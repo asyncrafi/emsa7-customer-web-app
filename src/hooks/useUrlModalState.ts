@@ -75,9 +75,11 @@ export function useUrlModalState() {
     isFilterOpen: activeModal === 'filter',
     isCartOpen: activeModal === 'cart',
     isFoodDetailOpen: activeModal === 'food',
+    isWaiterModalOpen: activeModal === 'waiter',
     openFilterModal: () => openModal('filter'),
     openCartModal: () => openModal('cart'),
     openFoodDetailModal: (itemId: string) => openModal('food', { item: itemId }),
+    openWaiterModal: () => openModal('waiter'),
     closeModal,
   };
 }

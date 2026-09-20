@@ -14,14 +14,15 @@ import {
   type MenuItem,
   type CartItem,
   type CategoryId,
+  type SelectedOption,
   CATEGORIES,
   MOCK_MENU_ITEMS,
 } from '@/types/menu';
 import { FoodCardVertical } from '@/components/food/FoodCardVertical';
 import { FoodCardHorizontal } from '@/components/food/FoodCardHorizontal';
-import { FoodDetailModal } from '@/components/food/FoodDetailModal';
-import { WaiterCallToast } from './WaiterCallToast';
-import { CartDrawer } from '@/components/cart/CartDrawer';
+import { FoodDetailScreen } from '@/components/food/FoodDetailScreen';
+import { WaiterCallModal } from './WaiterCallModal';
+import { MyOrderScreen } from '@/components/cart/MyOrderScreen';
 import { FloatingCartBar } from '@/components/cart/FloatingCartBar';
 import { SortFilterModal, type SortOption, type FilterTag } from './SortFilterModal';
 import { useUrlModalState } from '@/hooks/useUrlModalState';
@@ -46,10 +47,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     isFilterOpen,
     isCartOpen,
     isFoodDetailOpen,
+    isWaiterModalOpen,
     activeItemId,
     openFilterModal,
     openCartModal,
     openFoodDetailModal,
+    openWaiterModal,
     closeModal,
   } = useUrlModalState();
 
@@ -58,11 +61,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     [activeItemId]
   );
 
-  // Modals & Floating Toast state
+  // Modals state
   const [cart, setCart] = useState<CartItem[]>([]);
-
-  // Waiter Bell Call State
-  const [isWaiterCalled, setIsWaiterCalled] = useState(false);
 
   // Sort & Filter State
   const [selectedSort, setSelectedSort] = useState<SortOption>(null);
@@ -103,7 +103,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     return result;
   }, [selectedCategory, searchQuery, selectedTags, selectedSort]);
   // Cart operations
-  const handleAddToCart = (item: MenuItem, qty = 1, specialInstructions?: string) => {
+  const handleAddToCart = (
+    item: MenuItem,
+    qty = 1,
+    specialInstructions?: string,
+    selectedOptions?: SelectedOption[]
+  ) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex((ci) => ci.item.id === item.id);
       if (existingIndex > -1) {
@@ -112,9 +117,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         if (specialInstructions) {
           updated[existingIndex].specialInstructions = specialInstructions;
         }
+        if (selectedOptions) {
+          updated[existingIndex].selectedOptions = selectedOptions;
+        }
         return updated;
       }
-      return [...prevCart, { item, quantity: qty, specialInstructions }];
+      return [...prevCart, { item, quantity: qty, specialInstructions, selectedOptions }];
     });
   };
 
@@ -151,21 +159,26 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     return found ? found.quantity : 0;
   };
 
+  // Dedicated Full Page View for Food Details
+  if (isFoodDetailOpen && selectedFoodItem) {
+    return (
+      <FoodDetailScreen
+        item={selectedFoodItem}
+        onBack={closeModal}
+        onAddToCart={(item, qty, instructions, options) => {
+          handleAddToCart(item, qty, instructions, options);
+        }}
+        language={language}
+      />
+    );
+  }
+
   return (
     <div
       className={`min-h-[100dvh] bg-[#e8f5ee] antialiased select-none pb-28 relative ${
         language === 'ARABIC' ? 'font-sans rtl' : 'ltr'
       }`}
     >
-      {/* Waiter Call Toast Alert Banner */}
-      <WaiterCallToast
-        isOpen={isWaiterCalled}
-        tableName={`Table ${tableName}`}
-        language={language}
-        onClose={() => setIsWaiterCalled(false)}
-        onCancelCall={() => setIsWaiterCalled(false)}
-      />
-
       {/* Top Header Soft Green Section Container */}
       <div className="w-full bg-[#e8f5ee] pt-5 pb-5 sm:pt-7 sm:pb-6">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-4 sm:space-y-5">
@@ -442,39 +455,30 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           <span>{language === 'ARABIC' ? 'طلب النادل' : 'Call a Waiter'}</span>
         </div>
 
-        {/* Bell Button (Amber Accent Color Button matching design mockup) */}
+        {/* Bell Button (Amber Accent Color Button matching design mockup - Optimized mobile size) */}
         <button
           type="button"
-          onClick={() => setIsWaiterCalled(true)}
+          onClick={openWaiterModal}
           aria-label="Call Waiter"
-          className="relative group w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#f3a832] hover:bg-[#e29924] active:scale-95 text-white flex items-center justify-center shadow-2xl transition-all cursor-pointer"
+          className="relative group w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#f3a832] hover:bg-[#e29924] active:scale-95 text-white flex items-center justify-center shadow-2xl transition-all cursor-pointer"
         >
           {/* Pulse Ripple Effect */}
           <span className="absolute inset-0 rounded-full bg-[#f3a832]/40 animate-ping opacity-75 pointer-events-none" />
 
           {/* Bell Icon */}
-          <div className="relative z-10 w-6 h-6 flex items-center justify-center">
-            <SvgBellsIcon className="w-6 h-6 fill-current text-white" />
+          <div className="relative z-10 w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center">
+            <SvgBellsIcon className="w-5 h-5 sm:w-6 sm:h-6 fill-current text-white" />
           </div>
         </button>
       </div>
 
-      {/* Food Detail Modal */}
-      <FoodDetailModal
-        item={selectedFoodItem}
-        isOpen={isFoodDetailOpen}
-        onClose={closeModal}
-        onAddToCart={(item, qty, instructions) => {
-          handleAddToCart(item, qty, instructions);
-        }}
-        language={language}
-      />
 
-      {/* Cart Drawer */}
-      <CartDrawer
+
+      {/* My Order Screen (Figma Design matching 3 tabs & client feedback) */}
+      <MyOrderScreen
         isOpen={isCartOpen}
-        cart={cart}
         onClose={closeModal}
+        cart={cart}
         onIncrement={(itemId) => {
           const found = cart.find((ci) => ci.item.id === itemId);
           if (found) handleIncrement(found.item);
@@ -482,6 +486,22 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         onDecrement={handleDecrement}
         onRemove={handleRemoveFromCart}
         onClearCart={handleClearCart}
+        onAddToCart={(item) => handleIncrement(item)}
+        onReorder={(itemsToReorder) => {
+          setCart((prevCart) => {
+            const updated = [...prevCart];
+            itemsToReorder.forEach((rItem) => {
+              const idx = updated.findIndex((c) => c.item.id === rItem.item.id);
+              if (idx > -1) {
+                updated[idx].quantity += rItem.quantity;
+              } else {
+                updated.push({ ...rItem });
+              }
+            });
+            return updated;
+          });
+        }}
+        onCallWaiter={openWaiterModal}
         language={language}
         tableName={`Table ${tableName}`}
       />
@@ -501,6 +521,15 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           setSelectedSort(null);
           setSelectedTags([]);
         }}
+      />
+
+      {/* Waiter Call Interactive Flow Modal */}
+      <WaiterCallModal
+        isOpen={isWaiterModalOpen}
+        onClose={closeModal}
+        onSuccess={() => {}}
+        language={language}
+        tableName={`Table ${tableName}`}
       />
 
       {/* Floating Cart Bar (Appears at bottom when cart has items) */}

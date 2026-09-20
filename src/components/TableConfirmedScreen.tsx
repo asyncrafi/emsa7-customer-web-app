@@ -87,9 +87,9 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
 
         {/* Green Table Ticket Card Component - Precision Alignment for Mobile & Tablet */}
         <div className="relative w-full max-w-[310px] sm:max-w-[360px] md:max-w-[420px] lg:max-w-[480px] aspect-[2.1/1] flex items-center pl-16 sm:pl-20 md:pl-24 lg:pl-28 pr-16 md:pr-24 lg:pr-28 drop-shadow-md transition-transform duration-300 hover:scale-[1.02]">
-          {/* Ticket Background Image from public/iamges/auth/table-bg.png */}
+          {/* Ticket Background Image from public/images/auth/table-bg.png */}
           <img
-            src="/iamges/auth/table-bg.png"
+            src="/images/auth/table-bg.png"
             alt="Table Background Ticket"
             className="absolute inset-0 w-full h-full object-fill pointer-events-none rounded-2xl"
           />

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
 import { type MenuItem, formatPrice } from '@/types/menu';
-import { QuantityControl } from './QuantityControl';
 
 interface FoodCardVerticalProps {
   item: MenuItem;
@@ -15,11 +14,9 @@ interface FoodCardVerticalProps {
 
 export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
   item,
-  quantity = 0,
   language = 'ENGLISH',
   onAdd,
   onIncrement,
-  onDecrement,
   onClick,
 }) => {
   const title = language === 'ARABIC' ? item.nameAr || item.name : item.name;
@@ -30,12 +27,12 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
       onClick={() => onClick && onClick(item)}
       className="group relative bg-white border border-zinc-100 rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-pointer select-none overflow-hidden"
     >
-      {/* Top Image Container with Soft Light Gray Background */}
-      <div className="w-full aspect-[4/3] rounded-xl sm:rounded-2xl bg-[#f4f4f5] flex items-center justify-center p-3 overflow-hidden relative group-hover:bg-[#ebebeb] transition-colors">
+      {/* Top Image Container: Full-width object-cover matching Figma design */}
+      <div className="w-full aspect-[4/3] rounded-xl sm:rounded-2xl bg-zinc-100 overflow-hidden relative">
         <img
           src={item.imageUrl}
           alt={title}
-          className="w-full h-full object-contain drop-shadow-sm group-hover:scale-105 transition-transform duration-300 ease-out"
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300 ease-out"
           onError={(e) => {
             (e.target as HTMLImageElement).src = '/images/food/ramen.png';
           }}
@@ -59,32 +56,18 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
             {formatPrice(item.price, language)}
           </span>
 
-          {quantity > 0 ? (
-            <QuantityControl
-              quantity={quantity}
-              onIncrement={(e) => {
-                e.stopPropagation();
-                onIncrement && onIncrement(item);
-              }}
-              onDecrement={(e) => {
-                e.stopPropagation();
-                onDecrement && onDecrement(item);
-              }}
-              size="sm"
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onAdd && onAdd(item);
-              }}
-              aria-label={`Add ${title} to cart`}
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary hover:bg-primary/90 text-white flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
-            >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (onAdd) onAdd(item);
+              else if (onIncrement) onIncrement(item);
+            }}
+            aria-label={`Add ${title} to cart`}
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+          </button>
         </div>
       </div>
     </div>
