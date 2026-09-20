@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 
 /**
  * Senior-level URL-based modal management hook.
@@ -57,17 +58,8 @@ export function useUrlModalState() {
     }
   }, []);
 
-  // Lock body scroll whenever a modal is open
-  useEffect(() => {
-    if (activeModal) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-  }, [activeModal]);
+  // Lock body scroll whenever a modal is active
+  useBodyScrollLock(Boolean(activeModal));
 
   return {
     activeModal,

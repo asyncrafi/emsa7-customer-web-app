@@ -1,24 +1,24 @@
 import { useEffect } from 'react';
 
+let lockCount = 0;
+
 /**
  * Custom hook to lock body scrolling when a modal, drawer, or overlay is open.
- * Prevents background content from scrolling or being interacted with underneath.
+ * Uses a global reference counter to safely support nested / simultaneous modal scroll locks.
+ * Guarantees document.body.style.overflow is reset to '' when all active modal locks are released.
  */
 export function useBodyScrollLock(isLocked: boolean) {
   useEffect(() => {
     if (!isLocked) return;
 
-    // Save previous inline styles
-    const originalOverflow = document.body.style.overflow;
-    const originalTouchAction = document.body.style.touchAction;
-
-    // Lock body scrolling
+    lockCount++;
     document.body.style.overflow = 'hidden';
 
     return () => {
-      // Restore previous inline styles when modal closes
-      document.body.style.overflow = originalOverflow;
-      document.body.style.touchAction = originalTouchAction;
+      lockCount = Math.max(0, lockCount - 1);
+      if (lockCount === 0) {
+        document.body.style.overflow = '';
+      }
     };
   }, [isLocked]);
 }
