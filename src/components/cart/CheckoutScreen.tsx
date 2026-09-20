@@ -95,7 +95,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
       }`}
     >
       {/* Top Page Container with Responsive Max-Width for Mobile and Tablet */}
-      <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-5 sm:pt-7 md:pt-10 pb-28 md:pb-36 space-y-5 md:space-y-7 flex-1">
+      <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 pb-6 sm:pb-8 space-y-4 sm:space-y-5">
         {/* Header Row: Back Arrow + Centered Title */}
         <header className="relative flex items-center justify-center py-2 md:py-4">
           <button
