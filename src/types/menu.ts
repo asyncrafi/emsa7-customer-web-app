@@ -10,6 +10,7 @@ export interface MenuItem {
   isPopular?: boolean;
   rating?: number;
   calories?: string;
+  tags?: string[];
 }
 
 export interface CartItem {
@@ -47,6 +48,7 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     category: 'ramen',
     imageUrl: '/images/food/ramen.png',
     isPopular: true,
+    tags: ['bestseller', 'chefs_pick'],
   },
   {
     id: 'drink-1',
@@ -58,6 +60,7 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     category: 'drinks',
     imageUrl: '/images/food/iced-tea.png',
     isPopular: true,
+    tags: ['bestseller', 'sweet'],
   },
   {
     id: 'side-1',
@@ -69,6 +72,7 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     category: 'sides',
     imageUrl: '/images/food/gyoza.png',
     isPopular: true,
+    tags: ['bestseller', 'sharing'],
   },
   {
     id: 'ramen-2',
@@ -80,6 +84,7 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     category: 'ramen',
     imageUrl: '/images/food/ramen.png',
     isPopular: false,
+    tags: ['chefs_pick', 'seafood'],
   },
   {
     id: 'drink-2',
@@ -91,6 +96,7 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     category: 'drinks',
     imageUrl: '/images/food/iced-tea.png',
     isPopular: false,
+    tags: ['sweet', 'sharing'],
   },
 ];
 

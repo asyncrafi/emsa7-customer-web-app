@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgFilterIcon from '@/components/ui/svg-icons/FilterSvg';
 import SvgBellsIcon from '@/components/ui/svg-icons/BellsSvg';
@@ -21,6 +22,9 @@ import { FoodCardHorizontal } from '@/components/food/FoodCardHorizontal';
 import { FoodDetailModal } from '@/components/food/FoodDetailModal';
 import { WaiterCallToast } from './WaiterCallToast';
 import { CartDrawer } from '@/components/cart/CartDrawer';
+import { FloatingCartBar } from '@/components/cart/FloatingCartBar';
+import { SortFilterModal, type SortOption, type FilterTag } from './SortFilterModal';
+import { useUrlModalState } from '@/hooks/useUrlModalState';
 
 interface MenuScreenProps {
   tableName?: string;
@@ -37,14 +41,32 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // URL-based Modal state management
+  const {
+    isFilterOpen,
+    isCartOpen,
+    isFoodDetailOpen,
+    activeItemId,
+    openFilterModal,
+    openCartModal,
+    openFoodDetailModal,
+    closeModal,
+  } = useUrlModalState();
+
+  const selectedFoodItem = useMemo(
+    () => MOCK_MENU_ITEMS.find((item) => item.id === activeItemId) || null,
+    [activeItemId]
+  );
+
   // Modals & Floating Toast state
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [selectedFoodItem, setSelectedFoodItem] = useState<MenuItem | null>(null);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   // Waiter Bell Call State
   const [isWaiterCalled, setIsWaiterCalled] = useState(false);
+
+  // Sort & Filter State
+  const [selectedSort, setSelectedSort] = useState<SortOption>(null);
+  const [selectedTags, setSelectedTags] = useState<FilterTag[]>([]);
 
   // Filter items
   const popularItems = useMemo(() => {
@@ -52,7 +74,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   }, []);
 
   const filteredItems = useMemo(() => {
-    return MOCK_MENU_ITEMS.filter((item) => {
+    let result = MOCK_MENU_ITEMS.filter((item) => {
       const matchesCategory =
         selectedCategory === 'all' || item.category === selectedCategory;
 
@@ -63,37 +85,36 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         item.description.toLowerCase().includes(query) ||
         (item.nameAr && item.nameAr.toLowerCase().includes(query));
 
-      return matchesCategory && matchesSearch;
+      const matchesTags =
+        selectedTags.length === 0 ||
+        selectedTags.some((tag) => item.tags?.includes(tag));
+
+      return matchesCategory && matchesSearch && matchesTags;
     });
-  }, [selectedCategory, searchQuery]);
 
-  // Cart Helper Functions
-  const getItemQuantity = (itemId: string) => {
-    const found = cart.find((ci) => ci.item.id === itemId);
-    return found ? found.quantity : 0;
-  };
+    if (selectedSort === 'popularity') {
+      result = [...result].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
+    } else if (selectedSort === 'price_low_high') {
+      result = [...result].sort((a, b) => a.price - b.price);
+    } else if (selectedSort === 'price_high_low') {
+      result = [...result].sort((a, b) => b.price - a.price);
+    }
 
-  const handleAddToCart = (
-    item: MenuItem,
-    quantity = 1,
-    instructions = ''
-  ) => {
+    return result;
+  }, [selectedCategory, searchQuery, selectedTags, selectedSort]);
+  // Cart operations
+  const handleAddToCart = (item: MenuItem, qty = 1, specialInstructions?: string) => {
     setCart((prevCart) => {
-      const existingIndex = prevCart.findIndex(
-        (ci) => ci.item.id === item.id
-      );
+      const existingIndex = prevCart.findIndex((ci) => ci.item.id === item.id);
       if (existingIndex > -1) {
         const updated = [...prevCart];
-        updated[existingIndex].quantity += quantity;
-        if (instructions) {
-          updated[existingIndex].specialInstructions = instructions;
+        updated[existingIndex].quantity += qty;
+        if (specialInstructions) {
+          updated[existingIndex].specialInstructions = specialInstructions;
         }
         return updated;
       }
-      return [
-        ...prevCart,
-        { item, quantity, specialInstructions: instructions },
-      ];
+      return [...prevCart, { item, quantity: qty, specialInstructions }];
     });
   };
 
@@ -101,15 +122,16 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     handleAddToCart(item, 1);
   };
 
-  const handleDecrement = (itemId: string) => {
+  const handleDecrement = (target: string | MenuItem) => {
+    const id = typeof target === 'string' ? target : target.id;
     setCart((prevCart) => {
-      const existing = prevCart.find((ci) => ci.item.id === itemId);
+      const existing = prevCart.find((ci) => ci.item.id === id);
       if (!existing) return prevCart;
-      if (existing.quantity <= 1) {
-        return prevCart.filter((ci) => ci.item.id !== itemId);
+      if (existing.quantity === 1) {
+        return prevCart.filter((ci) => ci.item.id !== id);
       }
       return prevCart.map((ci) =>
-        ci.item.id === itemId ? { ...ci, quantity: ci.quantity - 1 } : ci
+        ci.item.id === id ? { ...ci, quantity: ci.quantity - 1 } : ci
       );
     });
   };
@@ -124,9 +146,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const getItemQuantity = (itemId: string): number => {
+    const found = cart.find((ci) => ci.item.id === itemId);
+    return found ? found.quantity : 0;
+  };
+
   return (
     <div
-      className={`min-h-[100dvh] bg-[#f8f9fa] sm:bg-[#f4f5f7] antialiased select-none pb-28 relative ${
+      className={`min-h-[100dvh] bg-[#e8f5ee] antialiased select-none pb-28 relative ${
         language === 'ARABIC' ? 'font-sans rtl' : 'ltr'
       }`}
     >
@@ -139,161 +166,180 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         onCancelCall={() => setIsWaiterCalled(false)}
       />
 
-      {/* Main Container Wrapper */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 space-y-5 sm:space-y-6">
-        
-        {/* Top Header Row */}
-        <header className="flex items-center justify-between gap-3">
-          {/* Brand Logo */}
-          <div className="flex items-center gap-2 cursor-pointer" onClick={onBackToTableConfirmed}>
-            <img
-              src="/trash/restaurant-logo.png"
-              alt="Restaurant Logo"
-              className="h-9 sm:h-11 w-auto object-contain"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/emsa7-logo.png';
-              }}
-            />
-          </div>
-
-          {/* Right Header Buttons: Language Dropdown & My Order Button */}
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Language Switcher Button */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold shadow-2xs hover:bg-primary/10 transition-colors cursor-pointer"
-              >
-                <Globe className="h-3.5 w-3.5 text-primary/80" />
-                <span>{language === 'ARABIC' ? 'AR' : 'EN'}</span>
-                <ChevronDown className="h-3 w-3 text-primary/80" />
-              </button>
-
-              {/* Language Options Dropdown */}
-              {langDropdownOpen && (
-                <div className="absolute right-0 mt-1.5 w-36 bg-white border border-primary/20 rounded-2xl shadow-xl py-1.5 z-40 text-xs overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLanguage('ENGLISH');
-                      setLangDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
-                      language === 'ENGLISH'
-                        ? 'bg-primary/10 text-primary font-bold'
-                        : 'text-zinc-700 hover:bg-zinc-50'
-                    }`}
-                  >
-                    <span>English</span>
-                    {language === 'ENGLISH' && <Check className="h-3.5 w-3.5 text-primary" />}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLanguage('ARABIC');
-                      setLangDropdownOpen(false);
-                    }}
-                    className={`w-full text-left px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
-                      language === 'ARABIC'
-                        ? 'bg-primary/10 text-primary font-bold'
-                        : 'text-zinc-700 hover:bg-zinc-50'
-                    }`}
-                  >
-                    <span>العربية</span>
-                    {language === 'ARABIC' && <Check className="h-3.5 w-3.5 text-primary" />}
-                  </button>
-                </div>
-              )}
+      {/* Top Header Soft Green Section Container */}
+      <div className="w-full bg-[#e8f5ee] pt-5 pb-5 sm:pt-7 sm:pb-6">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-4 sm:space-y-5">
+          {/* Top Header Row */}
+          <header className="flex items-center justify-between gap-3">
+            {/* Brand Logo */}
+            <div
+              className="flex items-center gap-2 cursor-pointer hover:opacity-95 transition-opacity"
+              onClick={onBackToTableConfirmed}
+            >
+              <SvgEmsa7Icon className="h-6 sm:h-7 md:h-8" />
             </div>
 
-            {/* My Order Button with SvgCartIcon */}
-            <button
-              type="button"
-              onClick={() => setIsCartOpen(true)}
-              className="relative inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full text-white text-xs sm:text-sm font-bold shadow-md bg-primary hover:bg-primary/90 active:scale-95 transition-all cursor-pointer"
-            >
-              <div className="w-4 h-4 shrink-0 flex items-center justify-center">
-                <SvgCartIcon className="w-4 h-4 fill-current" />
+            {/* Right Header Buttons: Language Dropdown & My Order Button */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Language Switcher Button */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full border border-emerald-200/60 bg-white text-[#026F4F] text-xs sm:text-sm font-bold shadow-2xs hover:bg-emerald-50/50 transition-colors cursor-pointer"
+                >
+                  <Globe className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#026F4F]" />
+                  <span>{language === 'ARABIC' ? 'AR' : 'EN'}</span>
+                  <ChevronDown className="h-3 w-3 text-[#026F4F]" />
+                </button>
+
+                {/* Language Options Dropdown */}
+                {langDropdownOpen && (
+                  <div className="absolute right-0 mt-1.5 w-36 bg-white border border-emerald-200/50 rounded-2xl shadow-xl py-1.5 z-40 text-xs overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLanguage('ENGLISH');
+                        setLangDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
+                        language === 'ENGLISH'
+                          ? 'bg-emerald-50 text-[#026F4F] font-bold'
+                          : 'text-zinc-700 hover:bg-zinc-50'
+                      }`}
+                    >
+                      <span>English</span>
+                      {language === 'ENGLISH' && <Check className="h-3.5 w-3.5 text-[#026F4F]" />}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLanguage('ARABIC');
+                        setLangDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
+                        language === 'ARABIC'
+                          ? 'bg-emerald-50 text-[#026F4F] font-bold'
+                          : 'text-zinc-700 hover:bg-zinc-50'
+                      }`}
+                    >
+                      <span>العربية</span>
+                      {language === 'ARABIC' && <Check className="h-3.5 w-3.5 text-[#026F4F]" />}
+                    </button>
+                  </div>
+                )}
               </div>
-              <span>{language === 'ARABIC' ? 'طلباتي' : 'My Order'}</span>
 
-              {totalCartCount > 0 && (
-                <span className="w-5 h-5 rounded-full bg-white text-primary font-extrabold text-[11px] flex items-center justify-center shadow-xs">
-                  {totalCartCount}
-                </span>
-              )}
-            </button>
-          </div>
-        </header>
-
-        {/* Table Seating Greeting */}
-        <section className="space-y-0.5 pt-1">
-          <p className="text-xs sm:text-sm text-zinc-500 font-medium">
-            {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
-          </p>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-primary">
-            {tableName}
-          </h1>
-        </section>
-
-        {/* Search & Filter Controls */}
-        <section className="flex items-center gap-2.5">
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={
-                language === 'ARABIC'
-                  ? 'ابحث عن رامن، غيوزا، مشروبات...'
-                  : 'Search ramen, gyoza, drinks...'
-              }
-              className="w-full pl-10 pr-9 py-2.5 sm:py-3 rounded-full bg-white border border-zinc-200/80 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-primary/40 shadow-2xs transition-all"
-            />
-            {searchQuery && (
+              {/* My Order Button with SvgCartIcon */}
               <button
                 type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 p-0.5 cursor-pointer"
+                onClick={openCartModal}
+                className="relative inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4.5 sm:py-2 rounded-full text-white text-xs sm:text-sm font-bold shadow-md bg-[#026F4F] hover:bg-[#025a40] active:scale-95 transition-all cursor-pointer"
               >
-                <X className="w-3.5 h-3.5" />
+                <div className="w-4 h-4 shrink-0 flex items-center justify-center">
+                  <SvgCartIcon className="w-4 h-4 fill-current" />
+                </div>
+                <span>{language === 'ARABIC' ? 'طلباتي' : 'My Order'}</span>
+
+                {totalCartCount > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-white text-[#026F4F] font-extrabold text-[11px] flex items-center justify-center shadow-xs">
+                    {totalCartCount}
+                  </span>
+                )}
               </button>
-            )}
-          </div>
+            </div>
+          </header>
 
-          {/* Filter SVG Icon Button */}
-          <button
-            type="button"
-            onClick={() => setSearchQuery('')}
-            aria-label="Filter menu"
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-primary hover:bg-primary/90 text-white flex items-center justify-center shadow-md active:scale-95 transition-all cursor-pointer shrink-0"
-          >
-            <SvgFilterIcon className="w-5 h-5 text-white" />
-          </button>
-        </section>
+          {/* Table Seating Greeting & Large Number */}
+          <section className="pt-2">
+            <p className="text-xs sm:text-sm text-zinc-500 font-medium tracking-normal">
+              {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
+            </p>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-[#026F4F] mt-1 mb-2">
+              {tableName}
+            </h1>
+          </section>
 
+          {/* Integrated Search & Filter Controls Pill Bar */}
+          <section>
+            <div className="relative w-full bg-white rounded-full border border-emerald-100/80 shadow-xs flex items-center p-1 pl-4 pr-1.5">
+              <Search className="h-4 w-4 text-zinc-400 shrink-0 mr-2.5 rtl:mr-0 rtl:ml-2.5" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={
+                  language === 'ARABIC'
+                    ? 'ابحث عن رامن، غيوزا، مشروبات...'
+                    : 'Search ramen, gyoza, drinks...'
+                }
+                className="w-full text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 font-medium bg-transparent focus:outline-none"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="text-zinc-400 hover:text-zinc-600 p-1 cursor-pointer mr-1"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+
+              {/* Filter SVG Icon Button embedded inside Search Pill */}
+              <button
+                type="button"
+                onClick={openFilterModal}
+                aria-label="Filter menu"
+                className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#e2e8f0]/60 hover:bg-[#d8e0e8] text-zinc-600 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+              >
+                <SvgFilterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />
+                {(selectedSort || selectedTags.length > 0) && (
+                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[#026F4F] rounded-full border border-white" />
+                )}
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {/* Main White Content Sheet Container with ROUNDED TOP CORNERS matching Figma */}
+      <div className="w-full bg-white rounded-t-[2.25rem] sm:rounded-t-[2.75rem] shadow-xs pt-5 sm:pt-6 pb-16 min-h-[60vh]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-5 sm:space-y-6">
         {/* Category Pills Slider / Filter */}
         <section className="overflow-x-auto no-scrollbar py-1">
-          <div className="flex items-center gap-2 min-w-max">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-max">
             {CATEGORIES.map((cat) => {
               const isActive = selectedCategory === cat.id;
               const catName = language === 'ARABIC' ? cat.nameAr : cat.name;
+
+              // Matching food thumbnail images for categories
+              let catImage = '';
+              if (cat.id === 'all') catImage = '/images/food/ramen.png';
+              else if (cat.id === 'ramen') catImage = '/images/food/ramen.png';
+              else if (cat.id === 'sides') catImage = '/images/food/gyoza.png';
+              else if (cat.id === 'drinks') catImage = '/images/food/iced-tea.png';
 
               return (
                 <button
                   key={cat.id}
                   type="button"
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all cursor-pointer shadow-2xs ${
+                  className={`inline-flex items-center gap-2 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all cursor-pointer shadow-2xs ${
                     isActive
-                      ? 'bg-primary text-white shadow-xs scale-[1.02]'
-                      : 'bg-white hover:bg-zinc-100 text-zinc-700 border border-zinc-200/60'
+                      ? 'bg-[#026F4F] text-white shadow-sm scale-[1.02]'
+                      : 'bg-[#f3f4f6] hover:bg-zinc-200/80 text-zinc-700'
                   }`}
                 >
-                  <span className="text-base leading-none">{cat.emoji}</span>
+                  {catImage ? (
+                    <img
+                      src={catImage}
+                      alt={catName}
+                      className="w-5 h-5 rounded-full object-cover shrink-0"
+                    />
+                  ) : (
+                    <span className="text-sm leading-none">{cat.emoji}</span>
+                  )}
                   <span>{catName}</span>
                 </button>
               );
@@ -321,10 +367,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   language={language}
                   onAdd={(food) => handleAddToCart(food, 1)}
                   onIncrement={handleIncrement}
-                  onDecrement={(food) => handleDecrement(food.id)}
+                  onDecrement={(food) => handleDecrement(food)}
                   onClick={(food) => {
-                    setSelectedFoodItem(food);
-                    setIsDetailModalOpen(true);
+                    openFoodDetailModal(food.id);
                   }}
                 />
               ))}
@@ -374,10 +419,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   language={language}
                   onAdd={(food) => handleAddToCart(food, 1)}
                   onIncrement={handleIncrement}
-                  onDecrement={(food) => handleDecrement(food.id)}
+                  onDecrement={(food) => handleDecrement(food)}
                   onClick={(food) => {
-                    setSelectedFoodItem(food);
-                    setIsDetailModalOpen(true);
+                    openFoodDetailModal(food.id);
                   }}
                 />
               ))}
@@ -385,23 +429,28 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           )}
         </section>
       </div>
+    </div>
 
-      {/* Floating Waiter Call Button (Anchored Bottom Right - Uses Primary Brand Color) */}
-      <div className="fixed bottom-6 right-5 sm:right-8 z-40 flex items-center gap-2.5 animate-in fade-in zoom-in-95 duration-300">
+      {/* Floating Waiter Call Button (Adjusts position when Floating Cart Bar is present) */}
+      <div
+        className={`fixed right-5 sm:right-8 z-40 flex items-center gap-2.5 transition-all duration-300 ${
+          totalCartCount > 0 ? 'bottom-20 sm:bottom-22' : 'bottom-6'
+        }`}
+      >
         {/* Floating Tooltip Label: Call a Waiter */}
         <div className="hidden sm:flex items-center px-3.5 py-1.5 rounded-full bg-zinc-900/90 backdrop-blur-xs text-white text-xs font-bold shadow-xl border border-white/10">
           <span>{language === 'ARABIC' ? 'طلب النادل' : 'Call a Waiter'}</span>
         </div>
 
-        {/* Bell Button (Primary Brand Color Button) */}
+        {/* Bell Button (Amber Accent Color Button matching design mockup) */}
         <button
           type="button"
           onClick={() => setIsWaiterCalled(true)}
           aria-label="Call Waiter"
-          className="relative group w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-primary hover:bg-primary/90 active:scale-95 text-white flex items-center justify-center shadow-2xl transition-all cursor-pointer"
+          className="relative group w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#f3a832] hover:bg-[#e29924] active:scale-95 text-white flex items-center justify-center shadow-2xl transition-all cursor-pointer"
         >
           {/* Pulse Ripple Effect */}
-          <span className="absolute inset-0 rounded-full bg-primary/40 animate-ping opacity-75 pointer-events-none" />
+          <span className="absolute inset-0 rounded-full bg-[#f3a832]/40 animate-ping opacity-75 pointer-events-none" />
 
           {/* Bell Icon */}
           <div className="relative z-10 w-6 h-6 flex items-center justify-center">
@@ -413,8 +462,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       {/* Food Detail Modal */}
       <FoodDetailModal
         item={selectedFoodItem}
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
+        isOpen={isFoodDetailOpen}
+        onClose={closeModal}
         onAddToCart={(item, qty, instructions) => {
           handleAddToCart(item, qty, instructions);
         }}
@@ -425,7 +474,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       <CartDrawer
         isOpen={isCartOpen}
         cart={cart}
-        onClose={() => setIsCartOpen(false)}
+        onClose={closeModal}
         onIncrement={(itemId) => {
           const found = cart.find((ci) => ci.item.id === itemId);
           if (found) handleIncrement(found.item);
@@ -435,6 +484,30 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         onClearCart={handleClearCart}
         language={language}
         tableName={`Table ${tableName}`}
+      />
+
+      {/* Sort & Filter Modal Bottom Sheet */}
+      <SortFilterModal
+        isOpen={isFilterOpen}
+        onClose={closeModal}
+        language={language}
+        selectedSort={selectedSort}
+        selectedTags={selectedTags}
+        onApply={(sort, tags) => {
+          setSelectedSort(sort);
+          setSelectedTags(tags);
+        }}
+        onClear={() => {
+          setSelectedSort(null);
+          setSelectedTags([]);
+        }}
+      />
+
+      {/* Floating Cart Bar (Appears at bottom when cart has items) */}
+      <FloatingCartBar
+        cart={cart}
+        onOpenCart={openCartModal}
+        language={language}
       />
     </div>
   );

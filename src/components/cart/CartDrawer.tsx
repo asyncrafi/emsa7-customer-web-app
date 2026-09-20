@@ -2,6 +2,7 @@ import React from 'react';
 import { X, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import { type CartItem, formatPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -26,6 +27,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   language = 'ENGLISH',
   tableName = 'Table A08',
 }) => {
+  // Lock body scroll when drawer is open
+  useBodyScrollLock(isOpen);
+
   if (!isOpen) return null;
 
   const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);

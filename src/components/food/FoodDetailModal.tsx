@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Plus, Minus, Flame } from 'lucide-react';
 import { type MenuItem, formatPrice } from '@/types/menu';
+import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 
 interface FoodDetailModalProps {
   item: MenuItem | null;
@@ -17,6 +18,9 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
   onAddToCart,
   language = 'ENGLISH',
 }) => {
+  // Lock body scroll when modal is open
+  useBodyScrollLock(isOpen);
+
   const [quantity, setQuantity] = useState(1);
   const [instructions, setInstructions] = useState('');
 
