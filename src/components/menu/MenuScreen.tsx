@@ -126,8 +126,17 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     });
   };
 
+  const handleCardAdd = (food: MenuItem) => {
+    const hasOptions = Boolean(food.optionGroups && food.optionGroups.length > 0);
+    if (hasOptions) {
+      openFoodDetailModal(food.id);
+    } else {
+      handleAddToCart(food, 1);
+    }
+  };
+
   const handleIncrement = (item: MenuItem) => {
-    handleAddToCart(item, 1);
+    handleCardAdd(item);
   };
 
   const handleDecrement = (target: string | MenuItem) => {
@@ -321,7 +330,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-5 sm:space-y-6">
         {/* Category Pills Slider / Filter */}
         <section className="overflow-x-auto no-scrollbar py-1">
-          <div className="flex items-center gap-2 sm:gap-2.5 min-w-max">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-max px-0.5">
             {CATEGORIES.map((cat) => {
               const isActive = selectedCategory === cat.id;
               const catName = language === 'ARABIC' ? cat.nameAr : cat.name;
@@ -338,7 +347,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   key={cat.id}
                   type="button"
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`inline-flex items-center gap-2 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all cursor-pointer shadow-2xs ${
+                  className={`inline-flex items-center gap-2 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all cursor-pointer shadow-2xs shrink-0 ${
                     isActive
                       ? 'bg-[#026F4F] text-white shadow-sm scale-[1.02]'
                       : 'bg-[#f3f4f6] hover:bg-zinc-200/80 text-zinc-700'
@@ -378,7 +387,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   item={item}
                   quantity={getItemQuantity(item.id)}
                   language={language}
-                  onAdd={(food) => handleAddToCart(food, 1)}
+                  onAdd={handleCardAdd}
                   onIncrement={handleIncrement}
                   onDecrement={(food) => handleDecrement(food)}
                   onClick={(food) => {
@@ -430,7 +439,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   item={item}
                   quantity={getItemQuantity(item.id)}
                   language={language}
-                  onAdd={(food) => handleAddToCart(food, 1)}
+                  onAdd={handleCardAdd}
                   onIncrement={handleIncrement}
                   onDecrement={(food) => handleDecrement(food)}
                   onClick={(food) => {

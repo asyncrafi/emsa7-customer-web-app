@@ -78,7 +78,7 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-md bg-white rounded-t-[2rem] sm:rounded-3xl shadow-2xl p-5 sm:p-6 animate-in slide-in-from-bottom duration-300 relative overflow-hidden ${
+        className={`w-full max-w-md bg-white rounded-t-[2rem] sm:rounded-3xl shadow-2xl p-5 sm:p-6 animate-in slide-in-from-bottom duration-300 relative overflow-y-auto max-h-[85vh] ${
           isArabic ? 'font-sans rtl' : 'ltr'
         }`}
         onClick={(e) => e.stopPropagation()}

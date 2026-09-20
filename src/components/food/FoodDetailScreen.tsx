@@ -96,19 +96,19 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
 
   return (
     <div
-      className={`min-h-[100dvh] bg-[#f4f4f5] antialiased select-none pb-28 relative ${
+      className={`fixed inset-0 z-50 bg-white antialiased select-none overflow-y-auto ${
         isArabic ? 'font-sans rtl' : 'ltr'
       }`}
     >
-      {/* Top Section: Full Width Soft Cream Background with Food Image & Floating Back Arrow */}
-      <div className="relative w-full bg-[#f4f4f5] pt-4 pb-8 sm:pt-6 sm:pb-10 flex flex-col items-center justify-center min-h-[35vh]">
+      {/* Top Header Section with Dish Image & Floating Back Arrow */}
+      <div className="relative w-full bg-white pt-4 pb-6 sm:pt-6 sm:pb-8 flex flex-col items-center justify-center shrink-0">
         {/* Floating Back Circle Button */}
         <div className="max-w-4xl w-full mx-auto px-4 sm:px-6 absolute top-4 inset-x-0 z-20 flex justify-between items-center">
           <button
             type="button"
             onClick={onBack}
             aria-label="Back to menu"
-            className="w-10 h-10 rounded-full bg-white/80 hover:bg-white text-zinc-800 backdrop-blur-md shadow-md flex items-center justify-center cursor-pointer transition-transform active:scale-95"
+            className="w-10 h-10 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-800 shadow-sm flex items-center justify-center cursor-pointer transition-transform active:scale-95"
           >
             {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
@@ -127,8 +127,8 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
         </div>
       </div>
 
-      {/* Main White Content Sheet with Rounded Top Corners */}
-      <div className="w-full bg-white rounded-t-[2.25rem] sm:rounded-t-[2.75rem] shadow-xs pt-6 sm:pt-8 pb-32 min-h-[65vh]">
+      {/* Main Content Body */}
+      <div className="w-full bg-white pt-2 pb-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-6 sm:space-y-7">
           {/* Title & Base Price Row */}
           <div>
@@ -154,7 +154,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
               const selectedIds = selectedOptionsMap[group.id] || [];
 
               return (
-                <div key={group.id} className="pt-4 border-t border-zinc-100/80">
+                <div key={group.id} className="pt-4 border-t border-zinc-100">
                   {/* Option Group Header & Badge */}
                   <div className="flex items-center justify-between mb-3">
                     <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight">
@@ -163,8 +163,8 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                     <span
                       className={`text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full tracking-wide ${
                         group.required
-                          ? 'bg-[#27272a] text-white'
-                          : 'bg-[#f4f4f5] text-zinc-500'
+                          ? 'bg-zinc-900 text-white'
+                          : 'bg-zinc-100 text-zinc-600'
                       }`}
                     >
                       {group.required
@@ -223,7 +223,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
             })}
 
           {/* Special Instructions Field */}
-          <div className="pt-4 border-t border-zinc-100/80">
+          <div className="pt-4 border-t border-zinc-100">
             <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight mb-2.5">
               {isArabic ? 'تعليمات خاصة' : 'Special instructions'}
             </h2>
@@ -235,50 +235,48 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                   ? 'أضف ملاحظة (مثال: بدون فلفل حار، ملح أقل)'
                   : 'Add note (e.g. no spicy, less salt)'
               }
-              className="w-full bg-[#f4f4f5] border border-zinc-200/60 rounded-2xl p-4 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all min-h-[95px] resize-none"
+              className="w-full bg-zinc-50 border border-zinc-200/80 rounded-2xl p-4 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all min-h-[95px] resize-none"
             />
           </div>
-        </div>
-      </div>
 
-      {/* Fixed Bottom Action Footer Bar */}
-      <div className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-zinc-100 p-3.5 sm:p-5 z-40">
-        <div className="max-w-4xl mx-auto flex items-center gap-2.5 sm:gap-4">
-          {/* Quantity Stepper Pill */}
-          <div className="bg-[#f4f4f5] rounded-full p-1 sm:p-1.5 flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* In-Flow Quantity Stepper & Add to Cart Section (Scrolls naturally at bottom) */}
+          <div className="pt-6 sm:pt-8 border-t border-zinc-100 flex items-center gap-3 sm:gap-4 pb-8 sm:pb-12">
+            {/* Quantity Stepper Pill */}
+            <div className="bg-zinc-100 rounded-full p-1.5 flex items-center gap-2 sm:gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
+                disabled={quantity <= 1}
+                aria-label="Decrease quantity"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#509B82] disabled:opacity-50 text-white flex items-center justify-center cursor-pointer transition-all active:scale-95 shrink-0"
+              >
+                <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+              </button>
+              <span className="font-bold text-sm sm:text-base text-zinc-800 w-5 text-center shrink-0">
+                {quantity}
+              </span>
+              <button
+                type="button"
+                onClick={() => setQuantity((q) => q + 1)}
+                aria-label="Increase quantity"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#026F4F] text-white flex items-center justify-center cursor-pointer transition-all active:scale-95 shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+              </button>
+            </div>
+
+            {/* Add to Cart Primary Button */}
             <button
               type="button"
-              onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
-              disabled={quantity <= 1}
-              aria-label="Decrease quantity"
-              className="w-7.5 h-7.5 sm:w-9 sm:h-9 rounded-full bg-[#509B82] disabled:opacity-50 text-white flex items-center justify-center cursor-pointer transition-all active:scale-95 shrink-0"
+              onClick={handleAdd}
+              className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3.5 sm:py-4 px-4 sm:px-6 rounded-full font-bold text-sm sm:text-base flex items-center justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer min-w-0"
             >
-              <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
-            </button>
-            <span className="font-bold text-xs sm:text-base text-zinc-800 w-4 sm:w-5 text-center shrink-0">
-              {quantity}
-            </span>
-            <button
-              type="button"
-              onClick={() => setQuantity((q) => q + 1)}
-              aria-label="Increase quantity"
-              className="w-7.5 h-7.5 sm:w-9 sm:h-9 rounded-full bg-[#026F4F] text-white flex items-center justify-center cursor-pointer transition-all active:scale-95 shrink-0"
-            >
-              <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+              <span className="whitespace-nowrap shrink-0">{isArabic ? 'إضافة إلى السلة' : 'Add to Cart'}</span>
+              <span className="font-extrabold text-sm sm:text-lg whitespace-nowrap shrink-0 ml-1.5 rtl:ml-0 rtl:mr-1.5">
+                {formatPrice(totalPrice, language)}
+              </span>
             </button>
           </div>
-
-          {/* Add to Cart Primary Button */}
-          <button
-            type="button"
-            onClick={handleAdd}
-            className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3 sm:py-3.5 px-3.5 sm:px-6 rounded-full font-bold text-xs sm:text-base flex items-center justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer min-w-0"
-          >
-            <span className="whitespace-nowrap shrink-0">{isArabic ? 'إضافة إلى السلة' : 'Add to Cart'}</span>
-            <span className="font-extrabold text-xs sm:text-lg whitespace-nowrap shrink-0 ml-1.5 rtl:ml-0 rtl:mr-1.5">
-              {formatPrice(totalPrice, language)}
-            </span>
-          </button>
         </div>
       </div>
     </div>
