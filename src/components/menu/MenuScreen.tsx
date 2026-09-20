@@ -184,12 +184,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
   return (
     <div
-      className={`min-h-[100dvh] bg-[#e8f5ee] antialiased select-none pb-28 relative ${
+      className={`min-h-[100dvh] bg-[#e8f5ee] antialiased select-none relative flex flex-col ${
         language === 'ARABIC' ? 'font-sans rtl' : 'ltr'
       }`}
     >
       {/* Top Header Soft Green Section Container */}
-      <div className="w-full bg-[#e8f5ee] pt-5 pb-5 sm:pt-7 sm:pb-6">
+      <div className="w-full bg-[#e8f5ee] pt-5 pb-5 sm:pt-7 sm:pb-6 shrink-0">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-4 sm:space-y-5">
           {/* Top Header Row */}
           <header className="flex items-center justify-between gap-3">
@@ -326,7 +326,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       </div>
 
       {/* Main White Content Sheet Container with ROUNDED TOP CORNERS matching Figma */}
-      <div className="w-full bg-white rounded-t-[2.25rem] sm:rounded-t-[2.75rem] shadow-xs pt-5 sm:pt-6 pb-16 min-h-[60vh]">
+      <div className="w-full bg-white rounded-t-[2.25rem] sm:rounded-t-[2.75rem] shadow-xs pt-5 sm:pt-6 pb-28 flex-1">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-5 sm:space-y-6">
         {/* Category Pills Slider / Filter */}
         <section className="overflow-x-auto no-scrollbar py-1">
