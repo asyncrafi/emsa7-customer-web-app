@@ -126,6 +126,26 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     });
   };
 
+  const handleQuickAdd = (food: MenuItem) => {
+    // Default required options setup for quick add via Blue Zone
+    const initialSelections: SelectedOption[] = [];
+    if (food.optionGroups) {
+      food.optionGroups.forEach((group) => {
+        if (group.required && group.options.length > 0) {
+          const opt = group.options[0];
+          initialSelections.push({
+            groupId: group.id,
+            groupTitle: group.title,
+            optionId: opt.id,
+            optionName: opt.name,
+            price: opt.price,
+          });
+        }
+      });
+    }
+    handleAddToCart(food, 1, undefined, initialSelections.length > 0 ? initialSelections : undefined);
+  };
+
   const handleCardAdd = (food: MenuItem) => {
     const hasOptions = Boolean(food.optionGroups && food.optionGroups.length > 0);
     if (hasOptions) {
@@ -415,9 +435,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   item={item}
                   quantity={getItemQuantity(item.id)}
                   language={language}
-                  onAdd={handleCardAdd}
-                  onIncrement={handleIncrement}
-                  onDecrement={(food) => handleDecrement(food)}
+                  onAdd={handleQuickAdd}
+                  onIncrement={(food) => handleCartItemIncrement(food.id)}
+                  onDecrement={(food) => handleDecrement(food.id)}
                   onClick={(food) => {
                     openFoodDetailModal(food.id);
                   }}
@@ -467,9 +487,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   item={item}
                   quantity={getItemQuantity(item.id)}
                   language={language}
-                  onAdd={handleCardAdd}
-                  onIncrement={handleIncrement}
-                  onDecrement={(food) => handleDecrement(food)}
+                  onAdd={handleQuickAdd}
+                  onIncrement={(food) => handleCartItemIncrement(food.id)}
+                  onDecrement={(food) => handleDecrement(food.id)}
                   onClick={(food) => {
                     openFoodDetailModal(food.id);
                   }}

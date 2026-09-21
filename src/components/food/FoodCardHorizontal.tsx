@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
 import { type MenuItem, formatPrice } from '@/types/menu';
 
 interface FoodCardHorizontalProps {
@@ -14,9 +14,11 @@ interface FoodCardHorizontalProps {
 
 export const FoodCardHorizontal: React.FC<FoodCardHorizontalProps> = ({
   item,
+  quantity = 0,
   language = 'ENGLISH',
   onAdd,
   onIncrement,
+  onDecrement,
   onClick,
 }) => {
   const title = language === 'ARABIC' ? item.nameAr || item.name : item.name;
@@ -50,24 +52,60 @@ export const FoodCardHorizontal: React.FC<FoodCardHorizontalProps> = ({
           </p>
         </div>
 
-        {/* Bottom Row: Price & Quantity Controls */}
+        {/* Bottom Row: Price & Quantity Controls (Blue Zone) */}
         <div className="pt-2 sm:pt-3 flex items-center justify-between mt-auto">
           <span className="font-extrabold text-xs sm:text-sm md:text-base tracking-tight text-primary">
             {formatPrice(item.price, language)}
           </span>
 
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onAdd) onAdd(item);
-              else if (onIncrement) onIncrement(item);
-            }}
-            aria-label={`Add ${title} to cart`}
-            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
-          >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
-          </button>
+          {quantity > 0 ? (
+            /* Stepper Pill when Item is in Cart */
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#f4f4f5] rounded-full p-1 flex items-center gap-1.5 sm:gap-2 shrink-0 border border-zinc-200/60 shadow-2xs"
+            >
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDecrement?.(item);
+                }}
+                aria-label={`Decrease ${title} quantity`}
+                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#509B82] hover:bg-[#025a40] text-white flex items-center justify-center cursor-pointer active:scale-90 transition-transform"
+              >
+                <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
+              </button>
+              <span className="font-extrabold text-xs sm:text-sm text-zinc-900 min-w-[1.1rem] text-center">
+                {quantity}
+              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onIncrement) onIncrement(item);
+                  else if (onAdd) onAdd(item);
+                }}
+                aria-label={`Increase ${title} quantity`}
+                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white flex items-center justify-center cursor-pointer active:scale-90 transition-transform"
+              >
+                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+              </button>
+            </div>
+          ) : (
+            /* Single + Button when Item is not in Cart */
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onAdd) onAdd(item);
+                else if (onIncrement) onIncrement(item);
+              }}
+              aria-label={`Add ${title} to cart`}
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+            >
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          )}
         </div>
       </div>
     </div>
