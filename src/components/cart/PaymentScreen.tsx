@@ -5,12 +5,9 @@ import {
   User,
   Phone,
   Mail,
-  CreditCard,
   ChevronDown,
   ChevronUp,
   ChevronRight,
-  Banknote,
-  Smartphone,
 } from 'lucide-react';
 import { type CartItem, formatPrice, getCartItemTotalPrice } from '@/types/menu';
 
