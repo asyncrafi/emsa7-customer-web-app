@@ -89,9 +89,11 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                         <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
                           {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                         </h3>
-                        <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic">
-                          "No Sauce"
-                        </p>
+                        {ci.specialInstructions && (
+                          <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic">
+                            "{ci.specialInstructions}"
+                          </p>
+                        )}
                         <span className="text-xs sm:text-sm text-zinc-500 font-semibold block mt-0.5">
                           x{ci.quantity}
                         </span>
@@ -114,7 +116,6 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                     </div>
                     <div>
                       <h3 className="font-bold text-xs sm:text-sm text-zinc-900">Shoyu Ramen</h3>
-                      <p className="text-[11px] text-zinc-400 italic">"No Sauce"</p>
                       <span className="text-xs text-zinc-500 font-semibold block">x1</span>
                     </div>
                   </div>

@@ -14,6 +14,10 @@ interface FoodDetailModalProps {
     selectedOptions?: SelectedOption[]
   ) => void;
   language?: 'ENGLISH' | 'ARABIC';
+  initialQuantity?: number;
+  initialInstructions?: string;
+  initialSelectedOptions?: SelectedOption[];
+  isEditing?: boolean;
 }
 
 export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
@@ -22,6 +26,10 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
   onClose,
   onAddToCart,
   language = 'ENGLISH',
+  initialQuantity,
+  initialInstructions,
+  initialSelectedOptions,
+  isEditing = false,
 }) => {
   // Lock body scroll when modal is open
   useBodyScrollLock(isOpen);
@@ -34,10 +42,10 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
 
   // Initialize option group defaults whenever item opens
   useEffect(() => {
-    if (!item) return;
+    if (!item || !isOpen) return;
 
-    setQuantity(1);
-    setInstructions('');
+    setQuantity(initialQuantity && initialQuantity > 0 ? initialQuantity : 1);
+    setInstructions(initialInstructions || '');
 
     const initialSelections: Record<string, string[]> = {};
 
@@ -52,8 +60,24 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
       });
     }
 
+    if (initialSelectedOptions && initialSelectedOptions.length > 0) {
+      initialSelectedOptions.forEach((so) => {
+        const group = item.optionGroups?.find((g) => g.id === so.groupId);
+        if (group?.type === 'single') {
+          initialSelections[so.groupId] = [so.optionId];
+        } else {
+          if (!initialSelections[so.groupId]) {
+            initialSelections[so.groupId] = [];
+          }
+          if (!initialSelections[so.groupId].includes(so.optionId)) {
+            initialSelections[so.groupId].push(so.optionId);
+          }
+        }
+      });
+    }
+
     setSelectedOptionsMap(initialSelections);
-  }, [item, isOpen]);
+  }, [item, isOpen, initialQuantity, initialInstructions, initialSelectedOptions]);
 
   if (!isOpen || !item) return null;
 
@@ -282,7 +306,15 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
             onClick={handleAdd}
             className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3 sm:py-3.5 px-5 rounded-full font-bold text-xs sm:text-base flex items-center justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer"
           >
-            <span>{isArabic ? 'إضافة إلى السلة' : 'Add to Cart'}</span>
+            <span>
+              {isEditing
+                ? isArabic
+                  ? 'تحديث الصنف'
+                  : 'Update Item'
+                : isArabic
+                ? 'إضافة إلى السلة'
+                : 'Add to Cart'}
+            </span>
             <span className="font-extrabold">{formatPrice(totalPrice, language)}</span>
           </button>
         </div>

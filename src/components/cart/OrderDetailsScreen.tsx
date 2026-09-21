@@ -159,7 +159,6 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                         <h3 className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-zinc-900 truncate">
                           Shoyu Ramen
                         </h3>
-                        <p className="text-[11px] sm:text-xs md:text-sm text-zinc-400 font-normal italic">"No Sauce"</p>
                         <span className="font-bold text-xs sm:text-sm md:text-base text-zinc-800 block mt-0.5">x1</span>
                       </div>
                     </div>
@@ -182,7 +181,6 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                         <h3 className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-zinc-900 truncate">
                           Shoyu Ramen
                         </h3>
-                        <p className="text-[11px] sm:text-xs md:text-sm text-zinc-400 font-normal italic">"No Sauce"</p>
                         <span className="font-bold text-xs sm:text-sm md:text-base text-zinc-800 block mt-0.5">x1</span>
                       </div>
                     </div>

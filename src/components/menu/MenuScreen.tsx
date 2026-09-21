@@ -157,6 +157,26 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     setCart((prevCart) => prevCart.filter((ci) => ci.item.id !== itemId));
   };
 
+  const handleUpdateCartItem = (
+    index: number,
+    qty: number,
+    specialInstructions?: string,
+    selectedOptions?: SelectedOption[]
+  ) => {
+    setCart((prevCart) => {
+      const updated = [...prevCart];
+      if (updated[index]) {
+        updated[index] = {
+          ...updated[index],
+          quantity: qty,
+          specialInstructions,
+          selectedOptions,
+        };
+      }
+      return updated;
+    });
+  };
+
   const handleClearCart = () => {
     setCart([]);
   };
@@ -496,6 +516,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         onRemove={handleRemoveFromCart}
         onClearCart={handleClearCart}
         onAddToCart={(item) => handleIncrement(item)}
+        onUpdateCartItem={handleUpdateCartItem}
         onReorder={(itemsToReorder) => {
           setCart((prevCart) => {
             const updated = [...prevCart];

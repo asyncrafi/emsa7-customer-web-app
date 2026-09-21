@@ -12,6 +12,10 @@ interface FoodDetailScreenProps {
     selectedOptions?: SelectedOption[]
   ) => void;
   language?: 'ENGLISH' | 'ARABIC';
+  initialQuantity?: number;
+  initialInstructions?: string;
+  initialSelectedOptions?: SelectedOption[];
+  isEditing?: boolean;
 }
 
 export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
@@ -19,6 +23,10 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
   onBack,
   onAddToCart,
   language = 'ENGLISH',
+  initialQuantity,
+  initialInstructions,
+  initialSelectedOptions,
+  isEditing = false,
 }) => {
   const [quantity, setQuantity] = useState(1);
   const [instructions, setInstructions] = useState('');
@@ -28,8 +36,8 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
 
   // Initialize option group defaults whenever item changes
   useEffect(() => {
-    setQuantity(1);
-    setInstructions('');
+    setQuantity(initialQuantity && initialQuantity > 0 ? initialQuantity : 1);
+    setInstructions(initialInstructions || '');
 
     const initialSelections: Record<string, string[]> = {};
 
@@ -44,8 +52,24 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
       });
     }
 
+    if (initialSelectedOptions && initialSelectedOptions.length > 0) {
+      initialSelectedOptions.forEach((so) => {
+        const group = item.optionGroups?.find((g) => g.id === so.groupId);
+        if (group?.type === 'single') {
+          initialSelections[so.groupId] = [so.optionId];
+        } else {
+          if (!initialSelections[so.groupId]) {
+            initialSelections[so.groupId] = [];
+          }
+          if (!initialSelections[so.groupId].includes(so.optionId)) {
+            initialSelections[so.groupId].push(so.optionId);
+          }
+        }
+      });
+    }
+
     setSelectedOptionsMap(initialSelections);
-  }, [item]);
+  }, [item, initialQuantity, initialInstructions, initialSelectedOptions]);
 
   const title = isArabic ? item.nameAr || item.name : item.name;
   const description = isArabic ? item.descriptionAr || item.description : item.description;
@@ -271,7 +295,15 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
               onClick={handleAdd}
               className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3.5 sm:py-4 px-4 sm:px-6 rounded-full font-bold text-sm sm:text-base flex items-center justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer min-w-0"
             >
-              <span className="whitespace-nowrap shrink-0">{isArabic ? 'إضافة إلى السلة' : 'Add to Cart'}</span>
+              <span className="whitespace-nowrap shrink-0">
+                {isEditing
+                  ? isArabic
+                    ? 'تحديث الصنف'
+                    : 'Update Item'
+                  : isArabic
+                  ? 'إضافة إلى السلة'
+                  : 'Add to Cart'}
+              </span>
               <span className="font-extrabold text-sm sm:text-lg whitespace-nowrap shrink-0 ml-1.5 rtl:ml-0 rtl:mr-1.5">
                 {formatPrice(totalPrice, language)}
               </span>

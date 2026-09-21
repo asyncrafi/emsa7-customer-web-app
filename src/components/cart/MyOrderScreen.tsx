@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, ChevronRight, Clock, Trash2, Plus } from 'lucide-react';
-import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem } from '@/types/menu';
+import { ArrowLeft, ArrowRight, ChevronRight, Clock, Trash2, Plus, Pencil } from 'lucide-react';
+import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
 import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
 import { OrderConfirmedScreen } from '@/components/cart/OrderConfirmedScreen';
+import { FoodDetailModal } from '@/components/food/FoodDetailModal';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgPlacedIcon from '@/components/ui/svg-icons/PlacedSvg';
 import SvgPrepIcon from '@/components/ui/svg-icons/PrepSvg';
@@ -34,6 +35,12 @@ export interface MyOrderScreenProps {
   onRemove: (itemId: string) => void;
   onClearCart: () => void;
   onAddToCart?: (item: MenuItem) => void;
+  onUpdateCartItem?: (
+    index: number,
+    quantity: number,
+    instructions: string,
+    selectedOptions?: SelectedOption[]
+  ) => void;
   onReorder?: (items: CartItem[]) => void;
   onCallWaiter?: () => void;
   language?: 'ENGLISH' | 'ARABIC';
@@ -50,6 +57,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   onRemove: _onRemove,
   onClearCart,
   onAddToCart,
+  onUpdateCartItem,
   onReorder,
   onCallWaiter: _onCallWaiter,
   language = 'ENGLISH',
@@ -57,6 +65,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   initialTab = 'ongoing',
 }) => {
   const [activeTab, setActiveTab] = useState<'ongoing' | 'cart' | 'history'>(initialTab);
+  const [editingCartIndex, setEditingCartIndex] = useState<number | null>(null);
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [showOrderConfirmedModal, setShowOrderConfirmedModal] = useState(false);
@@ -451,8 +460,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
                   {/* Items List */}
                   <div className="space-y-3.5 md:space-y-4 divide-y divide-zinc-100">
-                    {cart.map((ci) => (
-                      <div key={ci.item.id} className="pt-3.5 first:pt-0 flex items-center justify-between gap-3 md:gap-4">
+                    {cart.map((ci, idx) => (
+                      <div key={`${ci.item.id}-${idx}`} className="pt-3.5 first:pt-0 flex items-center justify-between gap-3 md:gap-4">
                         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                           <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-2xl bg-zinc-50 p-2 flex items-center justify-center shrink-0 border border-zinc-100">
                             <img
@@ -462,10 +471,30 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                             />
                           </div>
                           <div className="min-w-0">
-                            <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
-                              {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
-                            </h3>
-                            <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic">"No Sauce"</p>
+                            <div className="flex items-center gap-1.5">
+                              <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
+                                {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
+                              </h3>
+                              <button
+                                type="button"
+                                onClick={() => setEditingCartIndex(idx)}
+                                aria-label="Edit item"
+                                className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#eef7f4] hover:bg-[#026F4F]/20 text-[#026F4F] flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                                title={isArabic ? 'تعديل' : 'Edit'}
+                              >
+                                <Pencil className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.2]" />
+                              </button>
+                            </div>
+                            {ci.selectedOptions && ci.selectedOptions.length > 0 && (
+                              <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">
+                                {ci.selectedOptions.map((so) => so.optionName).join(', ')}
+                              </p>
+                            )}
+                            {ci.specialInstructions && (
+                              <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic truncate">
+                                "{ci.specialInstructions}"
+                              </p>
+                            )}
                             <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
                               {formatPrice(ci.item.price * ci.quantity, language)}
                             </span>
@@ -731,6 +760,26 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         language={language}
         tableName={_tableName}
       />
+
+      {/* Edit Food Item Modal */}
+      {editingCartIndex !== null && cart[editingCartIndex] && (
+        <FoodDetailModal
+          item={cart[editingCartIndex].item}
+          isOpen={editingCartIndex !== null}
+          onClose={() => setEditingCartIndex(null)}
+          initialQuantity={cart[editingCartIndex].quantity}
+          initialInstructions={cart[editingCartIndex].specialInstructions}
+          initialSelectedOptions={cart[editingCartIndex].selectedOptions}
+          isEditing={true}
+          language={language}
+          onAddToCart={(_item, qty, instructions, options) => {
+            if (onUpdateCartItem && editingCartIndex !== null) {
+              onUpdateCartItem(editingCartIndex, qty, instructions, options);
+            }
+            setEditingCartIndex(null);
+          }}
+        />
+      )}
     </div>
   );
 };

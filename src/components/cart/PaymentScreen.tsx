@@ -211,7 +211,16 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                     <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
                       {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                     </h3>
-                    <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic">"No Sauce"</p>
+                    {ci.selectedOptions && ci.selectedOptions.length > 0 && (
+                      <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">
+                        {ci.selectedOptions.map((so) => so.optionName).join(', ')}
+                      </p>
+                    )}
+                    {ci.specialInstructions && (
+                      <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic truncate">
+                        "{ci.specialInstructions}"
+                      </p>
+                    )}
                     <span className="text-xs sm:text-sm text-zinc-500 font-semibold block mt-0.5">
                       x{ci.quantity}
                     </span>
