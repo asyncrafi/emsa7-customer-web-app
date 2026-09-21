@@ -33,9 +33,31 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   tableName = 'Table A8',
 }) => {
   const [isSplitCheck, setIsSplitCheck] = useState(false);
-  const [selectedSplitItemIds, setSelectedSplitItemIds] = useState<Set<string>>(
-    new Set(cart.map((ci) => ci.item.id))
-  );
+
+  // Expand cart items into individual single-unit items when split check is ON
+  const expandedSplitItems = React.useMemo(() => {
+    const items: { splitId: string; cartItem: CartItem; singlePrice: number }[] = [];
+    cart.forEach((ci, cartIdx) => {
+      const singlePrice = getCartItemTotalPrice(ci) / ci.quantity;
+      for (let i = 0; i < ci.quantity; i++) {
+        items.push({
+          splitId: `${ci.item.id}-${cartIdx}-${i}`,
+          cartItem: ci,
+          singlePrice,
+        });
+      }
+    });
+    return items;
+  }, [cart]);
+
+  const [selectedSplitIds, setSelectedSplitIds] = useState<Set<string>>(new Set());
+
+  // Automatically select all expanded items whenever split check is turned ON or cart changes
+  React.useEffect(() => {
+    if (isSplitCheck) {
+      setSelectedSplitIds(new Set(expandedSplitItems.map((item) => item.splitId)));
+    }
+  }, [isSplitCheck, expandedSplitItems]);
 
   const [promoCode, setPromoCode] = useState('');
   const [promoStatus, setPromoStatus] = useState<'none' | 'applied' | 'error'>('none');
@@ -50,24 +72,28 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   const isArabic = language === 'ARABIC';
 
   // Toggle single item selection for split check
-  const toggleSplitItem = (itemId: string) => {
-    setSelectedSplitItemIds((prev) => {
+  const toggleSplitItem = (splitId: string) => {
+    setSelectedSplitIds((prev) => {
       const next = new Set(prev);
-      if (next.has(itemId)) {
-        next.delete(itemId);
+      if (next.has(splitId)) {
+        next.delete(splitId);
       } else {
-        next.add(itemId);
+        next.add(splitId);
       }
       return next;
     });
   };
 
-  // Filter items if split check is ON
-  const activeItems = isSplitCheck
-    ? cart.filter((ci) => selectedSplitItemIds.has(ci.item.id))
-    : cart;
+  const subtotal = isSplitCheck
+    ? expandedSplitItems
+        .filter((item) => selectedSplitIds.has(item.splitId))
+        .reduce((sum, item) => sum + item.singlePrice, 0)
+    : getCartSubtotal(cart);
 
-  const subtotal = getCartSubtotal(activeItems);
+  const activeItemCount = isSplitCheck
+    ? expandedSplitItems.filter((item) => selectedSplitIds.has(item.splitId)).length
+    : cart.reduce((sum, item) => sum + item.quantity, 0);
+
   const serviceCharge = subtotal * 0.1; // 10% Service Charge
   const vat = subtotal * 0.05; // 5% VAT
 
@@ -159,69 +185,113 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </h2>
 
           <div className="space-y-3.5 md:space-y-4 divide-y divide-zinc-100">
-            {cart.map((ci) => {
-              const isChecked = selectedSplitItemIds.has(ci.item.id);
-              return (
-                <div key={ci.item.id} className="pt-3.5 first:pt-0 flex items-center justify-between gap-3 md:gap-4">
-                  <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                    {/* Checkbox for Split Check */}
-                    {isSplitCheck && (
-                      <button
-                        type="button"
-                        onClick={() => toggleSplitItem(ci.item.id)}
-                        className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md flex items-center justify-center transition-colors cursor-pointer shrink-0 border ${
-                          isChecked ? 'bg-[#026F4F] border-[#026F4F] text-white' : 'border-zinc-300 bg-white'
-                        }`}
-                      >
-                        {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                      </button>
-                    )}
+            {isSplitCheck
+              ? expandedSplitItems.map((splitItem) => {
+                  const isChecked = selectedSplitIds.has(splitItem.splitId);
+                  const ci = splitItem.cartItem;
 
-                    <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-2xl bg-zinc-50 p-2 flex items-center justify-center shrink-0 border border-zinc-100">
-                      <img
-                        src={ci.item.imageUrl}
-                        alt={ci.item.name}
-                        className="w-full h-full object-contain"
-                      />
+                  return (
+                    <div
+                      key={splitItem.splitId}
+                      onClick={() => toggleSplitItem(splitItem.splitId)}
+                      className={`pt-3.5 first:pt-0 flex items-center justify-between gap-3 md:gap-4 cursor-pointer p-2 sm:p-2.5 rounded-2xl transition-all ${
+                        isChecked ? 'bg-emerald-50/40' : 'hover:bg-zinc-50 opacity-60'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                        {/* Checkbox for Split Check */}
+                        <div
+                          className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md flex items-center justify-center transition-colors shrink-0 border ${
+                            isChecked
+                              ? 'bg-[#026F4F] border-[#026F4F] text-white'
+                              : 'border-zinc-300 bg-white'
+                          }`}
+                        >
+                          {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                        </div>
+
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-zinc-50 p-2 flex items-center justify-center shrink-0 border border-zinc-100">
+                          <img
+                            src={ci.item.imageUrl}
+                            alt={ci.item.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
+                            {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
+                          </h3>
+                          {ci.selectedOptions && ci.selectedOptions.length > 0 && (
+                            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">
+                              {ci.selectedOptions.map((so) => so.optionName).join(', ')}
+                            </p>
+                          )}
+                          {ci.specialInstructions && (
+                            <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic truncate">
+                              "{ci.specialInstructions}"
+                            </p>
+                          )}
+                          <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
+                            {formatPrice(splitItem.singlePrice, language)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="shrink-0">
+                        <span className="text-xs sm:text-sm font-bold text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
+                          x1
+                        </span>
+                      </div>
                     </div>
+                  );
+                })
+              : cart.map((ci) => {
+                  return (
+                    <div
+                      key={ci.item.id}
+                      className="pt-3.5 first:pt-0 flex items-center justify-between gap-3 md:gap-4"
+                    >
+                      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                        <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-2xl bg-zinc-50 p-2 flex items-center justify-center shrink-0 border border-zinc-100">
+                          <img
+                            src={ci.item.imageUrl}
+                            alt={ci.item.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
 
-                    <div className="min-w-0">
-                      <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
-                        {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
-                      </h3>
-                      {ci.selectedOptions && ci.selectedOptions.length > 0 && (
-                        <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">
-                          {ci.selectedOptions.map((so) => so.optionName).join(', ')}
-                        </p>
-                      )}
-                      {ci.specialInstructions && (
-                        <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic truncate">
-                          "{ci.specialInstructions}"
-                        </p>
-                      )}
-                      <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
-                        {formatPrice(getCartItemTotalPrice(ci), language)}
-                      </span>
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
+                            {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
+                          </h3>
+                          {ci.selectedOptions && ci.selectedOptions.length > 0 && (
+                            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">
+                              {ci.selectedOptions.map((so) => so.optionName).join(', ')}
+                            </p>
+                          )}
+                          {ci.specialInstructions && (
+                            <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic truncate">
+                              "{ci.specialInstructions}"
+                            </p>
+                          )}
+                          <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
+                            {formatPrice(getCartItemTotalPrice(ci), language)}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <QuantityControl
+                          quantity={ci.quantity}
+                          onIncrement={() => onIncrement(ci.item.id)}
+                          onDecrement={() => onDecrement(ci.item.id)}
+                          size="sm"
+                        />
+                      </div>
                     </div>
-                  </div>
-
-                  <div>
-                    {isSplitCheck ? (
-                      <span className="text-xs sm:text-sm font-bold text-zinc-500">
-                        x{ci.quantity}
-                      </span>
-                    ) : (
-                      <QuantityControl
-                        quantity={ci.quantity}
-                        onIncrement={() => onIncrement(ci.item.id)}
-                        onDecrement={() => onDecrement(ci.item.id)}
-                        size="sm"
-                      />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                  );
+                })}
           </div>
 
           {/* + Add More Items Link */}
@@ -356,7 +426,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
           <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base font-medium">
             <div className="flex justify-between text-zinc-400">
-              <span>{isArabic ? `المجموع الفرعي (${activeItems.length} أصناف)` : `Subtotal (${activeItems.length}items)`}</span>
+              <span>{isArabic ? `المجموع الفرعي (${activeItemCount} أصناف)` : `Subtotal (${activeItemCount} items)`}</span>
               <span className="text-zinc-800 font-bold">{formatPrice(subtotal, language)}</span>
             </div>
 

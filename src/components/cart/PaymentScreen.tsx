@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -8,6 +8,7 @@ import {
   ChevronDown,
   ChevronUp,
   ChevronRight,
+  AlertCircle,
 } from 'lucide-react';
 import { type CartItem, formatPrice, getCartItemTotalPrice } from '@/types/menu';
 
@@ -42,6 +43,11 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
 
+  // Refs for auto-scrolling & focusing on validation error
+  const customerFormRef = useRef<HTMLDivElement>(null);
+  const fullNameInputRef = useRef<HTMLInputElement>(null);
+  const phoneInputRef = useRef<HTMLInputElement>(null);
+
   // Accordion open states
   const [isPayOnlineOpen, setIsPayOnlineOpen] = useState(true);
   const [isGetCheckOpen, setIsGetCheckOpen] = useState(true);
@@ -72,6 +78,18 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const handlePayNow = () => {
     if (!fullName.trim() || !phoneNumber.trim()) {
       setShowErrors(true);
+
+      // Smooth scroll up to the customer information form section
+      customerFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // Focus the first empty required field
+      setTimeout(() => {
+        if (!fullName.trim()) {
+          fullNameInputRef.current?.focus();
+        } else if (!phoneNumber.trim()) {
+          phoneInputRef.current?.focus();
+        }
+      }, 350);
       return;
     }
 
@@ -103,7 +121,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
         </header>
 
         {/* 1. Customer Information Form Card */}
-        <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-4 md:space-y-5">
+        <div ref={customerFormRef} className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-4 md:space-y-5 scroll-mt-6">
           <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
             {isArabic ? 'معلومات العميل' : 'Customer Information'}
           </h2>
@@ -116,11 +134,12 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               </label>
               <div
                 className={`bg-[#f4f4f5] rounded-2xl px-4 py-3 sm:py-3.5 flex items-center gap-3 border transition-colors ${
-                  showErrors && !fullName.trim() ? 'border-red-400 bg-red-50/50' : 'border-transparent focus-within:border-[#026F4F]'
+                  showErrors && !fullName.trim() ? 'border-red-400 bg-red-50/70 shadow-xs' : 'border-transparent focus-within:border-[#026F4F]'
                 }`}
               >
-                <User className="w-5 h-5 text-zinc-400 shrink-0" />
+                <User className={`w-5 h-5 shrink-0 ${showErrors && !fullName.trim() ? 'text-red-500' : 'text-zinc-400'}`} />
                 <input
+                  ref={fullNameInputRef}
                   type="text"
                   value={fullName}
                   onChange={(e) => {
@@ -132,8 +151,9 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 />
               </div>
               {showErrors && !fullName.trim() && (
-                <p className="text-[11px] text-red-500 font-medium mt-1">
-                  {isArabic ? 'الاسم مطلوب' : 'Full name is required'}
+                <p className="text-[11px] text-red-500 font-semibold mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>{isArabic ? 'الاسم مطلوب' : 'Full name is required'}</span>
                 </p>
               )}
             </div>
@@ -145,11 +165,12 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               </label>
               <div
                 className={`bg-[#f4f4f5] rounded-2xl px-4 py-3 sm:py-3.5 flex items-center gap-3 border transition-colors ${
-                  showErrors && !phoneNumber.trim() ? 'border-red-400 bg-red-50/50' : 'border-transparent focus-within:border-[#026F4F]'
+                  showErrors && !phoneNumber.trim() ? 'border-red-400 bg-red-50/70 shadow-xs' : 'border-transparent focus-within:border-[#026F4F]'
                 }`}
               >
-                <Phone className="w-5 h-5 text-zinc-400 shrink-0" />
+                <Phone className={`w-5 h-5 shrink-0 ${showErrors && !phoneNumber.trim() ? 'text-red-500' : 'text-zinc-400'}`} />
                 <input
+                  ref={phoneInputRef}
                   type="tel"
                   value={phoneNumber}
                   onChange={(e) => {
@@ -161,8 +182,9 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 />
               </div>
               {showErrors && !phoneNumber.trim() && (
-                <p className="text-[11px] text-red-500 font-medium mt-1">
-                  {isArabic ? 'رقم الهاتف مطلوب' : 'Phone number is required'}
+                <p className="text-[11px] text-red-500 font-semibold mt-1 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />
+                  <span>{isArabic ? 'رقم الهاتف مطلوب' : 'Phone number is required'}</span>
                 </p>
               )}
             </div>

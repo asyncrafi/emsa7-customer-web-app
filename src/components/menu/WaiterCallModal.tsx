@@ -38,8 +38,8 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
       setTimeout(() => {
         onSuccess();
         onClose();
-      }, 1500);
-    }, 1500);
+      }, 1600);
+    }, 1600);
   };
 
   return (
@@ -48,7 +48,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-md bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl p-5 sm:p-6 pb-7 animate-in slide-in-from-bottom duration-300 relative overflow-hidden text-center ${
+        className={`w-full max-w-md bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl p-5 sm:p-6 pb-7 animate-in slide-in-from-bottom duration-300 ease-out relative overflow-hidden text-center transition-all ${
           isArabic ? 'font-sans rtl' : 'ltr'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -104,42 +104,46 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
           </div>
         )}
 
-        {/* STEP 2: Notifying Staff Loading View */}
+        {/* STEP 2: Notifying Staff Loading View (Upwards Slide Animation) */}
         {step === 'notifying' && (
-          <div className="py-16 sm:py-20 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+          <div className="py-14 sm:py-16 space-y-5 animate-in fade-in slide-in-from-bottom-8 duration-300 ease-out">
             {/* Circular Spinner */}
-            <div className="w-14 h-14 rounded-full border-4 border-zinc-200 border-t-[#026F4F] animate-spin mx-auto my-4" />
+            <div className="w-14 h-14 rounded-full border-4 border-emerald-100 border-t-[#026F4F] animate-spin mx-auto my-3" />
 
-            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-              {isArabic ? 'جاري إبلاغ النادل' : 'Notifying Staff'}
-            </h2>
-            <p className="text-xs sm:text-sm text-zinc-400 font-normal">
-              {isArabic ? 'يرجى الانتظار لحظة.' : 'Please wait a moment.'}
-            </p>
+            <div className="space-y-1">
+              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
+                {isArabic ? 'جاري إبلاغ النادل' : 'Notifying Staff'}
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-400 font-normal">
+                {isArabic ? 'يرجى الانتظار لحظة.' : 'Please wait a moment.'}
+              </p>
+            </div>
           </div>
         )}
 
-        {/* STEP 3: Success View */}
+        {/* STEP 3: Success View (Scaled Success Animation) */}
         {step === 'success' && (
-          <div className="py-14 sm:py-18 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+          <div className="py-12 sm:py-14 space-y-5 animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-300 ease-out">
             {/* Green Scalloped Checkmark Badge Image */}
-            <div className="w-20 h-20 mx-auto flex items-center justify-center">
+            <div className="w-20 h-20 mx-auto flex items-center justify-center animate-in zoom-in-75 duration-400 ease-out">
               <img
                 src="/images/common/success.png"
                 alt="Success Checkmark Badge"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain drop-shadow-md"
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
             </div>
 
-            <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-              {isArabic ? 'تم بنجاح' : 'Success'}
-            </h2>
-            <p className="text-xs sm:text-sm text-zinc-400 font-normal">
-              {isArabic ? 'تم إبلاغ النادل بنجاح' : 'Waiter has been notified'}
-            </p>
+            <div className="space-y-1">
+              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
+                {isArabic ? 'تم بنجاح' : 'Success'}
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-400 font-normal">
+                {isArabic ? 'تم إبلاغ النادل بنجاح' : 'Waiter has been notified'}
+              </p>
+            </div>
           </div>
         )}
       </div>

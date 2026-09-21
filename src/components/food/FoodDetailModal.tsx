@@ -134,7 +134,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-lg bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[85vh] sm:max-h-[85vh] relative ${
+        className={`w-full max-w-lg bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[88vh] sm:max-h-[85vh] relative ${
           isArabic ? 'font-sans rtl' : 'ltr'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -163,7 +163,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
         </div>
 
         {/* Scrollable Content Body Area */}
-        <div className="flex-1 overflow-y-auto px-5 sm:px-6 pt-4 pb-4 space-y-5 bg-white -mt-3 rounded-t-[1.75rem] relative z-10">
+        <div className="flex-1 overflow-y-auto px-5 sm:px-6 pt-4 pb-6 space-y-5 bg-white -mt-3 rounded-t-[1.75rem] relative z-10 min-h-0">
           {/* Title & Base Price Row */}
           <div>
             <div className="flex items-center justify-between gap-3">
@@ -275,7 +275,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
         </div>
 
         {/* Sticky Bottom Action Footer Bar */}
-        <div className="p-4 sm:p-5 pb-5 sm:pb-6 bg-white border-t border-zinc-100 flex items-center gap-3 shrink-0 shadow-lg">
+        <div className="p-4 sm:p-5 pb-5 sm:pb-6 bg-white border-t border-zinc-100 flex items-center gap-3 shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] z-20">
           {/* Quantity Stepper Pill */}
           <div className="bg-[#f4f4f5] rounded-full p-1.5 flex items-center gap-2.5 shrink-0">
             <button
