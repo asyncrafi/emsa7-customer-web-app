@@ -44,11 +44,11 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 select-none p-0 sm:p-4"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs select-none p-0 sm:p-4 animate-fade-in-overlay"
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-md bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl p-5 sm:p-6 pb-7 animate-in slide-in-from-bottom duration-300 ease-out relative overflow-hidden text-center transition-all ${
+        className={`w-full max-w-md bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl p-5 sm:p-6 pb-7 animate-slide-up-modal relative overflow-hidden text-center transition-all ${
           isArabic ? 'font-sans rtl' : 'ltr'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -58,7 +58,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
 
         {/* STEP 1: Confirmation View with Tall call-waiter.png Illustration */}
         {step === 'confirm' && (
-          <div className="space-y-5 animate-in fade-in duration-200">
+          <div key="confirm" className="space-y-5 animate-slide-up-content">
             {/* Full Illustration Image Container matching Figma 100% without cropping */}
             <div className="w-full rounded-2xl overflow-hidden bg-[#fff6ee] flex items-center justify-center">
               <img
@@ -106,7 +106,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
 
         {/* STEP 2: Notifying Staff Loading View (Upwards Slide Animation) */}
         {step === 'notifying' && (
-          <div className="py-14 sm:py-16 space-y-5 animate-in fade-in slide-in-from-bottom-8 duration-300 ease-out">
+          <div key="notifying" className="py-14 sm:py-16 space-y-5 animate-slide-up-content">
             {/* Circular Spinner */}
             <div className="w-14 h-14 rounded-full border-4 border-emerald-100 border-t-[#026F4F] animate-spin mx-auto my-3" />
 
@@ -123,9 +123,9 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
 
         {/* STEP 3: Success View (Scaled Success Animation) */}
         {step === 'success' && (
-          <div className="py-12 sm:py-14 space-y-5 animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-300 ease-out">
+          <div key="success" className="py-12 sm:py-14 space-y-5 animate-slide-up-content">
             {/* Green Scalloped Checkmark Badge Image */}
-            <div className="w-20 h-20 mx-auto flex items-center justify-center animate-in zoom-in-75 duration-400 ease-out">
+            <div className="w-20 h-20 mx-auto flex items-center justify-center animate-pop-success">
               <img
                 src="/images/common/success.png"
                 alt="Success Checkmark Badge"
