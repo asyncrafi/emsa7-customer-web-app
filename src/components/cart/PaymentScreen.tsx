@@ -292,8 +292,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               className="w-full p-4 sm:p-5 flex items-center justify-between bg-white cursor-pointer select-none"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-50 p-2 flex items-center justify-center text-[#026F4F]">
-                  <CreditCard className="w-5 h-5 sm:w-6 sm:h-6" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
+                  <img src="/images/payment/pay-online.svg" alt="Pay Online" className="w-full h-full object-cover" />
                 </div>
                 <span className="font-bold text-sm sm:text-base text-zinc-900">
                   {isArabic ? 'الدفع عبر الإنترنت' : 'Pay Online'}
@@ -319,9 +319,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-7 rounded bg-zinc-100 flex items-center justify-center border border-zinc-200">
-                      <CreditCard className="w-4 h-4 text-zinc-700" />
-                    </div>
+                    <img src="/images/payment/credit-debit-pay.svg" alt="Credit / Debit Card" className="h-7 w-auto object-contain" />
                     <span className="font-bold text-xs sm:text-sm text-zinc-800">
                       {isArabic ? 'بطاقة ائتمان / خصم' : 'Credit / Debit Card'}
                     </span>
@@ -339,9 +337,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-7 rounded bg-zinc-100 flex items-center justify-center font-bold text-[11px] text-zinc-700 border border-zinc-200">
-                      GPay
-                    </div>
+                    <img src="/images/payment/google-pay.svg" alt="Google Pay" className="h-7 w-auto object-contain" />
                     <span className="font-bold text-xs sm:text-sm text-zinc-800">
                       Google Pay
                     </span>
@@ -359,9 +355,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-7 rounded bg-zinc-100 flex items-center justify-center font-bold text-[11px] text-zinc-700 border border-zinc-200">
-                      Pay
-                    </div>
+                    <img src="/images/payment/apple-pay.svg" alt="Apple Pay" className="h-7 w-auto object-contain" />
                     <span className="font-bold text-xs sm:text-sm text-zinc-800">
                       Apple Pay
                     </span>
@@ -381,8 +375,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               className="w-full p-4 sm:p-5 flex items-center justify-between bg-white cursor-pointer select-none"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-amber-50 p-2 flex items-center justify-center text-amber-700">
-                  <Banknote className="w-5 h-5 sm:w-6 sm:h-6" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
+                  <img src="/images/payment/get-check.svg" alt="Get the Check" className="w-full h-full object-cover" />
                 </div>
                 <span className="font-bold text-sm sm:text-base text-zinc-900">
                   {isArabic ? 'الحصول على الفاتورة' : 'Get the Check'}
@@ -408,14 +402,14 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Banknote className="w-5 h-5 text-zinc-600" />
+                    <img src="/images/payment/cash.svg" alt="Cash" className="w-7 h-7 object-contain" />
                     <span className="font-bold text-xs sm:text-sm text-zinc-800">
                       {isArabic ? 'نقداً' : 'Cash'}
                     </span>
                   </div>
                   <div className="w-5 h-5 rounded-full border-2 border-zinc-300 flex items-center justify-center">
                     {selectedMethod === 'cash' && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#026F4F]" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
                     )}
                   </div>
                 </div>
@@ -430,14 +424,14 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Smartphone className="w-5 h-5 text-zinc-600" />
+                    <img src="/images/payment/card-pay.svg" alt="Card" className="w-7 h-7 object-contain" />
                     <span className="font-bold text-xs sm:text-sm text-zinc-800">
-                      {isArabic ? 'بطاقة عبر الجهاز' : 'Card (POS Machine)'}
+                      {isArabic ? 'بطاقة' : 'Card'}
                     </span>
                   </div>
                   <div className="w-5 h-5 rounded-full border-2 border-zinc-300 flex items-center justify-center">
                     {selectedMethod === 'pos_card' && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#026F4F]" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
                     )}
                   </div>
                 </div>
