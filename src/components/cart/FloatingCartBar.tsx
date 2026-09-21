@@ -1,7 +1,7 @@
 import React from 'react';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import { ArrowRight } from 'lucide-react';
-import { formatPrice, type CartItem } from '@/types/menu';
+import { formatPrice, type CartItem, getCartSubtotal } from '@/types/menu';
 
 interface FloatingCartBarProps {
   cart: CartItem[];
@@ -18,10 +18,7 @@ export const FloatingCartBar: React.FC<FloatingCartBarProps> = ({
 
   if (totalItemCount === 0) return null;
 
-  const subtotal = cart.reduce(
-    (sum, item) => sum + item.item.price * item.quantity,
-    0
-  );
+  const subtotal = getCartSubtotal(cart);
   const tax = subtotal * 0.14; // 14% VAT in Egypt
   const grandTotal = subtotal + tax;
 

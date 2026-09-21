@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatPrice, type CartItem } from '@/types/menu';
+import { formatPrice, type CartItem, getCartItemTotalPrice } from '@/types/menu';
 
 export interface OrderConfirmedScreenProps {
   isOpen: boolean;
@@ -102,7 +102,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
 
                     <div className="text-right shrink-0">
                       <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F]">
-                        {formatPrice(ci.item.price * ci.quantity, language)}
+                        {formatPrice(getCartItemTotalPrice(ci), language)}
                       </span>
                     </div>
                   </div>

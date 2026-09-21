@@ -120,12 +120,12 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-white antialiased select-none overflow-y-auto ${
+      className={`fixed inset-0 z-[70] bg-white antialiased select-none overflow-y-auto ${
         isArabic ? 'font-sans rtl' : 'ltr'
       }`}
     >
       {/* Top Header Section with Dish Image & Floating Back Arrow */}
-      <div className="relative w-full bg-white pt-4 pb-6 sm:pt-6 sm:pb-8 flex flex-col items-center justify-center shrink-0">
+      <div className="relative w-full bg-white pt-5 pb-4 sm:pt-7 sm:pb-6 flex flex-col items-center justify-center shrink-0">
         {/* Floating Back Circle Button */}
         <div className="max-w-4xl w-full mx-auto px-4 sm:px-6 absolute top-4 inset-x-0 z-20 flex justify-between items-center">
           <button
@@ -138,8 +138,8 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
           </button>
         </div>
 
-        {/* Big Centered Dish Image */}
-        <div className="w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 flex items-center justify-center p-2">
+        {/* Center Dish Image */}
+        <div className="w-44 h-44 sm:w-56 sm:h-56 md:w-64 md:h-64 flex items-center justify-center p-2">
           <img
             src={item.imageUrl}
             alt={title}

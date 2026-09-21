@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Check, Plus } from 'lucide-react';
-import { type CartItem, formatPrice } from '@/types/menu';
+import { type CartItem, formatPrice, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { PaymentScreen } from '@/components/cart/PaymentScreen';
 import SvgChairIcon from '@/components/ui/svg-icons/ChairSvg';
@@ -67,7 +67,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
     ? cart.filter((ci) => selectedSplitItemIds.has(ci.item.id))
     : cart;
 
-  const subtotal = activeItems.reduce((sum, item) => sum + item.item.price * item.quantity, 0);
+  const subtotal = getCartSubtotal(activeItems);
   const serviceCharge = subtotal * 0.1; // 10% Service Charge
   const vat = subtotal * 0.05; // 5% VAT
 
@@ -200,7 +200,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                         </p>
                       )}
                       <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
-                        {formatPrice(ci.item.price * ci.quantity, language)}
+                        {formatPrice(getCartItemTotalPrice(ci), language)}
                       </span>
                     </div>
                   </div>

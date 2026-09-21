@@ -12,7 +12,7 @@ import {
   Banknote,
   Smartphone,
 } from 'lucide-react';
-import { type CartItem, formatPrice } from '@/types/menu';
+import { type CartItem, formatPrice, getCartItemTotalPrice } from '@/types/menu';
 
 export interface PaymentScreenProps {
   isOpen: boolean;
@@ -229,7 +229,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
                 <div className="text-right shrink-0">
                   <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F]">
-                    {formatPrice(ci.item.price * ci.quantity, language)}
+                    {formatPrice(getCartItemTotalPrice(ci), language)}
                   </span>
                 </div>
               </div>

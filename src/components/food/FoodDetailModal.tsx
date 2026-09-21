@@ -130,32 +130,32 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 select-none p-0 sm:p-4"
+      className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 select-none p-0 sm:p-4"
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-lg bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[92vh] sm:max-h-[88vh] relative ${
+        className={`w-full max-w-lg bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[85vh] sm:max-h-[85vh] relative ${
           isArabic ? 'font-sans rtl' : 'ltr'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Food Image Container */}
-        <div className="relative w-full h-56 sm:h-64 bg-[#f4f4f5] flex items-center justify-center p-6 shrink-0">
+        <div className="relative w-full h-44 sm:h-52 bg-[#f4f4f5] flex items-center justify-center p-4 shrink-0 overflow-hidden">
           {/* Back Circular Button */}
           <button
             type="button"
             onClick={onClose}
             aria-label="Back"
-            className="absolute top-4 left-4 z-10 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-zinc-700 backdrop-blur-md shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-95 rtl:left-auto rtl:right-4"
+            className="absolute top-3.5 left-4 z-20 w-9 h-9 rounded-full bg-white/95 hover:bg-white text-zinc-700 shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-95 rtl:left-auto rtl:right-4"
           >
             {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
 
-          {/* Large Center Dish Image */}
+          {/* Center Dish Image */}
           <img
             src={item.imageUrl}
             alt={title}
-            className="w-48 h-48 sm:w-56 sm:h-56 object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
+            className="w-36 h-36 sm:w-44 sm:h-44 object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/images/food/ramen.png';
             }}
@@ -163,7 +163,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
         </div>
 
         {/* Scrollable Content Body Area */}
-        <div className="flex-1 overflow-y-auto px-5 sm:px-6 pt-5 pb-4 space-y-5 bg-white -mt-5 rounded-t-[2rem] relative z-10">
+        <div className="flex-1 overflow-y-auto px-5 sm:px-6 pt-4 pb-4 space-y-5 bg-white -mt-3 rounded-t-[1.75rem] relative z-10">
           {/* Title & Base Price Row */}
           <div>
             <div className="flex items-center justify-between gap-3">
@@ -275,7 +275,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
         </div>
 
         {/* Sticky Bottom Action Footer Bar */}
-        <div className="p-4 sm:p-5 bg-white border-t border-zinc-100 flex items-center gap-3 shrink-0">
+        <div className="p-4 sm:p-5 pb-5 sm:pb-6 bg-white border-t border-zinc-100 flex items-center gap-3 shrink-0 shadow-lg">
           {/* Quantity Stepper Pill */}
           <div className="bg-[#f4f4f5] rounded-full p-1.5 flex items-center gap-2.5 shrink-0">
             <button

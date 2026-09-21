@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, ChevronRight, Clock, Trash2, Plus, Pencil } from 'lucide-react';
-import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption } from '@/types/menu';
+import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
 import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
@@ -139,7 +139,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   const isArabic = language === 'ARABIC';
 
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cart.reduce((sum, item) => sum + item.item.price * item.quantity, 0);
+  const subtotal = getCartSubtotal(cart);
   const serviceCharge = subtotal * 0.1; // 10% Service Charge
   const grandTotal = subtotal + serviceCharge;
 
@@ -496,7 +496,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                               </p>
                             )}
                             <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
-                              {formatPrice(ci.item.price * ci.quantity, language)}
+                              {formatPrice(getCartItemTotalPrice(ci), language)}
                             </span>
                           </div>
                         </div>

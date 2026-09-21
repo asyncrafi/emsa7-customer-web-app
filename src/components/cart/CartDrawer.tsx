@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
-import { type CartItem, formatPrice } from '@/types/menu';
+import { type CartItem, formatPrice, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 
@@ -33,10 +33,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   if (!isOpen) return null;
 
   const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = cart.reduce(
-    (sum, item) => sum + item.item.price * item.quantity,
-    0
-  );
+  const subtotal = getCartSubtotal(cart);
   const tax = subtotal * 0.14; // 14% VAT in Egypt
   const grandTotal = subtotal + tax;
 
@@ -86,7 +83,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               </p>
             </div>
           ) : (
-            cart.map(({ item, quantity, specialInstructions }) => {
+            cart.map((ci) => {
+              const { item, quantity, specialInstructions } = ci;
               const itemTitle =
                 language === 'ARABIC' ? item.nameAr || item.name : item.name;
 
@@ -123,7 +121,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
                     <div className="flex items-center justify-between mt-2">
                       <span className="font-extrabold text-xs sm:text-sm text-primary">
-                        {formatPrice(item.price * quantity, language)}
+                        {formatPrice(getCartItemTotalPrice(ci), language)}
                       </span>
 
                       <QuantityControl

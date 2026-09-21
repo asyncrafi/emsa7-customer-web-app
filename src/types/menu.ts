@@ -45,6 +45,21 @@ export interface CartItem {
   specialInstructions?: string;
 }
 
+export const getCartItemUnitPrice = (ci: CartItem): number => {
+  const extrasTotal = ci.selectedOptions
+    ? ci.selectedOptions.reduce((sum, opt) => sum + (opt.price || 0), 0)
+    : 0;
+  return (ci.item.price || 0) + extrasTotal;
+};
+
+export const getCartItemTotalPrice = (ci: CartItem): number => {
+  return getCartItemUnitPrice(ci) * ci.quantity;
+};
+
+export const getCartSubtotal = (cart: CartItem[]): number => {
+  return cart.reduce((sum, ci) => sum + getCartItemTotalPrice(ci), 0);
+};
+
 export type CategoryId = "all" | "ramen" | "sides" | "drinks" | "desserts";
 
 export interface Category {

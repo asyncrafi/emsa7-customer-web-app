@@ -139,6 +139,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     handleCardAdd(item);
   };
 
+  const handleCartItemIncrement = (itemId: string) => {
+    setCart((prevCart) =>
+      prevCart.map((ci) =>
+        ci.item.id === itemId ? { ...ci, quantity: ci.quantity + 1 } : ci
+      )
+    );
+  };
+
   const handleDecrement = (target: string | MenuItem) => {
     const id = typeof target === 'string' ? target : target.id;
     setCart((prevCart) => {
@@ -508,10 +516,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         isOpen={isCartOpen}
         onClose={closeModal}
         cart={cart}
-        onIncrement={(itemId) => {
-          const found = cart.find((ci) => ci.item.id === itemId);
-          if (found) handleIncrement(found.item);
-        }}
+        onIncrement={handleCartItemIncrement}
         onDecrement={handleDecrement}
         onRemove={handleRemoveFromCart}
         onClearCart={handleClearCart}
