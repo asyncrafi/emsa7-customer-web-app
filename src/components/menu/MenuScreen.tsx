@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgFilterIcon from '@/components/ui/svg-icons/FilterSvg';
@@ -40,8 +40,13 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   // Global Language Management
   const { language, setLanguage } = useLanguage();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryId>('popular');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // ScrollSpy section refs
+  const categoryRefs = useRef<Record<string, HTMLElement | null>>({});
+  const catPillRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const isManualScrolling = useRef(false);
 
   // URL-based Modal state management
   const {
@@ -69,19 +74,41 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   const [selectedSort, setSelectedSort] = useState<SortOption>(null);
   const [selectedTags, setSelectedTags] = useState<FilterTag[]>([]);
 
-  // Filter items
-  const popularItems = useMemo(() => {
-    return MOCK_MENU_ITEMS.filter((item) => item.isPopular);
-  }, []);
+  // Filter items per category for continuous scrolling
+  const categorySectionsData = useMemo(() => {
+    return CATEGORIES.map((cat) => {
+      let items =
+        cat.id === 'popular'
+          ? MOCK_MENU_ITEMS.filter((item) => item.isPopular)
+          : MOCK_MENU_ITEMS.filter((item) => item.category === cat.id);
 
-  const filteredItems = useMemo(() => {
+      if (selectedTags.length > 0) {
+        items = items.filter((item) =>
+          selectedTags.some((tag) => item.tags?.includes(tag))
+        );
+      }
+
+      if (selectedSort === 'popularity') {
+        items = [...items].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
+      } else if (selectedSort === 'price_low_high') {
+        items = [...items].sort((a, b) => a.price - b.price);
+      } else if (selectedSort === 'price_high_low') {
+        items = [...items].sort((a, b) => b.price - a.price);
+      }
+
+      return {
+        category: cat,
+        items,
+      };
+    });
+  }, [selectedTags, selectedSort]);
+
+  // Search Results
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const query = searchQuery.toLowerCase().trim();
     let result = MOCK_MENU_ITEMS.filter((item) => {
-      const matchesCategory =
-        selectedCategory === 'all' || item.category === selectedCategory;
-
-      const query = searchQuery.toLowerCase().trim();
       const matchesSearch =
-        !query ||
         item.name.toLowerCase().includes(query) ||
         item.description.toLowerCase().includes(query) ||
         (item.nameAr && item.nameAr.toLowerCase().includes(query));
@@ -90,7 +117,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         selectedTags.length === 0 ||
         selectedTags.some((tag) => item.tags?.includes(tag));
 
-      return matchesCategory && matchesSearch && matchesTags;
+      return matchesSearch && matchesTags;
     });
 
     if (selectedSort === 'popularity') {
@@ -102,7 +129,62 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     }
 
     return result;
-  }, [selectedCategory, searchQuery, selectedTags, selectedSort]);
+  }, [searchQuery, selectedTags, selectedSort]);
+
+  // ScrollSpy Listener: Auto update active category pill when scrolling
+  useEffect(() => {
+    if (searchQuery) return;
+
+    const handleScroll = () => {
+      if (isManualScrolling.current) return;
+
+      const categoryIds = CATEGORIES.map((c) => c.id);
+      let currentActive = categoryIds[0];
+
+      for (const id of categoryIds) {
+        const el = categoryRefs.current[id];
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= 230) {
+            currentActive = id as CategoryId;
+          }
+        }
+      }
+
+      setSelectedCategory(currentActive as CategoryId);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [searchQuery]);
+
+  // Scroll active category pill tab into view horizontally
+  useEffect(() => {
+    const activePill = catPillRefs.current[selectedCategory];
+    if (activePill) {
+      activePill.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+  }, [selectedCategory]);
+
+  const scrollToCategory = (catId: CategoryId) => {
+    setSelectedCategory(catId);
+    isManualScrolling.current = true;
+
+    const el = categoryRefs.current[catId];
+    if (el) {
+      const yOffset = -130;
+      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+
+    setTimeout(() => {
+      isManualScrolling.current = false;
+    }, 800);
+  };
   // Cart operations
   const handleAddToCart = (
     item: MenuItem,
@@ -359,17 +441,15 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       {/* Main White Content Sheet Container with ROUNDED TOP CORNERS matching Figma */}
       <div className="w-full bg-white rounded-t-[2.25rem] sm:rounded-t-[2.75rem] shadow-xs pt-5 sm:pt-6 pb-28 flex-1">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-5 sm:space-y-6">
-        {/* Category Pills Slider / Filter */}
-        <section className="overflow-x-auto no-scrollbar py-1">
-          <div className="flex items-center gap-2 sm:gap-2.5 min-w-max px-0.5">
+        {/* Category Pills Slider / Filter (Sticky for smooth navigation) */}
+        <section className="sticky top-0 z-30 bg-white/95 backdrop-blur-md py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8 border-b border-zinc-100/80 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-max">
             {CATEGORIES.map((cat) => {
               const isActive = selectedCategory === cat.id;
               const catName = language === 'ARABIC' ? cat.nameAr : cat.name;
 
-              // Matching food thumbnail images for categories
               let catImage = '';
-              if (cat.id === 'all') catImage = '/images/food/ramen.png';
-              else if (cat.id === 'ramen') catImage = '/images/food/ramen.png';
+              if (cat.id === 'ramen') catImage = '/images/food/ramen.png';
               else if (cat.id === 'sides') catImage = '/images/food/gyoza.png';
               else if (cat.id === 'drinks') catImage = '/images/food/iced-tea.png';
 
@@ -377,7 +457,10 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 <button
                   key={cat.id}
                   type="button"
-                  onClick={() => setSelectedCategory(cat.id)}
+                  ref={(el) => {
+                    catPillRefs.current[cat.id] = el;
+                  }}
+                  onClick={() => scrollToCategory(cat.id)}
                   className={`inline-flex items-center gap-2 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all cursor-pointer shadow-2xs shrink-0 ${
                     isActive
                       ? 'bg-[#026F4F] text-white shadow-sm scale-[1.02]'
@@ -400,87 +483,135 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           </div>
         </section>
 
-        {/* Section 1: 🔥 Popular Now (Card Design 1 - Vertical Cards Grid) */}
-        {!searchQuery && selectedCategory === 'all' && (
+        {/* Content View: Search Mode OR Continuous Sequential Category Sections */}
+        {searchQuery ? (
           <section className="space-y-3 pt-2">
-            <div className="flex items-center gap-2">
-              <span className="text-lg">🔥</span>
+            <div className="flex items-center justify-between">
               <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight">
-                {language === 'ARABIC' ? 'الشعبية الآن' : 'Popular Now'}
+                {language === 'ARABIC' ? 'نتائج البحث' : 'Search Results'}
               </h2>
+              <span className="text-xs font-semibold text-zinc-400">
+                {searchResults.length} {language === 'ARABIC' ? 'صنف' : 'items'}
+              </span>
             </div>
 
-            {/* Grid for Vertical Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {popularItems.map((item) => (
-                <FoodCardVertical
-                  key={item.id}
-                  item={item}
-                  quantity={getItemQuantity(item.id)}
-                  language={language}
-                  onAdd={handleCardAdd}
-                  onIncrement={(food) => handleCartItemIncrement(food.id)}
-                  onDecrement={(food) => handleDecrement(food.id)}
-                  onClick={(food) => {
-                    openFoodDetailModal(food.id);
-                  }}
-                />
-              ))}
-            </div>
+            {searchResults.length === 0 ? (
+              <div className="py-12 text-center text-zinc-400 bg-white rounded-2xl border border-zinc-100 p-6">
+                <p className="font-bold text-sm text-zinc-700">
+                  {language === 'ARABIC'
+                    ? 'لم يتم العثور على أطباق مطابقة'
+                    : 'No food items found'}
+                </p>
+                <p className="text-xs text-zinc-400 mt-1">
+                  {language === 'ARABIC'
+                    ? 'جرب البحث عن كلمة أخرى.'
+                    : 'Try searching with another keyword.'}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                {searchResults.map((item) => (
+                  <FoodCardHorizontal
+                    key={item.id}
+                    item={item}
+                    quantity={getItemQuantity(item.id)}
+                    language={language}
+                    onAdd={handleCardAdd}
+                    onIncrement={(food) => handleCartItemIncrement(food.id)}
+                    onDecrement={(food) => handleDecrement(food.id)}
+                    onClick={(food) => {
+                      openFoodDetailModal(food.id);
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </section>
-        )}
+        ) : (
+          <div className="space-y-8 pt-2">
+            {categorySectionsData.map(({ category, items }) => {
+              if (items.length === 0) return null;
 
-        {/* Section 2: All Items (Card Design 2 - Horizontal Cards List) */}
-        <section className="space-y-3 pt-2">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight">
-              {searchQuery
-                ? language === 'ARABIC'
-                  ? 'نتائج البحث'
-                  : 'Search Results'
-                : selectedCategory === 'all'
-                ? language === 'ARABIC'
-                  ? 'جميع الأصناف'
-                  : 'All Items'
-                : CATEGORIES.find((c) => c.id === selectedCategory)?.name}
-            </h2>
-            <span className="text-xs font-semibold text-zinc-400">
-              {filteredItems.length} {language === 'ARABIC' ? 'صنف' : 'items'}
-            </span>
-          </div>
+              if (category.id === 'popular') {
+                return (
+                  <section
+                    key={category.id}
+                    ref={(el) => {
+                      categoryRefs.current[category.id] = el;
+                    }}
+                    className="space-y-3 pt-2 scroll-mt-36"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">🔥</span>
+                        <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight">
+                          {language === 'ARABIC' ? 'الأكثر شعبية' : 'Popular Now'}
+                        </h2>
+                      </div>
+                      <span className="text-xs font-semibold text-zinc-400">
+                        {items.length} {language === 'ARABIC' ? 'صنف' : 'items'}
+                      </span>
+                    </div>
 
-          {filteredItems.length === 0 ? (
-            <div className="py-12 text-center text-zinc-400 bg-white rounded-2xl border border-zinc-100 p-6">
-              <p className="font-bold text-sm text-zinc-700">
-                {language === 'ARABIC'
-                  ? 'لم يتم العثور على أطباق مطابقة'
-                  : 'No food items found'}
-              </p>
-              <p className="text-xs text-zinc-400 mt-1">
-                {language === 'ARABIC'
-                  ? 'جرب البحث عن كلمة أخرى أو تغيير الفئة.'
-                  : 'Try searching with another keyword or change category.'}
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-              {filteredItems.map((item) => (
-                <FoodCardHorizontal
-                  key={item.id}
-                  item={item}
-                  quantity={getItemQuantity(item.id)}
-                  language={language}
-                  onAdd={handleCardAdd}
-                  onIncrement={(food) => handleCartItemIncrement(food.id)}
-                  onDecrement={(food) => handleDecrement(food.id)}
-                  onClick={(food) => {
-                    openFoodDetailModal(food.id);
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                      {items.map((item) => (
+                        <FoodCardVertical
+                          key={item.id}
+                          item={item}
+                          quantity={getItemQuantity(item.id)}
+                          language={language}
+                          onAdd={handleCardAdd}
+                          onIncrement={(food) => handleCartItemIncrement(food.id)}
+                          onDecrement={(food) => handleDecrement(food.id)}
+                          onClick={(food) => {
+                            openFoodDetailModal(food.id);
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                );
+              }
+
+              return (
+                <section
+                  key={category.id}
+                  ref={(el) => {
+                    categoryRefs.current[category.id] = el;
                   }}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+                  className="space-y-3 pt-4 border-t border-zinc-100/80 scroll-mt-36"
+                >
+                  <div className="flex items-center justify-between pb-1">
+                    <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight flex items-center gap-2">
+                      <span className="text-lg">{category.emoji}</span>
+                      <span>{language === 'ARABIC' ? category.nameAr : category.name}</span>
+                    </h2>
+                    <span className="text-xs font-semibold text-zinc-400">
+                      {items.length} {language === 'ARABIC' ? 'صنف' : 'items'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                    {items.map((item) => (
+                      <FoodCardHorizontal
+                        key={item.id}
+                        item={item}
+                        quantity={getItemQuantity(item.id)}
+                        language={language}
+                        onAdd={handleCardAdd}
+                        onIncrement={(food) => handleCartItemIncrement(food.id)}
+                        onDecrement={(food) => handleDecrement(food.id)}
+                        onClick={(food) => {
+                          openFoodDetailModal(food.id);
+                        }}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
 

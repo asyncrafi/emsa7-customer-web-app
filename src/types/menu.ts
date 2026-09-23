@@ -60,7 +60,7 @@ export const getCartSubtotal = (cart: CartItem[]): number => {
   return cart.reduce((sum, ci) => sum + getCartItemTotalPrice(ci), 0);
 };
 
-export type CategoryId = "all" | "ramen" | "sides" | "drinks" | "desserts";
+export type CategoryId = "popular" | "ramen" | "sides" | "drinks" | "desserts";
 
 export interface Category {
   id: CategoryId;
@@ -71,7 +71,7 @@ export interface Category {
 }
 
 export const CATEGORIES: Category[] = [
-  { id: "all", name: "All", nameAr: "الكل", emoji: "🍱" },
+  { id: "popular", name: "Popular", nameAr: "الأكثر شعبية", emoji: "🔥" },
   { id: "ramen", name: "Ramen", nameAr: "رامن", emoji: "🍜" },
   { id: "sides", name: "Sides", nameAr: "المقبلات", emoji: "🥟" },
   { id: "drinks", name: "Drinks", nameAr: "المشروبات", emoji: "🍹" },
