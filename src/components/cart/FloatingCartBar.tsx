@@ -22,8 +22,7 @@ export const FloatingCartBar: React.FC<FloatingCartBarProps> = ({
   if (totalItemCount === 0) return null;
 
   const subtotal = getCartSubtotal(cart);
-  const tax = subtotal * 0.14; // 14% VAT in Egypt
-  const grandTotal = subtotal + tax;
+  const grandTotal = subtotal;
 
   const isArabic = activeLanguage === 'ARABIC';
 

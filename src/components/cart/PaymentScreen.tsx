@@ -34,8 +34,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   onPaymentSuccess,
   language: propLanguage,
   subtotal,
-  serviceCharge,
-  vat,
+  serviceCharge: _serviceCharge,
+  vat: _vat,
   tipAmount,
   discount = 0,
   grandTotal,
@@ -262,16 +262,6 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
             <div className="flex justify-between text-zinc-400 font-medium">
               <span>{isArabic ? 'المجموع الفرعي' : 'Subtotal'}</span>
               <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
-            </div>
-
-            <div className="flex justify-between text-zinc-400 font-medium">
-              <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
-            </div>
-
-            <div className="flex justify-between text-zinc-400 font-medium">
-              <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(vat, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400 font-medium">

@@ -67,7 +67,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   const [promoCode, setPromoCode] = useState('');
   const [promoStatus, setPromoStatus] = useState<'none' | 'applied' | 'error'>('none');
 
-  const [selectedTip, setSelectedTip] = useState<'0' | '10' | '15' | 'custom'>('10');
+  const [selectedTip, setSelectedTip] = useState<'0' | '10' | '15' | 'custom' | null>(null);
   const [customTipAmount, setCustomTipAmount] = useState<string>('');
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -97,8 +97,8 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
     ? expandedSplitItems.filter((item) => selectedSplitIds.has(item.splitId)).length
     : cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const serviceCharge = subtotal * 0.1; // 10% Service Charge
-  const vat = subtotal * 0.05; // 5% VAT
+  const serviceCharge = 0;
+  const vat = 0;
 
   let tipAmount = 0;
   if (selectedTip === '10') tipAmount = 10;
@@ -106,7 +106,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   else if (selectedTip === 'custom') tipAmount = parseFloat(customTipAmount) || 0;
 
   const discount = promoStatus === 'applied' ? subtotal * 0.2 : 0;
-  const grandTotal = Math.max(0, subtotal + serviceCharge + vat + tipAmount - discount);
+  const grandTotal = Math.max(0, subtotal + tipAmount - discount);
 
   const handleApplyPromo = () => {
     const code = promoCode.trim().toUpperCase();
@@ -330,7 +330,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             <button
               type="button"
               onClick={handleApplyPromo}
-              className="px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-bold transition-colors cursor-pointer shrink-0"
+              className="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/80 text-white text-xs sm:text-sm font-bold transition-colors cursor-pointer shrink-0"
             >
               {isArabic ? 'تطبيق' : 'Apply'}
             </button>
@@ -358,9 +358,9 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
           <div className="grid grid-cols-4 gap-2">
             {[
-              { id: '0', label: '0%' },
-              { id: '10', label: '10%' },
-              { id: '15', label: '15%' },
+              { id: '0', label: '0' },
+              { id: '10', label: '10' },
+              { id: '15', label: '15' },
               { id: 'custom', label: isArabic ? 'مخصص' : 'Custom' },
             ].map((tip) => (
               <button
@@ -387,6 +387,16 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
               className="w-full bg-[#f4f4f5] border border-zinc-200/80 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 font-medium focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all mt-2"
             />
           )}
+
+          {/* Highest tip today note */}
+          <div className="flex items-center gap-1 text-[11px] sm:text-xs font-medium text-zinc-400 pt-0.5">
+            <span className="text-rose-500 font-bold">*</span>
+            <span>
+              {isArabic
+                ? 'أعلى إكرامية اليوم كانت 10.00 ج.م'
+                : 'Highest tip today was EGP 10.00'}
+            </span>
+          </div>
         </div>
 
         {/* 6. Payments Details Card */}
@@ -399,16 +409,6 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             <div className="flex justify-between text-zinc-400">
               <span>{isArabic ? `المجموع الفرعي (${activeItemCount} أصناف)` : `Subtotal (${activeItemCount} items)`}</span>
               <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
-            </div>
-
-            <div className="flex justify-between text-zinc-400">
-              <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
-            </div>
-
-            <div className="flex justify-between text-zinc-400">
-              <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(vat, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400">

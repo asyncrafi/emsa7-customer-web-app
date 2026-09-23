@@ -46,6 +46,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   // ScrollSpy section refs
   const categoryRefs = useRef<Record<string, HTMLElement | null>>({});
   const catPillRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const pillContainerRef = useRef<HTMLDivElement | null>(null);
   const isManualScrolling = useRef(false);
 
   // URL-based Modal state management
@@ -69,6 +70,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
   // Modals state
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [openCheckoutDirectly, setOpenCheckoutDirectly] = useState(false);
 
   // Sort & Filter State
   const [selectedSort, setSelectedSort] = useState<SortOption>(null);
@@ -158,15 +160,16 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [searchQuery]);
 
-  // Scroll active category pill tab into view horizontally
+  // Scroll active category pill tab into view horizontally inside pill container
   useEffect(() => {
     const activePill = catPillRefs.current[selectedCategory];
-    if (activePill) {
-      activePill.scrollIntoView({
-        behavior: 'smooth',
-        inline: 'center',
-        block: 'nearest',
-      });
+    const container = pillContainerRef.current;
+    if (activePill && container) {
+      const pillLeft = activePill.offsetLeft;
+      const pillWidth = activePill.offsetWidth;
+      const containerWidth = container.offsetWidth;
+      const targetScrollLeft = pillLeft - containerWidth / 2 + pillWidth / 2;
+      container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
     }
   }, [selectedCategory]);
 
@@ -176,9 +179,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
     const el = categoryRefs.current[catId];
     if (el) {
-      const yOffset = -130;
-      const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      const yOffset = -70; // Height of top bar offset
+      const elementPosition = el.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset + yOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
     }
 
     setTimeout(() => {
@@ -369,7 +377,10 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
               {/* My Order Button with SvgCartIcon */}
               <button
                 type="button"
-                onClick={openCartModal}
+                onClick={() => {
+                  setOpenCheckoutDirectly(false);
+                  openCartModal();
+                }}
                 className="relative inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4.5 sm:py-2 rounded-full text-white text-xs sm:text-sm font-bold shadow-md bg-[#026F4F] hover:bg-[#025a40] active:scale-95 transition-all cursor-pointer"
               >
                 <div className="w-4 h-4 shrink-0 flex items-center justify-center">
@@ -442,7 +453,10 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       <div className="w-full bg-white rounded-t-[2.25rem] sm:rounded-t-[2.75rem] shadow-xs pt-5 sm:pt-6 pb-28 flex-1">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-5 sm:space-y-6">
         {/* Category Pills Slider / Filter (Sticky for smooth navigation) */}
-        <section className="sticky top-0 z-30 bg-white/95 backdrop-blur-md py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8 border-b border-zinc-100/80 overflow-x-auto no-scrollbar">
+        <section
+          ref={pillContainerRef}
+          className="sticky top-0 z-30 bg-white/95 backdrop-blur-md py-2 -mx-4 px-4 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8 border-b border-zinc-100/80 overflow-x-auto no-scrollbar"
+        >
           <div className="flex items-center gap-2 sm:gap-2.5 min-w-max">
             {CATEGORIES.map((cat) => {
               const isActive = selectedCategory === cat.id;
@@ -648,7 +662,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       {/* My Order Screen (Figma Design matching 3 tabs & client feedback) */}
       <MyOrderScreen
         isOpen={isCartOpen}
-        onClose={closeModal}
+        onClose={() => {
+          setOpenCheckoutDirectly(false);
+          closeModal();
+        }}
+        initialShowCheckout={openCheckoutDirectly}
+        initialTab="cart"
         cart={cart}
         onIncrement={handleCartItemIncrement}
         onDecrement={handleDecrement}
@@ -704,7 +723,10 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       {/* Floating Cart Bar (Appears at bottom when cart has items) */}
       <FloatingCartBar
         cart={cart}
-        onOpenCart={openCartModal}
+        onOpenCart={() => {
+          setOpenCheckoutDirectly(true);
+          openCartModal();
+        }}
         language={language}
       />
     </div>

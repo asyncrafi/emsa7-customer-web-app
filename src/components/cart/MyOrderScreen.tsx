@@ -47,6 +47,7 @@ export interface MyOrderScreenProps {
   language?: 'ENGLISH' | 'ARABIC';
   tableName?: string;
   initialTab?: 'ongoing' | 'cart' | 'history';
+  initialShowCheckout?: boolean;
 }
 
 export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
@@ -64,6 +65,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   language: propLanguage,
   tableName: _tableName = 'Table A08',
   initialTab = 'ongoing',
+  initialShowCheckout = false,
 }) => {
   const { language: contextLanguage } = useLanguage();
   const activeLanguage = propLanguage || contextLanguage;
@@ -71,6 +73,17 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   const [editingCartIndex, setEditingCartIndex] = useState<number | null>(null);
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      if (initialShowCheckout) {
+        setActiveTab('cart');
+        setShowCheckoutModal(true);
+      } else {
+        setActiveTab(initialTab);
+      }
+    }
+  }, [isOpen, initialShowCheckout, initialTab]);
   const [showOrderConfirmedModal, setShowOrderConfirmedModal] = useState(false);
   const [confirmedCart, setConfirmedCart] = useState<CartItem[]>([]);
   const [confirmedGrandTotal, setConfirmedGrandTotal] = useState(0);
@@ -143,8 +156,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = getCartSubtotal(cart);
-  const serviceCharge = subtotal * 0.1; // 10% Service Charge
-  const grandTotal = subtotal + serviceCharge;
+  const serviceCharge = 0;
+  const grandTotal = subtotal;
 
   return (
     <div
@@ -517,7 +530,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   </div>
 
                   {/* + Add More Items Link Button */}
-                  <div className="pt-3 border-t border-zinc-100">
+                  <div className="pt-3 border-t border-zinc-100 flex items-center justify-between">
                     <button
                       type="button"
                       onClick={onClose}
@@ -527,34 +540,15 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                       <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
                     </button>
                   </div>
-                </div>
-
-                {/* Card 2: Order Summary (Totals Details Card) */}
-                <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3 md:space-y-4">
-                  <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
-                    {isArabic ? 'ملخص الطلب' : 'Order Summary'}
-                  </h2>
-
-                  <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base font-medium">
-                    <div className="flex justify-between text-zinc-400">
-                      <span>{isArabic ? `المجموع الفرعي (${totalCartCount} أصناف)` : `Subtotal (${totalCartCount} items)`}</span>
-                      <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
-                    </div>
-
-                    <div className="flex justify-between text-zinc-400">
-                      <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-                      <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
-                    </div>
-                  </div>
 
                   {/* Dashed Separator Line */}
                   <div className="border-b border-dashed border-zinc-200 my-2.5 md:my-3.5" />
 
-                  {/* Total Line */}
-                  <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
-                    <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
-                    <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
-                      {formatPrice(grandTotal, activeLanguage)}
+                  {/* Subtotal Line */}
+                  <div className="flex justify-between items-center text-xs sm:text-sm md:text-base font-bold text-zinc-900 pt-0.5">
+                    <span>{isArabic ? 'المجموع الفرعي' : 'Subtotal'}</span>
+                    <span className="text-[#026F4F] font-extrabold text-sm sm:text-base md:text-lg">
+                      {formatPrice(subtotal, activeLanguage)}
                     </span>
                   </div>
                 </div>

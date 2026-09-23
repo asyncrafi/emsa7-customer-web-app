@@ -141,32 +141,34 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
           </div>
         </div>
 
-        {/* Section 2: Filter */}
-        <div className="my-5">
-          <p className="text-xs font-semibold text-zinc-400 mb-3 tracking-wide">
-            {isArabic ? 'تصفية' : 'Filter'}
-          </p>
+        {/* Section 2: Filter (Visible only in English mode) */}
+        {!isArabic && (
+          <div className="my-5">
+            <p className="text-xs font-semibold text-zinc-400 mb-3 tracking-wide">
+              Filter
+            </p>
 
-          <div className="flex flex-wrap gap-2.5">
-            {FILTER_TAGS.map((tag) => {
-              const isSelected = tempTags.includes(tag.id);
-              return (
-                <button
-                  key={tag.id}
-                  type="button"
-                  onClick={() => toggleTag(tag.id)}
-                  className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all cursor-pointer shadow-2xs ${
-                    isSelected
-                      ? 'bg-[#026F4F] text-white shadow-sm scale-[1.02]'
-                      : 'bg-[#f3f4f6] text-zinc-600 hover:bg-zinc-200/80'
-                  }`}
-                >
-                  {isArabic ? tag.labelAr : tag.labelEn}
-                </button>
-              );
-            })}
+            <div className="flex flex-wrap gap-2.5">
+              {FILTER_TAGS.map((tag) => {
+                const isSelected = tempTags.includes(tag.id);
+                return (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    onClick={() => toggleTag(tag.id)}
+                    className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all cursor-pointer shadow-2xs ${
+                      isSelected
+                        ? 'bg-[#026F4F] text-white shadow-sm scale-[1.02]'
+                        : 'bg-[#f3f4f6] text-zinc-600 hover:bg-zinc-200/80'
+                    }`}
+                  >
+                    {tag.labelEn}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Action Buttons Row */}
         <div className="flex items-center gap-3 mt-7 pt-2">
