@@ -523,8 +523,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                         <div className="flex items-center gap-2 sm:gap-3">
                           <QuantityControl
                             quantity={ci.quantity}
-                            onIncrement={() => onIncrement(ci.item.id)}
-                            onDecrement={() => onDecrement(ci.item.id)}
+                            onIncrement={() => onIncrement(idx as any)}
+                            onDecrement={() => onDecrement(idx as any)}
                             size="sm"
                           />
                         </div>

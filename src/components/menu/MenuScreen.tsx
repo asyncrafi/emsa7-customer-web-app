@@ -193,6 +193,42 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       isManualScrolling.current = false;
     }, 800);
   };
+  // Helper: check if two selected option arrays are identical
+  const areSelectedOptionsEqual = (
+    opts1?: SelectedOption[],
+    opts2?: SelectedOption[]
+  ): boolean => {
+    const arr1 = opts1 || [];
+    const arr2 = opts2 || [];
+    if (arr1.length !== arr2.length) return false;
+
+    const sorted1 = [...arr1].sort((a, b) =>
+      `${a.groupId}:${a.optionId}`.localeCompare(`${b.groupId}:${b.optionId}`)
+    );
+    const sorted2 = [...arr2].sort((a, b) =>
+      `${a.groupId}:${a.optionId}`.localeCompare(`${b.groupId}:${b.optionId}`)
+    );
+
+    return sorted1.every(
+      (opt, idx) =>
+        opt.groupId === sorted2[idx].groupId && opt.optionId === sorted2[idx].optionId
+    );
+  };
+
+  // Helper: check if cart item is identical in item ID, selected options, and special instructions
+  const isSameCartItemVariant = (
+    ci: CartItem,
+    item: MenuItem,
+    specialInstructions?: string,
+    selectedOptions?: SelectedOption[]
+  ): boolean => {
+    if (ci.item.id !== item.id) return false;
+    const inst1 = (ci.specialInstructions || '').trim();
+    const inst2 = (specialInstructions || '').trim();
+    if (inst1 !== inst2) return false;
+    return areSelectedOptionsEqual(ci.selectedOptions, selectedOptions);
+  };
+
   // Cart operations
   const handleAddToCart = (
     item: MenuItem,
@@ -201,23 +237,20 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     selectedOptions?: SelectedOption[]
   ) => {
     setCart((prevCart) => {
-      const existingIndex = prevCart.findIndex((ci) => ci.item.id === item.id);
+      const existingIndex = prevCart.findIndex((ci) =>
+        isSameCartItemVariant(ci, item, specialInstructions, selectedOptions)
+      );
       if (existingIndex > -1) {
         const updated = [...prevCart];
-        updated[existingIndex].quantity += qty;
-        if (specialInstructions) {
-          updated[existingIndex].specialInstructions = specialInstructions;
-        }
-        if (selectedOptions) {
-          updated[existingIndex].selectedOptions = selectedOptions;
-        }
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: updated[existingIndex].quantity + qty,
+        };
         return updated;
       }
       return [...prevCart, { item, quantity: qty, specialInstructions, selectedOptions }];
     });
   };
-
-
 
   const handleCardAdd = (food: MenuItem) => {
     const hasOptions = Boolean(food.optionGroups && food.optionGroups.length > 0);
@@ -232,30 +265,58 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     handleCardAdd(item);
   };
 
-  const handleCartItemIncrement = (itemId: string) => {
-    setCart((prevCart) =>
-      prevCart.map((ci) =>
-        ci.item.id === itemId ? { ...ci, quantity: ci.quantity + 1 } : ci
-      )
-    );
-  };
-
-  const handleDecrement = (target: string | MenuItem) => {
-    const id = typeof target === 'string' ? target : target.id;
+  const handleCartItemIncrement = (target: string | number) => {
     setCart((prevCart) => {
-      const existing = prevCart.find((ci) => ci.item.id === id);
-      if (!existing) return prevCart;
-      if (existing.quantity === 1) {
-        return prevCart.filter((ci) => ci.item.id !== id);
+      if (typeof target === 'number') {
+        if (!prevCart[target]) return prevCart;
+        const updated = [...prevCart];
+        updated[target] = { ...updated[target], quantity: updated[target].quantity + 1 };
+        return updated;
       }
-      return prevCart.map((ci) =>
-        ci.item.id === id ? { ...ci, quantity: ci.quantity - 1 } : ci
-      );
+      const existingIndex = prevCart.findIndex((ci) => ci.item.id === target);
+      if (existingIndex === -1) return prevCart;
+      const updated = [...prevCart];
+      updated[existingIndex] = {
+        ...updated[existingIndex],
+        quantity: updated[existingIndex].quantity + 1,
+      };
+      return updated;
     });
   };
 
-  const handleRemoveFromCart = (itemId: string) => {
-    setCart((prevCart) => prevCart.filter((ci) => ci.item.id !== itemId));
+  const handleDecrement = (target: string | number | MenuItem) => {
+    setCart((prevCart) => {
+      if (typeof target === 'number') {
+        if (!prevCart[target]) return prevCart;
+        if (prevCart[target].quantity === 1) {
+          return prevCart.filter((_, idx) => idx !== target);
+        }
+        const updated = [...prevCart];
+        updated[target] = { ...updated[target], quantity: updated[target].quantity - 1 };
+        return updated;
+      }
+      const id = typeof target === 'string' ? target : target.id;
+      const existingIndex = prevCart.findIndex((ci) => ci.item.id === id);
+      if (existingIndex === -1) return prevCart;
+      if (prevCart[existingIndex].quantity === 1) {
+        return prevCart.filter((_, idx) => idx !== existingIndex);
+      }
+      const updated = [...prevCart];
+      updated[existingIndex] = {
+        ...updated[existingIndex],
+        quantity: updated[existingIndex].quantity - 1,
+      };
+      return updated;
+    });
+  };
+
+  const handleRemoveFromCart = (target: string | number) => {
+    setCart((prevCart) => {
+      if (typeof target === 'number') {
+        return prevCart.filter((_, idx) => idx !== target);
+      }
+      return prevCart.filter((ci) => ci.item.id !== target);
+    });
   };
 
   const handleUpdateCartItem = (
@@ -285,8 +346,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const getItemQuantity = (itemId: string): number => {
-    const found = cart.find((ci) => ci.item.id === itemId);
-    return found ? found.quantity : 0;
+    return cart
+      .filter((ci) => ci.item.id === itemId)
+      .reduce((sum, ci) => sum + ci.quantity, 0);
   };
 
   // Dedicated Full Page View for Food Details

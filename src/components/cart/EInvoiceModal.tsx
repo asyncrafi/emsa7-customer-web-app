@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { X, Printer, Share2, FileText, Check, QrCode } from 'lucide-react';
+import { X, Printer, FileText } from 'lucide-react';
 import { formatPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
 import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
@@ -44,7 +44,6 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
   const activeLanguage = propLanguage || contextLanguage;
   const isArabic = activeLanguage === 'ARABIC';
   const printRef = useRef<HTMLDivElement>(null);
-  const [copied, setCopied] = React.useState(false);
 
   if (!isOpen) return null;
 
@@ -56,28 +55,6 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
 
   const handlePrint = () => {
     window.print();
-  };
-
-  const handleShare = async () => {
-    const text = `E-Invoice ${orderId}\nTotal: EGP ${total.toFixed(2)}\nTable: ${tableName}\nDate: ${formattedDate}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `E-Invoice ${orderId}`,
-          text,
-          url: window.location.href,
-        });
-      } catch (_err) {
-        // Fallback to clipboard
-        await navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }
-    } else {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
   };
 
   return (
