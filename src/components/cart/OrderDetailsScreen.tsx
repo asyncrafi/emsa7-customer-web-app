@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
 import { formatPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
+import { EInvoiceModal } from '@/components/cart/EInvoiceModal';
 
 export type OrderStatus = 'preparing' | 'ready' | 'served';
 
@@ -23,6 +24,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
   const { language: contextLanguage } = useLanguage();
   const activeLanguage = propLanguage || contextLanguage;
   const [status, setStatus] = useState<OrderStatus>('preparing');
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   const isArabic = activeLanguage === 'ARABIC';
 
@@ -196,9 +198,19 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
 
               {/* Card 2: Payments Details */}
               <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3 md:space-y-4">
-                <h2 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl text-zinc-900">
-                  {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
-                </h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl text-zinc-900">
+                    {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
+                  </h2>
+                  <button
+                    type="button"
+                    onClick={() => setShowInvoiceModal(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#026F4F] font-bold text-xs sm:text-sm border border-emerald-200/60 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                    <span>{isArabic ? 'الفاتورة الإلكترونية' : 'E-Invoice'}</span>
+                  </button>
+                </div>
 
                 <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base lg:text-lg font-medium">
                   <div className="flex justify-between text-zinc-400">
@@ -248,6 +260,21 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
           </button>
         </div>
       </div>
+
+      {/* E-Invoice Modal */}
+      <EInvoiceModal
+        isOpen={showInvoiceModal}
+        onClose={() => setShowInvoiceModal(false)}
+        orderId={_orderId}
+        items={[
+          { name: 'Shoyu Ramen', nameAr: 'شويو رامن', qty: 2, price: 15.99 },
+          { name: 'Iced Green Tea', nameAr: 'شاي أخضر مثلج', qty: 1, price: 13.99 },
+        ]}
+        subtotal={45.97}
+        tipAmount={5.0}
+        total={50.97}
+        language={activeLanguage}
+      />
     </div>
   );
 };

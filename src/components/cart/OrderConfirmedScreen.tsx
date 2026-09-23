@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FileText } from 'lucide-react';
 import { formatPrice, type CartItem, getCartItemTotalPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
+import { EInvoiceModal } from '@/components/cart/EInvoiceModal';
 
 export interface OrderConfirmedScreenProps {
   isOpen: boolean;
@@ -32,6 +34,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
 }) => {
   const { language: contextLanguage } = useLanguage();
   const activeLanguage = propLanguage || contextLanguage;
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   if (!isOpen) return null;
 
   const isArabic = activeLanguage === 'ARABIC';
@@ -132,9 +135,19 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
 
           {/* 4. Payments Details Card */}
           <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3.5 sm:space-y-4">
-            <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
-              {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
+                {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowInvoiceModal(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-[#026F4F] font-bold text-xs sm:text-sm border border-emerald-200/60 transition-colors cursor-pointer shadow-2xs"
+              >
+                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <span>{isArabic ? 'الفاتورة الإلكترونية' : 'E-Invoice'}</span>
+              </button>
+            </div>
 
             <div className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm md:text-base font-medium">
               <div className="flex justify-between text-zinc-400">
@@ -201,6 +214,23 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
           </button>
         </div>
       </div>
+
+      {/* E-Invoice Modal */}
+      <EInvoiceModal
+        isOpen={showInvoiceModal}
+        onClose={() => setShowInvoiceModal(false)}
+        items={cart.map((ci) => ({
+          name: ci.item.name,
+          nameAr: ci.item.nameAr,
+          qty: ci.quantity,
+          price: ci.item.price,
+        }))}
+        subtotal={subtotal}
+        tipAmount={tipAmount}
+        discount={discount}
+        total={grandTotal}
+        language={activeLanguage}
+      />
     </div>
   );
 };

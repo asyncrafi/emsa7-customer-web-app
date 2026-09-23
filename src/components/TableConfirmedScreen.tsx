@@ -117,14 +117,19 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
       {/* Bottom Footer & Primary Action Button */}
       <footer className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl flex flex-col items-center space-y-4 sm:space-y-5 pt-4">
         {/* Powered By EMSA7 - High Resolution SVG */}
-        <div className="inline-flex items-center justify-center gap-2 leading-none">
+        <a
+          href="https://emsa7.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center justify-center gap-2 leading-none cursor-pointer hover:opacity-80 transition-opacity no-underline"
+        >
           <span className="text-[11px] sm:text-xs md:text-sm font-bold tracking-wider uppercase text-[#989898] inline-flex items-center">
             POWERED BY
           </span>
           <div className="inline-flex items-center justify-center my-auto shrink-0">
             <SvgEmsa7Icon className="h-4.5 sm:h-5 md:h-6 lg:h-7 w-auto" />
           </div>
-        </div>
+        </a>
 
         {/* Full-width Rounded Continue Button */}
         <button

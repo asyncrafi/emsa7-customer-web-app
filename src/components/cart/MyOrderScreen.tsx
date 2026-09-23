@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, ChevronRight, Clock, Trash2, Plus, Pencil } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronRight, Clock, Trash2, Plus, Pencil, FileText } from 'lucide-react';
 import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
 import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
 import { OrderConfirmedScreen } from '@/components/cart/OrderConfirmedScreen';
+import { EInvoiceModal } from '@/components/cart/EInvoiceModal';
 import { FoodDetailModal } from '@/components/food/FoodDetailModal';
 import { useLanguage } from '@/providers/LanguageContext';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
+import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 import SvgPlacedIcon from '@/components/ui/svg-icons/PlacedSvg';
 import SvgPrepIcon from '@/components/ui/svg-icons/PrepSvg';
 import SvgServedIcon from '@/components/ui/svg-icons/ServedSvg';
@@ -87,6 +89,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   const [showOrderConfirmedModal, setShowOrderConfirmedModal] = useState(false);
   const [confirmedCart, setConfirmedCart] = useState<CartItem[]>([]);
   const [confirmedGrandTotal, setConfirmedGrandTotal] = useState(0);
+  const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<StoredOrder | null>(null);
 
   // LocalStorage Keys
   const LOCAL_STORAGE_HISTORY_KEY = 'emsa7_order_history';
@@ -200,7 +203,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('cart')}
-            className={`flex-1 py-2.5 md:py-3.5 rounded-full text-xs sm:text-sm md:text-base tracking-wide transition-all cursor-pointer text-center relative ${
+            className={`flex-1 py-2.5 md:py-3.5 rounded-full text-xs sm:text-sm md:text-base tracking-wide transition-all cursor-pointer text-center relative inline-flex items-center justify-center gap-1.5 ${
               activeTab === 'cart'
                 ? 'bg-white text-zinc-900 shadow-xs font-medium'
                 : 'text-zinc-500 hover:text-zinc-700 font-normal'
@@ -208,7 +211,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           >
             <span>{isArabic ? 'السلة' : 'Cart'}</span>
             {totalCartCount > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.2 bg-[#026F4F] text-white text-[10px] sm:text-xs font-medium rounded-full">
+              <span className="px-1.5 py-0.2 bg-[#026F4F] text-white text-[10px] sm:text-xs font-medium rounded-full shrink-0">
                 {totalCartCount}
               </span>
             )}
@@ -223,7 +226,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 : 'text-zinc-500 hover:text-zinc-700 font-normal'
             }`}
           >
-            {isArabic ? 'السجل' : 'History'}
+            {isArabic ? 'الطلبات السابقة' : 'History'}
           </button>
         </div>
 
@@ -595,33 +598,44 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   ))}
                 </div>
 
-                {/* Reorder Button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onReorder && ord.cartItems && ord.cartItems.length > 0) {
-                      onReorder(ord.cartItems);
-                    } else {
-                      // Fallback: build cart items from order.items
-                      const itemsToReorder: CartItem[] = ord.items.map((it) => {
-                        const matched =
-                          MOCK_MENU_ITEMS.find((m) => m.name.toLowerCase() === it.name.toLowerCase()) ||
-                          MOCK_MENU_ITEMS[0];
-                        return { item: matched, quantity: it.qty };
-                      });
-                      if (onReorder) {
-                        onReorder(itemsToReorder);
+                {/* Action Buttons: E-Invoice & Reorder */}
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedInvoiceOrder(ord)}
+                    className="flex-1 py-3 sm:py-3.5 px-3 sm:px-4 rounded-full bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-800 font-bold text-xs sm:text-sm md:text-base tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <FileText className="w-4 h-4 text-[#026F4F] shrink-0" />
+                    <span>{isArabic ? 'الفاتورة الإلكترونية' : 'E-Invoice'}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onReorder && ord.cartItems && ord.cartItems.length > 0) {
+                        onReorder(ord.cartItems);
                       } else {
-                        itemsToReorder.forEach((ci) => onAddToCart?.(ci.item));
+                        // Fallback: build cart items from order.items
+                        const itemsToReorder: CartItem[] = ord.items.map((it) => {
+                          const matched =
+                            MOCK_MENU_ITEMS.find((m) => m.name.toLowerCase() === it.name.toLowerCase()) ||
+                            MOCK_MENU_ITEMS[0];
+                          return { item: matched, quantity: it.qty };
+                        });
+                        if (onReorder) {
+                          onReorder(itemsToReorder);
+                        } else {
+                          itemsToReorder.forEach((ci) => onAddToCart?.(ci.item));
+                        }
                       }
-                    }
-                    setActiveTab('cart');
-                  }}
-                  className="w-full py-3.5 sm:py-4 px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-bold text-xs sm:text-sm md:text-base tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <span>{isArabic ? 'إعادة الطلب' : 'Reorder'}</span>
-                  <ChevronRight className="w-4 h-4 text-zinc-500 rtl:rotate-180" />
-                </button>
+                      setActiveTab('cart');
+                    }}
+                    className="flex-1 py-3 sm:py-3.5 px-3 sm:px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-bold text-xs sm:text-sm md:text-base tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <span>{isArabic ? 'إعادة الطلب' : 'Reorder'}</span>
+                    <ChevronRight className="w-4 h-4 text-zinc-500 rtl:rotate-180 shrink-0" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -648,18 +662,20 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         </div>
       )}
 
-      {/* Footer Branding Line: POWERED BY EMSA7 (Clickable to landing page per client comment!) */}
-      <footer className="w-full text-center py-4 md:py-6 bg-[#f4f4f5] border-t border-zinc-200/50 select-none">
+      {/* Footer Branding Line: POWERED BY EMSA7 */}
+      <footer className="w-full text-center py-3 sm:py-4 bg-[#f4f4f5] border-t border-zinc-200/50 select-none flex justify-center items-center">
         <a
           href="https://emsa7.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-normal text-zinc-400 hover:text-zinc-700 transition-colors group cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
         >
-          <span>POWERED BY</span>
-          <span className="font-semibold underline tracking-wide text-zinc-500 group-hover:text-zinc-900">
-            EMSA7
+          <span className="text-[11px] sm:text-xs md:text-sm font-bold tracking-wider uppercase text-[#989898] inline-flex items-center">
+            POWERED BY
           </span>
+          <div className="inline-flex items-center justify-center my-auto shrink-0">
+            <SvgEmsa7Icon className="h-4.5 sm:h-5 md:h-6 w-auto" />
+          </div>
         </a>
       </footer>
 
@@ -775,6 +791,22 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             }
             setEditingCartIndex(null);
           }}
+        />
+      )}
+      {/* E-Invoice Modal */}
+      {selectedInvoiceOrder && (
+        <EInvoiceModal
+          isOpen={!!selectedInvoiceOrder}
+          onClose={() => setSelectedInvoiceOrder(null)}
+          orderId={selectedInvoiceOrder.id}
+          date={selectedInvoiceOrder.date}
+          items={selectedInvoiceOrder.items.map((it) => ({
+            name: it.name,
+            qty: it.qty,
+            price: it.price,
+          }))}
+          total={selectedInvoiceOrder.total}
+          language={activeLanguage}
         />
       )}
     </div>

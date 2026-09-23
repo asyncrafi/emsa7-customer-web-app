@@ -5,6 +5,7 @@ import { QuantityControl } from '@/components/food/QuantityControl';
 import { PaymentScreen } from '@/components/cart/PaymentScreen';
 import { useLanguage } from '@/providers/LanguageContext';
 import SvgChairIcon from '@/components/ui/svg-icons/ChairSvg';
+import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 
 export interface CheckoutScreenProps {
   isOpen: boolean;
@@ -441,6 +442,23 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
               {formatPrice(grandTotal, activeLanguage)}
             </span>
           </div>
+        </div>
+
+        {/* Footer Branding Line: POWERED BY EMSA7 */}
+        <div className="pt-6 pb-2 text-center select-none flex justify-center items-center">
+          <a
+            href="https://emsa7.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity no-underline"
+          >
+            <span className="text-[11px] sm:text-xs md:text-sm font-bold tracking-wider uppercase text-[#989898] inline-flex items-center">
+              POWERED BY
+            </span>
+            <div className="inline-flex items-center justify-center my-auto shrink-0">
+              <SvgEmsa7Icon className="h-4.5 sm:h-5 md:h-6 w-auto" />
+            </div>
+          </a>
         </div>
       </div>
 
