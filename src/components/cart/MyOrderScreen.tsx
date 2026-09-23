@@ -6,6 +6,7 @@ import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
 import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
 import { OrderConfirmedScreen } from '@/components/cart/OrderConfirmedScreen';
 import { FoodDetailModal } from '@/components/food/FoodDetailModal';
+import { useLanguage } from '@/providers/LanguageContext';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgPlacedIcon from '@/components/ui/svg-icons/PlacedSvg';
 import SvgPrepIcon from '@/components/ui/svg-icons/PrepSvg';
@@ -60,10 +61,12 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   onUpdateCartItem,
   onReorder,
   onCallWaiter: _onCallWaiter,
-  language = 'ENGLISH',
+  language: propLanguage,
   tableName: _tableName = 'Table A08',
   initialTab = 'ongoing',
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
   const [activeTab, setActiveTab] = useState<'ongoing' | 'cart' | 'history'>(initialTab);
   const [editingCartIndex, setEditingCartIndex] = useState<number | null>(null);
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
@@ -136,7 +139,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
   if (!isOpen) return null;
 
-  const isArabic = language === 'ARABIC';
+  const isArabic = activeLanguage === 'ARABIC';
 
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = getCartSubtotal(cart);
@@ -228,7 +231,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                     </p>
                   </div>
                   <span className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#026F4F]">
-                    {formatPrice(ongoingOrder.total, language)}
+                    {formatPrice(ongoingOrder.total, activeLanguage)}
                   </span>
                 </div>
 
@@ -423,7 +426,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                         {/* Price & Add (+) Button */}
                         <div className="flex items-center justify-between pt-3 mt-1">
                           <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F]">
-                            {formatPrice(popItem.price, language)}
+                            {formatPrice(popItem.price, activeLanguage)}
                           </span>
                           <button
                             type="button"
@@ -496,7 +499,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                               </p>
                             )}
                             <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
-                              {formatPrice(getCartItemTotalPrice(ci), language)}
+                              {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                             </span>
                           </div>
                         </div>
@@ -535,12 +538,12 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base font-medium">
                     <div className="flex justify-between text-zinc-400">
                       <span>{isArabic ? `المجموع الفرعي (${totalCartCount} أصناف)` : `Subtotal (${totalCartCount} items)`}</span>
-                      <span className="text-zinc-800 font-bold">{formatPrice(subtotal, language)}</span>
+                      <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
                     </div>
 
                     <div className="flex justify-between text-zinc-400">
                       <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-                      <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, language)}</span>
+                      <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
                     </div>
                   </div>
 
@@ -551,7 +554,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
                     <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
                     <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
-                      {formatPrice(grandTotal, language)}
+                      {formatPrice(grandTotal, activeLanguage)}
                     </span>
                   </div>
                 </div>
@@ -572,7 +575,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                     <p className="text-xs sm:text-sm text-zinc-400 font-medium mt-0.5">{ord.date}</p>
                   </div>
                   <span className="font-extrabold text-base sm:text-lg md:text-xl text-[#026F4F]">
-                    {formatPrice(ord.total, language)}
+                    {formatPrice(ord.total, activeLanguage)}
                   </span>
                 </div>
 
@@ -644,7 +647,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             >
               <span>{isArabic ? 'متابعة الشراء' : 'Continue to Checkout'}</span>
               <span className="font-extrabold text-base sm:text-lg md:text-xl">
-                {formatPrice(grandTotal, language)}
+                {formatPrice(grandTotal, activeLanguage)}
               </span>
             </button>
           </div>
@@ -674,7 +677,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           setShowOrderDetailsModal(false);
           onClose();
         }}
-        language={language}
+        language={activeLanguage}
         orderId={ongoingOrder?.id || '#A102'}
       />
 
@@ -698,7 +701,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         vat={confirmedGrandTotal ? (confirmedGrandTotal / 1.15) * 0.05 : subtotal * 0.05}
         tipAmount={5.0}
         grandTotal={confirmedGrandTotal || grandTotal}
-        language={language}
+        language={activeLanguage}
       />
 
       {/* Checkout Screen Modal */}
@@ -757,7 +760,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           setShowCheckoutModal(false);
           setShowOrderConfirmedModal(true);
         }}
-        language={language}
+        language={activeLanguage}
         tableName={_tableName}
       />
 
@@ -771,7 +774,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           initialInstructions={cart[editingCartIndex].specialInstructions}
           initialSelectedOptions={cart[editingCartIndex].selectedOptions}
           isEditing={true}
-          language={language}
+          language={activeLanguage}
           onAddToCart={(_item, qty, instructions, options) => {
             if (onUpdateCartItem && editingCartIndex !== null) {
               onUpdateCartItem(editingCartIndex, qty, instructions, options);

@@ -2,6 +2,7 @@ import React from 'react';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import { ArrowRight } from 'lucide-react';
 import { formatPrice, type CartItem, getCartSubtotal } from '@/types/menu';
+import { useLanguage } from '@/providers/LanguageContext';
 
 interface FloatingCartBarProps {
   cart: CartItem[];
@@ -12,8 +13,10 @@ interface FloatingCartBarProps {
 export const FloatingCartBar: React.FC<FloatingCartBarProps> = ({
   cart,
   onOpenCart,
-  language = 'ENGLISH',
+  language: propLanguage,
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
   const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   if (totalItemCount === 0) return null;
@@ -22,7 +25,7 @@ export const FloatingCartBar: React.FC<FloatingCartBarProps> = ({
   const tax = subtotal * 0.14; // 14% VAT in Egypt
   const grandTotal = subtotal + tax;
 
-  const isArabic = language === 'ARABIC';
+  const isArabic = activeLanguage === 'ARABIC';
 
   const dishesText = isArabic
     ? `${totalItemCount} ${totalItemCount === 1 ? 'طبق' : 'أطباق'}`

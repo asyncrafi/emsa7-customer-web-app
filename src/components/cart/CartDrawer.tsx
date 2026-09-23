@@ -3,6 +3,7 @@ import { X, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import { type CartItem, formatPrice, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
+import { useLanguage } from '@/providers/LanguageContext';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -24,9 +25,12 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onDecrement,
   onRemove,
   onClearCart,
-  language = 'ENGLISH',
+  language: propLanguage,
   tableName = 'Table A08',
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
+
   // Lock body scroll when drawer is open
   useBodyScrollLock(isOpen);
 
@@ -40,7 +44,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-xs animate-in fade-in duration-200 select-none">
       <div
-        className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300 overflow-hidden"
+        className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right rtl:slide-in-from-left duration-300 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
@@ -51,10 +55,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             </div>
             <div>
               <h2 className="font-extrabold text-base sm:text-lg text-zinc-900 leading-tight">
-                {language === 'ARABIC' ? 'طلبك الحالي' : 'My Order'}
+                {activeLanguage === 'ARABIC' ? 'طلبك الحالي' : 'My Order'}
               </h2>
               <p className="text-xs text-zinc-400 font-medium">
-                {tableName} • {totalItemCount} {language === 'ARABIC' ? 'أصناف' : 'items'}
+                {tableName} • {totalItemCount} {activeLanguage === 'ARABIC' ? 'أصناف' : 'items'}
               </p>
             </div>
           </div>
@@ -74,10 +78,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             <div className="h-full flex flex-col items-center justify-center text-center p-6 text-zinc-400">
               <ShoppingBag className="w-16 h-16 stroke-1 mb-3 text-zinc-300" />
               <p className="font-bold text-base text-zinc-700">
-                {language === 'ARABIC' ? 'سلة الطلب فارغة' : 'Your cart is empty'}
+                {activeLanguage === 'ARABIC' ? 'سلة الطلب فارغة' : 'Your cart is empty'}
               </p>
               <p className="text-xs text-zinc-400 mt-1 max-w-xs">
-                {language === 'ARABIC'
+                {activeLanguage === 'ARABIC'
                   ? 'أضف بعض الأطباق والمشروبات اللذيذة من القائمة للبدء.'
                   : 'Add some delicious ramen or drinks from the menu to get started.'}
               </p>
@@ -86,7 +90,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             cart.map((ci) => {
               const { item, quantity, specialInstructions } = ci;
               const itemTitle =
-                language === 'ARABIC' ? item.nameAr || item.name : item.name;
+                activeLanguage === 'ARABIC' ? item.nameAr || item.name : item.name;
 
               return (
                 <div
@@ -121,7 +125,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
                     <div className="flex items-center justify-between mt-2">
                       <span className="font-extrabold text-xs sm:text-sm text-primary">
-                        {formatPrice(getCartItemTotalPrice(ci), language)}
+                        {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                       </span>
 
                       <QuantityControl
@@ -143,21 +147,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
           <div className="p-4 sm:p-5 border-t border-zinc-100 bg-zinc-50/80 space-y-3 shrink-0">
             <div className="space-y-1.5 text-xs text-zinc-500 font-medium">
               <div className="flex justify-between">
-                <span>{language === 'ARABIC' ? 'المجموع الفرعي' : 'Subtotal'}</span>
+                <span>{activeLanguage === 'ARABIC' ? 'المجموع الفرعي' : 'Subtotal'}</span>
                 <span className="font-bold text-zinc-800">
-                  {formatPrice(subtotal, language)}
+                  {formatPrice(subtotal, activeLanguage)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span>{language === 'ARABIC' ? 'ضريبة القيمة المضافة (14%)' : 'VAT (14%)'}</span>
+                <span>{activeLanguage === 'ARABIC' ? 'ضريبة القيمة المضافة (14%)' : 'VAT (14%)'}</span>
                 <span className="font-bold text-zinc-800">
-                  {formatPrice(tax, language)}
+                  {formatPrice(tax, activeLanguage)}
                 </span>
               </div>
               <div className="flex justify-between text-sm sm:text-base font-extrabold text-zinc-900 pt-1 border-t border-zinc-200">
-                <span>{language === 'ARABIC' ? 'المجموع الكلي' : 'Total'}</span>
+                <span>{activeLanguage === 'ARABIC' ? 'المجموع الكلي' : 'Total'}</span>
                 <span className="text-primary font-black">
-                  {formatPrice(grandTotal, language)}
+                  {formatPrice(grandTotal, activeLanguage)}
                 </span>
               </div>
             </div>
@@ -166,7 +170,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               type="button"
               onClick={() => {
                 alert(
-                  language === 'ARABIC'
+                  activeLanguage === 'ARABIC'
                     ? 'تم إرسال طلبك إلى المطبخ بنجاح!'
                     : 'Order sent to kitchen successfully!'
                 );
@@ -175,8 +179,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               }}
               className="w-full py-3.5 px-4 rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-sm sm:text-base tracking-wide shadow-md active:scale-[0.99] transition-all cursor-pointer flex items-center justify-center gap-2"
             >
-              <span>{language === 'ARABIC' ? 'إرسال الطلب للمطبخ' : 'Send Order to Kitchen'}</span>
-              <ArrowRight className="w-4 h-4" />
+              <span>{activeLanguage === 'ARABIC' ? 'إرسال الطلب للمطبخ' : 'Send Order to Kitchen'}</span>
+              <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </button>
           </div>
         )}

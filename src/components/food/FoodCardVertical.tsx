@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { type MenuItem, formatPrice } from '@/types/menu';
+import { useLanguage } from '@/providers/LanguageContext';
 
 interface FoodCardVerticalProps {
   item: MenuItem;
@@ -15,14 +16,16 @@ interface FoodCardVerticalProps {
 export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
   item,
   quantity = 0,
-  language = 'ENGLISH',
+  language: propLanguage,
   onAdd,
   onIncrement,
   onDecrement,
   onClick,
 }) => {
-  const title = language === 'ARABIC' ? item.nameAr || item.name : item.name;
-  const description = language === 'ARABIC' ? item.descriptionAr || item.description : item.description;
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
+  const title = activeLanguage === 'ARABIC' ? item.nameAr || item.name : item.name;
+  const description = activeLanguage === 'ARABIC' ? item.descriptionAr || item.description : item.description;
 
   return (
     <div
@@ -55,7 +58,7 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
         {/* Price & Action Button Footer (Blue Zone) */}
         <div className="pt-3 flex items-center justify-between mt-auto">
           <span className="font-extrabold text-xs sm:text-sm md:text-base tracking-tight text-primary">
-            {formatPrice(item.price, language)}
+            {formatPrice(item.price, activeLanguage)}
           </span>
 
           {quantity > 0 ? (

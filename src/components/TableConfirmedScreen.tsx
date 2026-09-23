@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 import { useDynamicTheme } from '@/providers/DynamicThemeProvider';
+import { useLanguage } from '@/providers/LanguageContext';
 import { Globe, ChevronDown, Check } from 'lucide-react';
 
 interface TableConfirmedScreenProps {
@@ -13,7 +14,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
   onContinue,
 }) => {
   const { themeConfig } = useDynamicTheme();
-  const [language, setLanguage] = useState<'ENGLISH' | 'ARABIC'>('ENGLISH');
+  const { language, setLanguage } = useLanguage();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
   return (
@@ -33,14 +34,14 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
 
           {/* Language Dropdown with English & Arabic */}
           {langDropdownOpen && (
-            <div className="absolute right-0 mt-1.5 w-32 sm:w-36 bg-white border border-primary/20 rounded-2xl shadow-xl py-1.5 z-30 text-xs sm:text-sm overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
+            <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-1.5 w-32 sm:w-36 bg-white border border-primary/20 rounded-2xl shadow-xl py-1.5 z-30 text-xs sm:text-sm overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
               <button
                 type="button"
                 onClick={() => {
                   setLanguage('ENGLISH');
                   setLangDropdownOpen(false);
                 }}
-                className={`w-full text-left px-3.5 sm:px-4 py-2 sm:py-2.5 transition-colors font-medium flex items-center justify-between cursor-pointer ${
+                className={`w-full text-start px-3.5 sm:px-4 py-2 sm:py-2.5 transition-colors font-medium flex items-center justify-between cursor-pointer ${
                   language === 'ENGLISH'
                     ? 'bg-primary/10 text-primary font-bold'
                     : 'text-zinc-700 hover:bg-primary/5'
@@ -56,13 +57,13 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
                   setLanguage('ARABIC');
                   setLangDropdownOpen(false);
                 }}
-                className={`w-full text-left px-3.5 sm:px-4 py-2 sm:py-2.5 transition-colors font-medium flex items-center justify-between cursor-pointer ${
+                className={`w-full text-start px-3.5 sm:px-4 py-2 sm:py-2.5 transition-colors font-medium flex items-center justify-between cursor-pointer ${
                   language === 'ARABIC'
                     ? 'bg-primary/10 text-primary font-bold'
                     : 'text-zinc-700 hover:bg-primary/5'
                 }`}
               >
-                <span>Arabic</span>
+                <span>العربية</span>
                 {language === 'ARABIC' && <Check className="h-3.5 w-3.5 text-primary" />}
               </button>
             </div>
@@ -87,9 +88,9 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
 
         {/* Green Table Ticket Card Component - Precision Alignment for Mobile & Tablet */}
         <div className="relative w-full max-w-[310px] sm:max-w-[360px] md:max-w-[420px] lg:max-w-[480px] aspect-[2.1/1] flex items-center pl-16 sm:pl-20 md:pl-24 lg:pl-28 pr-16 md:pr-24 lg:pr-28 drop-shadow-md transition-transform duration-300 hover:scale-[1.02]">
-          {/* Ticket Background Image from public/images/auth/table-bg.png */}
+          {/* Ticket Background Image from public/images/auth/table-bg.png / table-bg-arabic.png */}
           <img
-            src="/images/auth/table-bg.png"
+            src={language === 'ARABIC' ? '/images/auth/table-bg-arabic.png' : '/images/auth/table-bg.png'}
             alt="Table Background Ticket"
             className="absolute inset-0 w-full h-full object-fill pointer-events-none rounded-2xl"
           />

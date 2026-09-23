@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Plus, Minus } from 'lucide-react';
 import { type MenuItem, type SelectedOption, formatPrice } from '@/types/menu';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
+import { useLanguage } from '@/providers/LanguageContext';
 
 interface FoodDetailModalProps {
   item: MenuItem | null;
@@ -25,12 +26,15 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
   isOpen,
   onClose,
   onAddToCart,
-  language = 'ENGLISH',
+  language: propLanguage,
   initialQuantity,
   initialInstructions,
   initialSelectedOptions,
   isEditing = false,
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
+
   // Lock body scroll when modal is open
   useBodyScrollLock(isOpen);
 
@@ -38,7 +42,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
   const [instructions, setInstructions] = useState('');
   const [selectedOptionsMap, setSelectedOptionsMap] = useState<Record<string, string[]>>({});
 
-  const isArabic = language === 'ARABIC';
+  const isArabic = activeLanguage === 'ARABIC';
 
   // Initialize option group defaults whenever item opens
   useEffect(() => {
@@ -171,7 +175,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
                 {title}
               </h2>
               <span className="text-lg sm:text-xl font-extrabold text-[#026F4F] shrink-0">
-                {formatPrice(item.price, language)}
+                {formatPrice(item.price, activeLanguage)}
               </span>
             </div>
 
@@ -234,7 +238,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
                                 ? isArabic
                                   ? 'مجاني'
                                   : 'Free'
-                                : `+${formatPrice(opt.price, language)}`}
+                                : `+${formatPrice(opt.price, activeLanguage)}`}
                             </span>
 
                             {/* Radio / Checkbox Indicator Circle */}
@@ -315,7 +319,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
                 ? 'إضافة إلى السلة'
                 : 'Add to Cart'}
             </span>
-            <span className="font-extrabold">{formatPrice(totalPrice, language)}</span>
+            <span className="font-extrabold">{formatPrice(totalPrice, activeLanguage)}</span>
           </button>
         </div>
       </div>

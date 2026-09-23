@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { DynamicThemeProvider } from './DynamicThemeProvider';
+import { LanguageProvider } from './LanguageContext';
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [queryClient] = useState(
@@ -17,7 +18,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <QueryClientProvider client={queryClient}>
-      <DynamicThemeProvider>{children}</DynamicThemeProvider>
+      <DynamicThemeProvider>
+        <LanguageProvider>{children}</LanguageProvider>
+      </DynamicThemeProvider>
     </QueryClientProvider>
   );
 };
+

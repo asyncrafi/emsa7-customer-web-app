@@ -11,6 +11,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { type CartItem, formatPrice, getCartItemTotalPrice } from '@/types/menu';
+import { useLanguage } from '@/providers/LanguageContext';
 
 export interface PaymentScreenProps {
   isOpen: boolean;
@@ -31,7 +32,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   onClose,
   cart,
   onPaymentSuccess,
-  language = 'ENGLISH',
+  language: propLanguage,
   subtotal,
   serviceCharge,
   vat,
@@ -39,6 +40,10 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   discount = 0,
   grandTotal,
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
+  const isArabic = activeLanguage === 'ARABIC';
+
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
@@ -60,8 +65,6 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
   // Form validation error state
   const [showErrors, setShowErrors] = useState(false);
-
-  const isArabic = language === 'ARABIC';
 
   // Handle auto confirmation transition when waiting modal is shown
   useEffect(() => {
@@ -248,7 +251,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
                 <div className="text-right shrink-0">
                   <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F]">
-                    {formatPrice(getCartItemTotalPrice(ci), language)}
+                    {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                   </span>
                 </div>
               </div>
@@ -258,28 +261,28 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           <div className="border-t border-dashed border-zinc-200 my-2 pt-3 space-y-2 text-xs sm:text-sm">
             <div className="flex justify-between text-zinc-400 font-medium">
               <span>{isArabic ? 'المجموع الفرعي' : 'Subtotal'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(subtotal, language)}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400 font-medium">
               <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, language)}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400 font-medium">
               <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(vat, language)}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(vat, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400 font-medium">
               <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(tipAmount, language)}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(tipAmount, activeLanguage)}</span>
             </div>
 
             {discount > 0 && (
               <div className="flex justify-between text-[#026F4F] font-medium">
                 <span>{isArabic ? 'خصم العرض' : 'Promo Discount'}</span>
-                <span className="font-bold">-{formatPrice(discount, language)}</span>
+                <span className="font-bold">-{formatPrice(discount, activeLanguage)}</span>
               </div>
             )}
           </div>
@@ -291,7 +294,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
             <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
             <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
-              {formatPrice(grandTotal, language)}
+              {formatPrice(grandTotal, activeLanguage)}
             </span>
           </div>
         </div>
@@ -470,7 +473,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           >
             <span>{isArabic ? 'الدفع الآن' : 'Pay Now'}</span>
             <span className="font-extrabold text-base sm:text-lg md:text-xl">
-              {formatPrice(grandTotal, language)}
+              {formatPrice(grandTotal, activeLanguage)}
             </span>
           </button>
         </div>

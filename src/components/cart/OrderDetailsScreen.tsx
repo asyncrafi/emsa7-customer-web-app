@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { formatPrice } from '@/types/menu';
+import { useLanguage } from '@/providers/LanguageContext';
 
 export type OrderStatus = 'preparing' | 'ready' | 'served';
 
@@ -16,12 +17,14 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
   isOpen,
   onClose,
   onNewOrder,
-  language = 'ENGLISH',
+  language: propLanguage,
   orderId: _orderId = '#A102',
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
   const [status, setStatus] = useState<OrderStatus>('preparing');
 
-  const isArabic = language === 'ARABIC';
+  const isArabic = activeLanguage === 'ARABIC';
 
   // Auto-transition status after 3 seconds per status: preparing -> ready -> served
   useEffect(() => {
@@ -163,7 +166,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                       </div>
                     </div>
                     <span className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-[#026F4F]">
-                      {formatPrice(15.99, language)}
+                      {formatPrice(15.99, activeLanguage)}
                     </span>
                   </div>
 
@@ -185,7 +188,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                       </div>
                     </div>
                     <span className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-[#026F4F]">
-                      {formatPrice(15.99, language)}
+                      {formatPrice(15.99, activeLanguage)}
                     </span>
                   </div>
                 </div>
@@ -200,22 +203,22 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                 <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base lg:text-lg font-medium">
                   <div className="flex justify-between text-zinc-400">
                     <span>{isArabic ? 'المجموع الفرعي (3 أصناف)' : 'Subtotal (3items)'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(25.99, language)}</span>
+                    <span className="text-zinc-800 font-bold">{formatPrice(25.99, activeLanguage)}</span>
                   </div>
 
                   <div className="flex justify-between text-zinc-400">
                     <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(25.99, language)}</span>
+                    <span className="text-zinc-800 font-bold">{formatPrice(25.99, activeLanguage)}</span>
                   </div>
 
                   <div className="flex justify-between text-zinc-400">
                     <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(1.3, language)}</span>
+                    <span className="text-zinc-800 font-bold">{formatPrice(1.3, activeLanguage)}</span>
                   </div>
 
                   <div className="flex justify-between text-zinc-400">
                     <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(5.0, language)}</span>
+                    <span className="text-zinc-800 font-bold">{formatPrice(5.0, activeLanguage)}</span>
                   </div>
                 </div>
 
@@ -226,7 +229,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                 <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
                   <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
                   <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
-                    {formatPrice(45.99, language)}
+                    {formatPrice(45.99, activeLanguage)}
                   </span>
                 </div>
               </div>

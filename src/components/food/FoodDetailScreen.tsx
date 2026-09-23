@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight, Plus, Minus } from 'lucide-react';
 import { type MenuItem, type SelectedOption, formatPrice } from '@/types/menu';
+import { useLanguage } from '@/providers/LanguageContext';
 
 interface FoodDetailScreenProps {
   item: MenuItem;
@@ -22,17 +23,19 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
   item,
   onBack,
   onAddToCart,
-  language = 'ENGLISH',
+  language: propLanguage,
   initialQuantity,
   initialInstructions,
   initialSelectedOptions,
   isEditing = false,
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
   const [quantity, setQuantity] = useState(1);
   const [instructions, setInstructions] = useState('');
   const [selectedOptionsMap, setSelectedOptionsMap] = useState<Record<string, string[]>>({});
 
-  const isArabic = language === 'ARABIC';
+  const isArabic = activeLanguage === 'ARABIC';
 
   // Initialize option group defaults whenever item changes
   useEffect(() => {
@@ -163,7 +166,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                   {title}
                 </h1>
                 <span className="text-xl sm:text-2xl font-extrabold text-[#026F4F] shrink-0">
-                  {formatPrice(item.price, language)}
+                  {formatPrice(item.price, activeLanguage)}
                 </span>
               </div>
 
@@ -226,7 +229,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                                   ? isArabic
                                     ? 'مجاني'
                                     : 'Free'
-                                  : `+${formatPrice(opt.price, language)}`}
+                                  : `+${formatPrice(opt.price, activeLanguage)}`}
                               </span>
 
                               {/* Radio / Checkbox Indicator Circle */}
@@ -311,7 +314,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                 : 'Add to Cart'}
             </span>
             <span className="font-extrabold text-sm sm:text-lg whitespace-nowrap shrink-0 ml-1.5 rtl:ml-0 rtl:mr-1.5">
-              {formatPrice(totalPrice, language)}
+              {formatPrice(totalPrice, activeLanguage)}
             </span>
           </button>
         </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
+import { useLanguage } from '@/providers/LanguageContext';
 
 interface WaiterCallModalProps {
   isOpen: boolean;
@@ -13,8 +14,11 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
-  language = 'ENGLISH',
+  language: propLanguage,
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
+
   useBodyScrollLock(isOpen);
 
   const [step, setStep] = useState<'confirm' | 'notifying' | 'success'>('confirm');
@@ -28,7 +32,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
 
   if (!isOpen) return null;
 
-  const isArabic = language === 'ARABIC';
+  const isArabic = activeLanguage === 'ARABIC';
 
   const handleCallNow = () => {
     setStep('notifying');

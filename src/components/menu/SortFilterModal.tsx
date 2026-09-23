@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
+import { useLanguage } from '@/providers/LanguageContext';
 
 export type SortOption = 'popularity' | 'price_low_high' | 'price_high_low' | null;
 export type FilterTag = 'bestseller' | 'seafood' | 'sweet' | 'chefs_pick' | 'sharing';
@@ -18,12 +19,15 @@ export interface SortFilterModalProps {
 export const SortFilterModal: React.FC<SortFilterModalProps> = ({
   isOpen,
   onClose,
-  language = 'ENGLISH',
+  language: propLanguage,
   selectedSort,
   selectedTags,
   onApply,
   onClear,
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
+
   // Lock body scroll when modal is open
   useBodyScrollLock(isOpen);
 
@@ -38,7 +42,7 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
 
   if (!isOpen) return null;
 
-  const isArabic = language === 'ARABIC';
+  const isArabic = activeLanguage === 'ARABIC';
 
   const SORT_OPTIONS: { id: SortOption; labelEn: string; labelAr: string }[] = [
     { id: 'popularity', labelEn: 'Popularity', labelAr: 'الأكثر شعبية' },

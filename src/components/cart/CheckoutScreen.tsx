@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Check, Plus } from 'lucide-react';
 import { type CartItem, formatPrice, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { PaymentScreen } from '@/components/cart/PaymentScreen';
+import { useLanguage } from '@/providers/LanguageContext';
 import SvgChairIcon from '@/components/ui/svg-icons/ChairSvg';
 
 export interface CheckoutScreenProps {
@@ -29,9 +30,13 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   onClearCart: _onClearCart,
   onAddMoreItems,
   onOrderSuccess,
-  language = 'ENGLISH',
+  language: propLanguage,
   tableName = 'Table A8',
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
+  const isArabic = activeLanguage === 'ARABIC';
+
   const [isSplitCheck, setIsSplitCheck] = useState(false);
 
   // Expand cart items into individual single-unit items when split check is ON
@@ -68,8 +73,6 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   if (!isOpen) return null;
-
-  const isArabic = language === 'ARABIC';
 
   // Toggle single item selection for split check
   const toggleSplitItem = (splitId: string) => {
@@ -172,7 +175,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           >
             <span
               className={`block w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white shadow-md transition-transform duration-200 ${
-                isSplitCheck ? 'translate-x-6 sm:translate-x-7' : 'translate-x-0'
+                isSplitCheck ? 'translate-x-6 sm:translate-x-7 rtl:-translate-x-6 sm:rtl:-translate-x-7' : 'translate-x-0'
               }`}
             />
           </button>
@@ -233,7 +236,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                             </p>
                           )}
                           <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
-                            {formatPrice(splitItem.singlePrice, language)}
+                            {formatPrice(splitItem.singlePrice, activeLanguage)}
                           </span>
                         </div>
                       </div>
@@ -276,7 +279,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                             </p>
                           )}
                           <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
-                            {formatPrice(getCartItemTotalPrice(ci), language)}
+                            {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                           </span>
                         </div>
                       </div>
@@ -295,167 +298,135 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </div>
 
           {/* + Add More Items Link */}
-          <div className="pt-3 border-t border-zinc-100">
+          <div className="pt-3 border-t border-zinc-100 flex justify-end">
             <button
               type="button"
               onClick={onAddMoreItems}
               className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
+              <Plus className="w-4 h-4" />
+              <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add more items'}</span>
             </button>
           </div>
         </div>
 
         {/* 4. Promo Code Card (Handles 3 states: Default, Valid, Error) */}
-        <div>
-          {promoStatus === 'applied' ? (
-            <div className="bg-[#eef7f4] border border-emerald-200 rounded-2xl p-3.5 sm:p-4 flex items-center justify-between shadow-2xs">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#026F4F] text-white flex items-center justify-center font-bold text-sm">
-                  %
-                </div>
-                <span className="font-extrabold text-sm sm:text-base text-[#026F4F] tracking-wide">
-                  {promoCode.toUpperCase()}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setPromoStatus('none');
-                  setPromoCode('');
-                }}
-                className="w-6 h-6 rounded-full bg-[#026F4F] text-white flex items-center justify-center text-xs font-bold cursor-pointer"
-              >
-                ✓
-              </button>
-            </div>
-          ) : promoStatus === 'error' ? (
-            <div className="bg-red-50 border border-red-200 rounded-2xl p-3.5 sm:p-4 flex items-center justify-between shadow-2xs">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-sm">
-                  %
-                </div>
-                <span className="font-extrabold text-sm sm:text-base text-red-600 tracking-wide">
-                  {promoCode.toUpperCase()}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setPromoStatus('none');
-                  setPromoCode('');
-                }}
-                className="w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs font-bold cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
-          ) : (
-            <div className="bg-white rounded-2xl p-2 sm:p-2.5 border border-zinc-200/80 flex items-center justify-between gap-2 shadow-2xs">
-              <div className="flex items-center gap-2.5 px-3 flex-1">
-                <span className="text-zinc-400 font-bold text-sm">%</span>
-                <input
-                  type="text"
-                  value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
-                  placeholder={isArabic ? 'أدخل رمز الترويجي' : 'ENTER PROMO CODE'}
-                  className="w-full bg-transparent text-xs sm:text-sm font-semibold uppercase tracking-wider text-zinc-900 placeholder:text-zinc-400 outline-none"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={handleApplyPromo}
-                className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-[#026F4F] hover:bg-[#025a40] text-white font-extrabold text-xs sm:text-sm tracking-wider uppercase transition-all cursor-pointer shadow-xs active:scale-95"
-              >
-                {isArabic ? 'تطبيق' : 'APPLY'}
-              </button>
-            </div>
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-100 space-y-2.5 shadow-2xs">
+          <span className="font-bold text-xs sm:text-sm text-zinc-900 block">
+            {isArabic ? 'رمز العرض' : 'Promo Code'}
+          </span>
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={promoCode}
+              onChange={(e) => {
+                setPromoCode(e.target.value);
+                if (promoStatus !== 'none') setPromoStatus('none');
+              }}
+              placeholder={isArabic ? 'أدخل الرمز (جرب: WELCOME20)' : 'Enter Code (Try: WELCOME20)'}
+              className="flex-1 bg-[#f4f4f5] border border-zinc-200/80 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 font-medium focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all uppercase"
+            />
+            <button
+              type="button"
+              onClick={handleApplyPromo}
+              className="px-4 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-bold transition-colors cursor-pointer shrink-0"
+            >
+              {isArabic ? 'تطبيق' : 'Apply'}
+            </button>
+          </div>
+
+          {promoStatus === 'applied' && (
+            <p className="text-xs text-[#026F4F] font-bold flex items-center gap-1">
+              <Check className="w-3.5 h-3.5" />
+              <span>{isArabic ? 'تم تطبيق خصم 20%!' : '20% discount applied!'}</span>
+            </p>
+          )}
+
+          {promoStatus === 'error' && (
+            <p className="text-xs text-rose-500 font-bold">
+              {isArabic ? 'رمز الترويج غير صالحة' : 'Invalid Promo Code'}
+            </p>
           )}
         </div>
 
         {/* 5. Add a Tip Card */}
-        <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3">
-          <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
-            {isArabic ? 'إضافة إكرامية' : 'Add a Tip'}
-          </h2>
+        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-100 space-y-3 shadow-2xs">
+          <span className="font-bold text-xs sm:text-sm text-zinc-900 block">
+            {isArabic ? 'إضافة إكرامية' : 'Add Tip'}
+          </span>
 
-          <div className="grid grid-cols-4 gap-2 sm:gap-3 pt-1">
-            {(['0', '10', '15', 'custom'] as const).map((tipOpt) => {
-              const isSelected = selectedTip === tipOpt;
-              const label = tipOpt === 'custom' ? (isArabic ? 'مخصص' : 'Custom') : tipOpt;
-              return (
-                <button
-                  key={tipOpt}
-                  type="button"
-                  onClick={() => setSelectedTip(tipOpt)}
-                  className={`py-2.5 sm:py-3 px-3 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer text-center ${
-                    isSelected
-                      ? 'bg-[#026F4F] text-white shadow-xs'
-                      : 'bg-white border border-zinc-200 text-zinc-600 hover:border-zinc-300'
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
+          <div className="grid grid-cols-4 gap-2">
+            {[
+              { id: '0', label: '0%' },
+              { id: '10', label: '10%' },
+              { id: '15', label: '15%' },
+              { id: 'custom', label: isArabic ? 'مخصص' : 'Custom' },
+            ].map((tip) => (
+              <button
+                key={tip.id}
+                type="button"
+                onClick={() => setSelectedTip(tip.id as any)}
+                className={`py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold border transition-all cursor-pointer text-center ${
+                  selectedTip === tip.id
+                    ? 'bg-emerald-50 border-[#026F4F] text-[#026F4F]'
+                    : 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50'
+                }`}
+              >
+                {tip.label}
+              </button>
+            ))}
           </div>
 
           {selectedTip === 'custom' && (
-            <div className="pt-2 animate-in fade-in duration-200">
-              <input
-                type="number"
-                value={customTipAmount}
-                onChange={(e) => setCustomTipAmount(e.target.value)}
-                placeholder={isArabic ? 'مبلغ الإكرامية' : 'Tip Amount (EGP)'}
-                className="w-full px-4 py-2.5 rounded-xl border border-zinc-200 bg-zinc-50 text-sm font-semibold outline-none focus:border-[#026F4F]"
-              />
-            </div>
+            <input
+              type="number"
+              value={customTipAmount}
+              onChange={(e) => setCustomTipAmount(e.target.value)}
+              placeholder={isArabic ? 'مبلغ الإكرامية' : 'Tip amount in LE'}
+              className="w-full bg-[#f4f4f5] border border-zinc-200/80 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 font-medium focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all mt-2"
+            />
           )}
-
-          <p className="text-[11px] sm:text-xs text-zinc-400 font-medium pt-1">
-            {isArabic ? '* أعلى إكرامية اليوم كانت 10.00 ج.م' : '* Highest tip today was EGP 10.00'}
-          </p>
         </div>
 
         {/* 6. Payments Details Card */}
-        <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3 md:space-y-4">
+        <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3">
           <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
-            {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
+            {isArabic ? 'تفاصيل الفاتورة' : 'Payment Details'}
           </h2>
 
           <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base font-medium">
             <div className="flex justify-between text-zinc-400">
               <span>{isArabic ? `المجموع الفرعي (${activeItemCount} أصناف)` : `Subtotal (${activeItemCount} items)`}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(subtotal, language)}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400">
               <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, language)}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400">
               <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(vat, language)}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(vat, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400">
               <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(tipAmount, language)}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(tipAmount, activeLanguage)}</span>
             </div>
 
             {isSplitCheck && (
               <div className="flex justify-between text-rose-500 font-medium">
                 <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                <span className="font-bold">{formatPrice(0, language)}</span>
+                <span className="font-bold">{formatPrice(0, activeLanguage)}</span>
               </div>
             )}
 
             {promoStatus === 'applied' && (
               <div className="flex justify-between text-[#026F4F] font-medium">
                 <span>{isArabic ? 'خصم العرض (20%)' : 'Promo Discount (20%)'}</span>
-                <span className="font-bold">-{formatPrice(discount, language)}</span>
+                <span className="font-bold">-{formatPrice(discount, activeLanguage)}</span>
               </div>
             )}
           </div>
@@ -467,7 +438,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
             <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
             <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
-              {formatPrice(grandTotal, language)}
+              {formatPrice(grandTotal, activeLanguage)}
             </span>
           </div>
         </div>
@@ -483,7 +454,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           >
             <span>{isArabic ? 'متابعة الشراء' : 'Continue to Checkout'}</span>
             <span className="font-extrabold text-base sm:text-lg md:text-xl">
-              {formatPrice(grandTotal, language)}
+              {formatPrice(grandTotal, activeLanguage)}
             </span>
           </button>
         </div>
@@ -498,7 +469,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           setShowPaymentModal(false);
           onOrderSuccess();
         }}
-        language={language}
+        language={activeLanguage}
         subtotal={subtotal}
         serviceCharge={serviceCharge}
         vat={vat}

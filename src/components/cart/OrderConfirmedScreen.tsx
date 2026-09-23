@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatPrice, type CartItem, getCartItemTotalPrice } from '@/types/menu';
+import { useLanguage } from '@/providers/LanguageContext';
 
 export interface OrderConfirmedScreenProps {
   isOpen: boolean;
@@ -27,11 +28,13 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
   tipAmount,
   discount = 0,
   grandTotal,
-  language = 'ENGLISH',
+  language: propLanguage,
 }) => {
+  const { language: contextLanguage } = useLanguage();
+  const activeLanguage = propLanguage || contextLanguage;
   if (!isOpen) return null;
 
-  const isArabic = language === 'ARABIC';
+  const isArabic = activeLanguage === 'ARABIC';
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
@@ -102,7 +105,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
 
                     <div className="text-right shrink-0">
                       <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F]">
-                        {formatPrice(getCartItemTotalPrice(ci), language)}
+                        {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                       </span>
                     </div>
                   </div>
@@ -120,7 +123,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                     </div>
                   </div>
                   <span className="font-extrabold text-xs sm:text-sm text-[#026F4F]">
-                    {formatPrice(15.99, language)}
+                    {formatPrice(15.99, activeLanguage)}
                   </span>
                 </div>
               )}
@@ -141,21 +144,21 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                     : `Subtotal (${totalCartCount || 1} items)`}
                 </span>
                 <span className="text-zinc-800 font-bold">
-                  {formatPrice(subtotal || 25.99, language)}
+                  {formatPrice(subtotal || 25.99, activeLanguage)}
                 </span>
               </div>
 
               <div className="flex justify-between text-zinc-400">
                 <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
                 <span className="text-zinc-800 font-bold">
-                  {formatPrice(serviceCharge || 2.6, language)}
+                  {formatPrice(serviceCharge || 2.6, activeLanguage)}
                 </span>
               </div>
 
               <div className="flex justify-between text-zinc-400">
                 <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
                 <span className="text-zinc-800 font-bold">
-                  {formatPrice(vat || 1.3, language)}
+                  {formatPrice(vat || 1.3, activeLanguage)}
                 </span>
               </div>
 
@@ -163,7 +166,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                 <div className="flex justify-between text-zinc-400">
                   <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
                   <span className="text-zinc-800 font-bold">
-                    {formatPrice(tipAmount, language)}
+                    {formatPrice(tipAmount, activeLanguage)}
                   </span>
                 </div>
               )}
@@ -172,7 +175,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                 <div className="flex justify-between text-emerald-600">
                   <span>{isArabic ? 'الخصم' : 'Discount'}</span>
                   <span className="font-bold">
-                    -{formatPrice(discount, language)}
+                    -{formatPrice(discount, activeLanguage)}
                   </span>
                 </div>
               )}
@@ -180,7 +183,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
               <div className="pt-3 border-t border-zinc-100 flex justify-between items-center text-sm sm:text-base md:text-lg">
                 <span className="font-bold text-zinc-900">{isArabic ? 'الإجمالي' : 'Total'}</span>
                 <span className="font-extrabold text-[#026F4F]">
-                  {formatPrice(grandTotal || 29.89, language)}
+                  {formatPrice(grandTotal || 29.89, activeLanguage)}
                 </span>
               </div>
             </div>

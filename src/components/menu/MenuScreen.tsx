@@ -3,6 +3,7 @@ import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgFilterIcon from '@/components/ui/svg-icons/FilterSvg';
 import SvgBellsIcon from '@/components/ui/svg-icons/BellsSvg';
+import { useLanguage } from '@/providers/LanguageContext';
 import {
   Globe,
   ChevronDown,
@@ -36,8 +37,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   tableName = 'A08',
   onBackToTableConfirmed,
 }) => {
-  // State Management
-  const [language, setLanguage] = useState<'ENGLISH' | 'ARABIC'>('ENGLISH');
+  // Global Language Management
+  const { language, setLanguage } = useLanguage();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -247,14 +248,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
                 {/* Language Options Dropdown */}
                 {langDropdownOpen && (
-                  <div className="absolute right-0 mt-1.5 w-36 bg-white border border-emerald-200/50 rounded-2xl shadow-xl py-1.5 z-40 text-xs overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
+                  <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-1.5 w-36 bg-white border border-emerald-200/50 rounded-2xl shadow-xl py-1.5 z-40 text-xs overflow-hidden animate-in fade-in-0 zoom-in-95 duration-150">
                     <button
                       type="button"
                       onClick={() => {
                         setLanguage('ENGLISH');
                         setLangDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
+                      className={`w-full text-start px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
                         language === 'ENGLISH'
                           ? 'bg-emerald-50 text-[#026F4F] font-bold'
                           : 'text-zinc-700 hover:bg-zinc-50'
@@ -270,7 +271,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                         setLanguage('ARABIC');
                         setLangDropdownOpen(false);
                       }}
-                      className={`w-full text-left px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
+                      className={`w-full text-start px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
                         language === 'ARABIC'
                           ? 'bg-emerald-50 text-[#026F4F] font-bold'
                           : 'text-zinc-700 hover:bg-zinc-50'
@@ -315,8 +316,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
           {/* Integrated Search & Filter Controls Pill Bar */}
           <section>
-            <div className="relative w-full bg-white rounded-full border border-emerald-100/80 shadow-xs flex items-center p-1 pl-4 pr-1.5">
-              <Search className="h-4 w-4 text-zinc-400 shrink-0 mr-2.5 rtl:mr-0 rtl:ml-2.5" />
+            <div className="relative w-full bg-white rounded-full border border-emerald-100/80 shadow-xs flex items-center p-1 ps-4 pe-1.5">
+              <Search className="h-4 w-4 text-zinc-400 shrink-0 me-2.5" />
               <input
                 type="text"
                 value={searchQuery}
@@ -332,7 +333,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="text-zinc-400 hover:text-zinc-600 p-1 cursor-pointer mr-1"
+                  className="text-zinc-400 hover:text-zinc-600 p-1 cursor-pointer me-1"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -347,7 +348,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
               >
                 <SvgFilterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />
                 {(selectedSort || selectedTags.length > 0) && (
-                  <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-[#026F4F] rounded-full border border-white" />
+                  <span className="absolute top-1 right-1 rtl:right-auto rtl:left-1 w-2.5 h-2.5 bg-[#026F4F] rounded-full border border-white" />
                 )}
               </button>
             </div>
@@ -485,7 +486,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
       {/* Floating Waiter Call Button (Adjusts position when Floating Cart Bar is present) */}
       <div
-        className={`fixed right-5 sm:right-8 z-40 flex items-center gap-2.5 transition-all duration-300 ${
+        className={`fixed end-5 sm:end-8 z-40 flex items-center gap-2.5 transition-all duration-300 ${
           totalCartCount > 0 ? 'bottom-20 sm:bottom-22' : 'bottom-6'
         }`}
       >
