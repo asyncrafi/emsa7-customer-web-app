@@ -163,7 +163,6 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
               </span>
             </div>
           </div>
-
           {/* Itemized Table */}
           <div className="space-y-2">
             <h3 className="font-bold text-xs uppercase tracking-wider text-zinc-400">
