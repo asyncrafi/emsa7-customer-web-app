@@ -51,14 +51,15 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
 
   const itemsSum = items.reduce((acc, item) => acc + item.price * item.qty, 0);
 
-  let calculatedSubtotal = propSubtotal;
-  let calculatedServiceCharge = propServiceCharge;
-  let calculatedVat = propVat;
+  let calculatedSubtotal: number;
+  let calculatedServiceCharge: number;
+  let calculatedVat: number;
 
   const netTotal = Math.max(0, total - tipAmount + discount);
 
-  if (calculatedServiceCharge === undefined && calculatedVat === undefined) {
+  if (propServiceCharge === undefined && propVat === undefined) {
     if (propSubtotal !== undefined) {
+      calculatedSubtotal = propSubtotal;
       calculatedServiceCharge = propSubtotal * 0.10;
       calculatedVat = propSubtotal * 0.05;
     } else {
@@ -67,15 +68,9 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
       calculatedVat = calculatedSubtotal * 0.05;
     }
   } else {
-    if (calculatedSubtotal === undefined) {
-      calculatedSubtotal = itemsSum;
-    }
-    if (calculatedServiceCharge === undefined) {
-      calculatedServiceCharge = 0;
-    }
-    if (calculatedVat === undefined) {
-      calculatedVat = 0;
-    }
+    calculatedSubtotal = propSubtotal ?? itemsSum;
+    calculatedServiceCharge = propServiceCharge ?? 0;
+    calculatedVat = propVat ?? 0;
   }
 
   const invoiceNumber = `INV-${orderId.replace('#', '')}-${Math.floor(1000 + Math.random() * 9000)}`;
