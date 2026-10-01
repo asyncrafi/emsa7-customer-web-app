@@ -216,7 +216,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
               </div>
             )}
 
-            {tipAmount > 0 && (
+            {tipAmount !== undefined && (
               <div className="flex justify-between text-zinc-500">
                 <span>{isArabic ? 'الإكرامية' : 'Tip'}</span>
                 <span className="font-semibold text-zinc-800">

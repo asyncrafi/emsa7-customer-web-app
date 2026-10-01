@@ -18,6 +18,11 @@ export interface StoredOrder {
   id: string;
   date: string;
   total: number;
+  subtotal?: number;
+  serviceCharge?: number;
+  vat?: number;
+  tipAmount?: number;
+  discount?: number;
   status: 'Placed' | 'Preparing' | 'Ready' | 'Served';
   isPaid?: boolean;
   items: {
@@ -805,6 +810,11 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             qty: it.qty,
             price: it.price,
           }))}
+          subtotal={selectedInvoiceOrder.subtotal}
+          serviceCharge={selectedInvoiceOrder.serviceCharge}
+          vat={selectedInvoiceOrder.vat}
+          tipAmount={selectedInvoiceOrder.tipAmount ?? 0}
+          discount={selectedInvoiceOrder.discount}
           total={selectedInvoiceOrder.total}
           language={activeLanguage}
         />
