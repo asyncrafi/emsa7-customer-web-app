@@ -20,6 +20,7 @@ export interface EInvoiceModalProps {
   items: EInvoiceItem[];
   subtotal?: number;
   vat?: number;
+  serviceCharge?: number;
   tipAmount?: number;
   discount?: number;
   total: number;
@@ -34,7 +35,8 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
   tableName = 'Table A08',
   items,
   subtotal: propSubtotal,
-  vat: _vat = 0,
+  vat: propVat,
+  serviceCharge: propServiceCharge,
   tipAmount = 0,
   discount = 0,
   total,
@@ -47,8 +49,34 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
 
   if (!isOpen) return null;
 
-  const calculatedSubtotal =
-    propSubtotal ?? items.reduce((acc, item) => acc + item.price * item.qty, 0);
+  const itemsSum = items.reduce((acc, item) => acc + item.price * item.qty, 0);
+
+  let calculatedSubtotal = propSubtotal;
+  let calculatedServiceCharge = propServiceCharge;
+  let calculatedVat = propVat;
+
+  const netTotal = Math.max(0, total - tipAmount + discount);
+
+  if (calculatedServiceCharge === undefined && calculatedVat === undefined) {
+    if (propSubtotal !== undefined) {
+      calculatedServiceCharge = propSubtotal * 0.10;
+      calculatedVat = propSubtotal * 0.05;
+    } else {
+      calculatedSubtotal = netTotal / 1.15;
+      calculatedServiceCharge = calculatedSubtotal * 0.10;
+      calculatedVat = calculatedSubtotal * 0.05;
+    }
+  } else {
+    if (calculatedSubtotal === undefined) {
+      calculatedSubtotal = itemsSum;
+    }
+    if (calculatedServiceCharge === undefined) {
+      calculatedServiceCharge = 0;
+    }
+    if (calculatedVat === undefined) {
+      calculatedVat = 0;
+    }
+  }
 
   const invoiceNumber = `INV-${orderId.replace('#', '')}-${Math.floor(1000 + Math.random() * 9000)}`;
   const formattedDate = date || new Date().toLocaleString(isArabic ? 'ar-EG' : 'en-US');
@@ -117,14 +145,6 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
               <p className="text-xs text-zinc-500 font-medium">Tax Reg #: 394-819-204</p>
               <p className="text-xs text-zinc-500 font-medium">{tableName}</p>
             </div>
-
-            {/* QR Code Icon representation for Tax Verification */}
-            {/* <div className="flex flex-col items-end shrink-0">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-zinc-50 p-2 border border-zinc-200 rounded-xl flex items-center justify-center">
-                <QrCode className="w-full h-full text-zinc-800" />
-              </div>
-              <span className="text-[10px] text-zinc-400 font-mono mt-1 uppercase">ZATCA / ETA Verified</span>
-            </div> */}
           </div>
 
           {/* Invoice Meta Grid */}
@@ -183,6 +203,24 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
               </span>
             </div>
 
+            {calculatedServiceCharge > 0 && (
+              <div className="flex justify-between text-zinc-500">
+                <span>{isArabic ? 'رسوم الخدمة' : 'Service Charge'}</span>
+                <span className="font-semibold text-zinc-800">
+                  {formatPrice(calculatedServiceCharge, activeLanguage)}
+                </span>
+              </div>
+            )}
+
+            {calculatedVat > 0 && (
+              <div className="flex justify-between text-zinc-500">
+                <span>{isArabic ? 'الضريبة' : 'Taxes'}</span>
+                <span className="font-semibold text-zinc-800">
+                  {formatPrice(calculatedVat, activeLanguage)}
+                </span>
+              </div>
+            )}
+
             {tipAmount > 0 && (
               <div className="flex justify-between text-zinc-500">
                 <span>{isArabic ? 'الإكرامية' : 'Tip'}</span>
@@ -212,7 +250,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
           {/* E-Invoice Footer & Branding */}
           <div className="pt-4 border-t border-zinc-200/80 text-center space-y-2">
             <p className="text-xs text-zinc-500 font-medium">
-              {isArabic ? 'شكراً لزيارتكم! نأمل رؤيتكم قريباً.' : 'Thank you for dining with us! See you again.'}
+              {isArabic ? 'شكراً لكم! نأمل رؤيتكم قريباً.' : 'Thank you! See you again.'}
             </p>
 
             <div className="inline-flex items-center justify-center gap-2 pt-1 select-none">

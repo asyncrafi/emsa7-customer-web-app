@@ -270,9 +270,11 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
           { name: 'Shoyu Ramen', nameAr: 'شويو رامن', qty: 2, price: 15.99 },
           { name: 'Iced Green Tea', nameAr: 'شاي أخضر مثلج', qty: 1, price: 13.99 },
         ]}
-        subtotal={45.97}
+        subtotal={25.99}
+        serviceCharge={2.60}
+        vat={1.30}
         tipAmount={5.0}
-        total={50.97}
+        total={34.89}
         language={activeLanguage}
       />
     </div>
