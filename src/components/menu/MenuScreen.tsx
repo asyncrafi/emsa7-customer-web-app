@@ -25,7 +25,7 @@ import { FoodDetailScreen } from '@/components/food/FoodDetailScreen';
 import { WaiterCallModal } from './WaiterCallModal';
 import { MyOrderScreen } from '@/components/cart/MyOrderScreen';
 import { FloatingCartBar } from '@/components/cart/FloatingCartBar';
-import { SortFilterModal, type SortOption, type FilterTag } from './SortFilterModal';
+import { SortFilterModal, type SortOption } from './SortFilterModal';
 import { useUrlModalState } from '@/hooks/useUrlModalState';
 
 interface MenuScreenProps {
@@ -72,9 +72,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   const [cart, setCart] = useState<CartItem[]>([]);
   const [openCheckoutDirectly, setOpenCheckoutDirectly] = useState(false);
 
-  // Sort & Filter State
+  // Sort State
   const [selectedSort, setSelectedSort] = useState<SortOption>(null);
-  const [selectedTags, setSelectedTags] = useState<FilterTag[]>([]);
 
   // Filter items per category for continuous scrolling
   const categorySectionsData = useMemo(() => {
@@ -83,12 +82,6 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         cat.id === 'popular'
           ? MOCK_MENU_ITEMS.filter((item) => item.isPopular)
           : MOCK_MENU_ITEMS.filter((item) => item.category === cat.id);
-
-      if (selectedTags.length > 0) {
-        items = items.filter((item) =>
-          selectedTags.some((tag) => item.tags?.includes(tag))
-        );
-      }
 
       if (selectedSort === 'popularity') {
         items = [...items].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
@@ -103,23 +96,18 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         items,
       };
     });
-  }, [selectedTags, selectedSort]);
+  }, [selectedSort]);
 
   // Search Results
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const query = searchQuery.toLowerCase().trim();
     let result = MOCK_MENU_ITEMS.filter((item) => {
-      const matchesSearch =
+      return (
         item.name.toLowerCase().includes(query) ||
         item.description.toLowerCase().includes(query) ||
-        (item.nameAr && item.nameAr.toLowerCase().includes(query));
-
-      const matchesTags =
-        selectedTags.length === 0 ||
-        selectedTags.some((tag) => item.tags?.includes(tag));
-
-      return matchesSearch && matchesTags;
+        (item.nameAr && item.nameAr.toLowerCase().includes(query))
+      );
     });
 
     if (selectedSort === 'popularity') {
@@ -131,7 +119,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     }
 
     return result;
-  }, [searchQuery, selectedTags, selectedSort]);
+  }, [searchQuery, selectedSort]);
 
   // ScrollSpy Listener: Auto update active category pill when scrolling
   useEffect(() => {
@@ -502,7 +490,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#e2e8f0]/60 hover:bg-[#d8e0e8] text-zinc-600 flex items-center justify-center transition-colors cursor-pointer shrink-0"
               >
                 <SvgFilterIcon className="w-4 h-4 sm:w-5 sm:h-5 text-zinc-600" />
-                {(selectedSort || selectedTags.length > 0) && (
+                {selectedSort && (
                   <span className="absolute top-1 right-1 rtl:right-auto rtl:left-1 w-2.5 h-2.5 bg-[#026F4F] rounded-full border border-white" />
                 )}
               </button>
@@ -779,14 +767,11 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         onClose={closeModal}
         language={language}
         selectedSort={selectedSort}
-        selectedTags={selectedTags}
-        onApply={(sort, tags) => {
+        onApply={(sort) => {
           setSelectedSort(sort);
-          setSelectedTags(tags);
         }}
         onClear={() => {
           setSelectedSort(null);
-          setSelectedTags([]);
         }}
       />
 
