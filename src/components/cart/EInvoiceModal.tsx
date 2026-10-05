@@ -22,6 +22,7 @@ export interface EInvoiceModalProps {
   vat?: number;
   serviceCharge?: number;
   tipAmount?: number;
+  splitFee?: number;
   discount?: number;
   total: number;
   language?: 'ENGLISH' | 'ARABIC';
@@ -38,6 +39,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
   vat: propVat,
   serviceCharge: propServiceCharge,
   tipAmount = 0,
+  splitFee = 0,
   discount = 0,
   total,
   language: propLanguage,
@@ -220,6 +222,15 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
                 <span>{isArabic ? 'الإكرامية' : 'Tip'}</span>
                 <span className="font-semibold text-zinc-800">
                   {formatPrice(tipAmount, activeLanguage)}
+                </span>
+              </div>
+            )}
+
+            {splitFee > 0 && (
+              <div className="flex justify-between text-zinc-500">
+                <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
+                <span className="font-semibold text-zinc-800">
+                  {formatPrice(splitFee, activeLanguage)}
                 </span>
               </div>
             )}

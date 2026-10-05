@@ -14,6 +14,7 @@ export interface OrderConfirmedScreenProps {
   serviceCharge: number;
   vat: number;
   tipAmount: number;
+  splitFee?: number;
   discount?: number;
   grandTotal: number;
   language?: 'ENGLISH' | 'ARABIC';
@@ -28,6 +29,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
   serviceCharge: _serviceCharge,
   vat: _vat,
   tipAmount,
+  splitFee = 0,
   discount = 0,
   grandTotal,
   language: propLanguage,
@@ -172,6 +174,15 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                 </div>
               )}
 
+              {splitFee > 0 && (
+                <div className="flex justify-between text-rose-500 font-medium">
+                  <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
+                  <span className="font-bold">
+                    {formatPrice(splitFee, activeLanguage)}
+                  </span>
+                </div>
+              )}
+
               {discount > 0 && (
                 <div className="flex justify-between text-emerald-600">
                   <span>{isArabic ? 'الخصم' : 'Discount'}</span>
@@ -227,6 +238,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
         }))}
         subtotal={subtotal}
         tipAmount={tipAmount}
+        splitFee={splitFee}
         discount={discount}
         total={grandTotal}
         language={activeLanguage}

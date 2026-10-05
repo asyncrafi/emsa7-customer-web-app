@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, FileText } from 'lucide-react';
 import { formatPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
 import { EInvoiceModal } from '@/components/cart/EInvoiceModal';
+import type { StoredOrder } from '@/components/cart/MyOrderScreen';
 
 export type OrderStatus = 'preparing' | 'ready' | 'served';
 
@@ -12,6 +13,7 @@ interface OrderDetailsScreenProps {
   onNewOrder: () => void;
   language?: 'ENGLISH' | 'ARABIC';
   orderId?: string;
+  order?: StoredOrder | null;
 }
 
 export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
@@ -20,6 +22,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
   onNewOrder,
   language: propLanguage,
   orderId: _orderId = '#A102',
+  order,
 }) => {
   const { language: contextLanguage } = useLanguage();
   const activeLanguage = propLanguage || contextLanguage;
@@ -150,49 +153,31 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                 </h2>
 
                 <div className="space-y-3.5 md:space-y-4">
-                  {/* Item 1 */}
-                  <div className="flex items-center justify-between gap-3 md:gap-4">
-                    <div className="flex items-center gap-3 sm:gap-4 md:gap-5 min-w-0">
-                      <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-2xl bg-[#f4f4f5] p-2 md:p-2.5 flex items-center justify-center shrink-0 border border-zinc-100">
-                        <img
-                          src="/images/food/ramen.png"
-                          alt="Shoyu Ramen"
-                          className="w-full h-full object-contain"
-                        />
+                  {order?.items?.map((item, idx) => (
+                    <div key={idx} className="flex items-center justify-between gap-3 md:gap-4 pt-3 md:pt-4 first:pt-0 first:border-0 border-t border-zinc-50">
+                      <div className="flex items-center gap-3 sm:gap-4 md:gap-5 min-w-0">
+                        <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-2xl bg-[#f4f4f5] p-2 md:p-2.5 flex items-center justify-center shrink-0 border border-zinc-100">
+                          <img
+                            src={item.image || '/images/food/ramen.png'}
+                            alt={item.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-zinc-900 truncate">
+                            {item.name}
+                          </h3>
+                          <span className="font-bold text-xs sm:text-sm md:text-base text-zinc-800 block mt-0.5">x{item.qty}</span>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <h3 className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-zinc-900 truncate">
-                          Shoyu Ramen
-                        </h3>
-                        <span className="font-bold text-xs sm:text-sm md:text-base text-zinc-800 block mt-0.5">x1</span>
-                      </div>
+                      <span className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-[#026F4F]">
+                        {formatPrice(item.price * item.qty, activeLanguage)}
+                      </span>
                     </div>
-                    <span className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-[#026F4F]">
-                      {formatPrice(15.99, activeLanguage)}
-                    </span>
-                  </div>
-
-                  {/* Item 2 */}
-                  <div className="flex items-center justify-between gap-3 md:gap-4 pt-3 md:pt-4 border-t border-zinc-50">
-                    <div className="flex items-center gap-3 sm:gap-4 md:gap-5 min-w-0">
-                      <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-2xl bg-[#f4f4f5] p-2 md:p-2.5 flex items-center justify-center shrink-0 border border-zinc-100">
-                        <img
-                          src="/images/food/ramen.png"
-                          alt="Shoyu Ramen"
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-zinc-900 truncate">
-                          Shoyu Ramen
-                        </h3>
-                        <span className="font-bold text-xs sm:text-sm md:text-base text-zinc-800 block mt-0.5">x1</span>
-                      </div>
-                    </div>
-                    <span className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-[#026F4F]">
-                      {formatPrice(15.99, activeLanguage)}
-                    </span>
-                  </div>
+                  ))}
+                  {!order?.items?.length && (
+                    <div className="text-sm text-zinc-500">{isArabic ? 'لا توجد أصناف' : 'No items found'}</div>
+                  )}
                 </div>
               </div>
 
@@ -214,24 +199,44 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
 
                 <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base lg:text-lg font-medium">
                   <div className="flex justify-between text-zinc-400">
-                    <span>{isArabic ? 'المجموع الفرعي (3 أصناف)' : 'Subtotal (3items)'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(25.99, activeLanguage)}</span>
+                    <span>{isArabic ? `المجموع الفرعي (${order?.items?.length || 0} أصناف)` : `Subtotal (${order?.items?.length || 0} items)`}</span>
+                    <span className="text-zinc-800 font-bold">{formatPrice(order?.subtotal || 25.99, activeLanguage)}</span>
                   </div>
 
-                  <div className="flex justify-between text-zinc-400">
-                    <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(25.99, activeLanguage)}</span>
-                  </div>
+                  {(order?.serviceCharge ?? 0) > 0 && (
+                    <div className="flex justify-between text-zinc-400">
+                      <span>{isArabic ? `رسوم الخدمة (10%)` : 'Service Charge (10%)'}</span>
+                      <span className="text-zinc-800 font-bold">{formatPrice(order?.serviceCharge || 0, activeLanguage)}</span>
+                    </div>
+                  )}
 
-                  <div className="flex justify-between text-zinc-400">
-                    <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(1.3, activeLanguage)}</span>
-                  </div>
+                  {(order?.vat ?? 0) > 0 && (
+                    <div className="flex justify-between text-zinc-400">
+                      <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
+                      <span className="text-zinc-800 font-bold">{formatPrice(order?.vat || 0, activeLanguage)}</span>
+                    </div>
+                  )}
 
-                  <div className="flex justify-between text-zinc-400">
-                    <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(5.0, activeLanguage)}</span>
-                  </div>
+                  {(order?.tipAmount ?? 0) > 0 && (
+                    <div className="flex justify-between text-zinc-400">
+                      <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
+                      <span className="text-zinc-800 font-bold">{formatPrice(order?.tipAmount || 0, activeLanguage)}</span>
+                    </div>
+                  )}
+
+                  {(order?.splitFee ?? 0) > 0 && (
+                    <div className="flex justify-between text-rose-500 font-medium">
+                      <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
+                      <span className="font-bold">{formatPrice(order?.splitFee || 0, activeLanguage)}</span>
+                    </div>
+                  )}
+
+                  {(order?.discount ?? 0) > 0 && (
+                    <div className="flex justify-between text-emerald-600">
+                      <span>{isArabic ? 'الخصم' : 'Discount'}</span>
+                      <span className="font-bold">-{formatPrice(order?.discount || 0, activeLanguage)}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Dashed Separator Line */}
@@ -241,7 +246,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                 <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
                   <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
                   <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
-                    {formatPrice(45.99, activeLanguage)}
+                    {formatPrice(order?.total || 45.99, activeLanguage)}
                   </span>
                 </div>
               </div>
@@ -266,15 +271,21 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
         isOpen={showInvoiceModal}
         onClose={() => setShowInvoiceModal(false)}
         orderId={_orderId}
-        items={[
+        items={order?.items?.map(it => ({
+          name: it.name,
+          qty: it.qty,
+          price: it.price
+        })) || [
           { name: 'Shoyu Ramen', nameAr: 'شويو رامن', qty: 2, price: 15.99 },
           { name: 'Iced Green Tea', nameAr: 'شاي أخضر مثلج', qty: 1, price: 13.99 },
         ]}
-        subtotal={25.99}
-        serviceCharge={2.60}
-        vat={1.30}
-        tipAmount={5.0}
-        total={34.89}
+        subtotal={order?.subtotal || 25.99}
+        serviceCharge={order?.serviceCharge}
+        vat={order?.vat}
+        tipAmount={order?.tipAmount || 0}
+        splitFee={order?.splitFee || 0}
+        discount={order?.discount}
+        total={order?.total || 34.89}
         language={activeLanguage}
       />
     </div>

@@ -22,6 +22,7 @@ export interface StoredOrder {
   serviceCharge?: number;
   vat?: number;
   tipAmount?: number;
+  splitFee?: number;
   discount?: number;
   status: 'Placed' | 'Preparing' | 'Ready' | 'Served';
   isPaid?: boolean;
@@ -42,6 +43,7 @@ export interface MyOrderScreenProps {
   onDecrement: (itemId: string) => void;
   onRemove: (itemId: string) => void;
   onClearCart: () => void;
+  onDeductPaidItems?: (paidCart: CartItem[]) => void;
   onAddToCart?: (item: MenuItem) => void;
   onUpdateCartItem?: (
     index: number,
@@ -65,6 +67,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   onDecrement,
   onRemove: _onRemove,
   onClearCart,
+  onDeductPaidItems,
   onAddToCart,
   onUpdateCartItem,
   onReorder,
@@ -94,6 +97,10 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   const [showOrderConfirmedModal, setShowOrderConfirmedModal] = useState(false);
   const [confirmedCart, setConfirmedCart] = useState<CartItem[]>([]);
   const [confirmedGrandTotal, setConfirmedGrandTotal] = useState(0);
+  const [confirmedTipAmount, setConfirmedTipAmount] = useState(0);
+  const [confirmedSplitFee, setConfirmedSplitFee] = useState(0);
+  const [confirmedDiscount, setConfirmedDiscount] = useState(0);
+  const [confirmedSubtotal, setConfirmedSubtotal] = useState(0);
   const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<StoredOrder | null>(null);
 
   // LocalStorage Keys
@@ -250,6 +257,11 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                     <p className="text-xs sm:text-sm text-zinc-400 font-normal mt-0.5 md:mt-1">
                       {ongoingOrder.date}
                     </p>
+                    {(ongoingOrder.tipAmount ?? 0) > 0 && (
+                      <p className="text-[10px] sm:text-xs text-[#026F4F] font-bold mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
+                        {isArabic ? 'بما في ذلك إكرامية:' : 'Includes Tip:'} {formatPrice(ongoingOrder.tipAmount || 0, activeLanguage)}
+                      </p>
+                    )}
                   </div>
                   <span className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#026F4F]">
                     {formatPrice(ongoingOrder.total, activeLanguage)}
@@ -575,6 +587,11 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   <div>
                     <h3 className="font-extrabold text-base md:text-lg text-zinc-900">{ord.id}</h3>
                     <p className="text-xs sm:text-sm text-zinc-400 font-medium mt-0.5">{ord.date}</p>
+                    {(ord.tipAmount ?? 0) > 0 && (
+                      <p className="text-[10px] sm:text-xs text-[#026F4F] font-bold mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
+                        {isArabic ? 'بما في ذلك إكرامية:' : 'Includes Tip:'} {formatPrice(ord.tipAmount || 0, activeLanguage)}
+                      </p>
+                    )}
                   </div>
                   <span className="font-extrabold text-base sm:text-lg md:text-xl text-[#026F4F]">
                     {formatPrice(ord.total, activeLanguage)}
@@ -694,6 +711,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         }}
         language={activeLanguage}
         orderId={ongoingOrder?.id || '#A102'}
+        order={ongoingOrder}
       />
 
       {/* Order Confirmed Screen Modal */}
@@ -702,19 +720,19 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         onClose={() => setShowOrderConfirmedModal(false)}
         onBackToMenu={() => {
           setShowOrderConfirmedModal(false);
-          onClearCart();
           onClose();
         }}
         onTrackOrder={() => {
           setShowOrderConfirmedModal(false);
-          onClearCart();
           setActiveTab('ongoing');
         }}
         cart={confirmedCart.length > 0 ? confirmedCart : cart}
-        subtotal={confirmedGrandTotal ? confirmedGrandTotal / 1.15 : subtotal}
-        serviceCharge={confirmedGrandTotal ? (confirmedGrandTotal / 1.15) * 0.1 : serviceCharge}
-        vat={confirmedGrandTotal ? (confirmedGrandTotal / 1.15) * 0.05 : subtotal * 0.05}
-        tipAmount={5.0}
+        subtotal={confirmedSubtotal || subtotal}
+        serviceCharge={confirmedSubtotal ? confirmedSubtotal * 0.1 : serviceCharge}
+        vat={confirmedSubtotal ? confirmedSubtotal * 0.05 : subtotal * 0.05}
+        tipAmount={confirmedTipAmount}
+        splitFee={confirmedSplitFee}
+        discount={confirmedDiscount}
         grandTotal={confirmedGrandTotal || grandTotal}
         language={activeLanguage}
       />
@@ -732,7 +750,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           setShowCheckoutModal(false);
           onClose();
         }}
-        onOrderSuccess={() => {
+        onOrderSuccess={(details) => {
           const now = new Date();
           const timeStr = `Today, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
           const newId = `#A${Math.floor(100 + Math.random() * 900)}`;
@@ -740,16 +758,20 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           const newOrder: StoredOrder = {
             id: newId,
             date: timeStr,
-            total: grandTotal,
+            total: details.grandTotal,
+            subtotal: details.subtotal,
+            tipAmount: details.tipAmount,
+            splitFee: details.splitFee,
+            discount: details.discount,
             status: 'Preparing',
             isPaid: true,
-            items: cart.map((ci) => ({
+            items: details.selectedCart.map((ci) => ({
               name: ci.item.name,
               qty: ci.quantity,
               image: ci.item.imageUrl || '/images/food/ramen.png',
               price: ci.item.price,
             })),
-            cartItems: [...cart],
+            cartItems: [...details.selectedCart],
           };
 
           // Save to ongoing state & localStorage
@@ -770,8 +792,17 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             console.error('Error saving ongoing order to localStorage:', e);
           }
 
-          setConfirmedCart([...cart]);
-          setConfirmedGrandTotal(grandTotal);
+          // Deduct paid items from the global cart
+          if (onDeductPaidItems) {
+            onDeductPaidItems(details.selectedCart);
+          }
+
+          setConfirmedCart([...details.selectedCart]);
+          setConfirmedGrandTotal(details.grandTotal);
+          setConfirmedTipAmount(details.tipAmount);
+          setConfirmedSplitFee(details.splitFee);
+          setConfirmedDiscount(details.discount);
+          setConfirmedSubtotal(details.subtotal);
           setShowCheckoutModal(false);
           setShowOrderConfirmedModal(true);
         }}
@@ -814,6 +845,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           serviceCharge={selectedInvoiceOrder.serviceCharge}
           vat={selectedInvoiceOrder.vat}
           tipAmount={selectedInvoiceOrder.tipAmount ?? 0}
+          splitFee={selectedInvoiceOrder.splitFee ?? 0}
           discount={selectedInvoiceOrder.discount}
           total={selectedInvoiceOrder.total}
           language={activeLanguage}

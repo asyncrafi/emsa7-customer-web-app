@@ -327,6 +327,29 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     });
   };
 
+  const handleDeductPaidItems = (paidItems: CartItem[]) => {
+    setCart((prevCart) => {
+      let updatedCart = [...prevCart];
+      paidItems.forEach((paid) => {
+        const matchIndex = updatedCart.findIndex((ci) =>
+          isSameCartItemVariant(ci, paid.item, paid.specialInstructions, paid.selectedOptions)
+        );
+        if (matchIndex > -1) {
+          const remainingQty = updatedCart[matchIndex].quantity - paid.quantity;
+          if (remainingQty <= 0) {
+            updatedCart = updatedCart.filter((_, idx) => idx !== matchIndex);
+          } else {
+            updatedCart[matchIndex] = {
+              ...updatedCart[matchIndex],
+              quantity: remainingQty,
+            };
+          }
+        }
+      });
+      return updatedCart;
+    });
+  };
+
   const handleClearCart = () => {
     setCart([]);
   };
@@ -740,6 +763,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         onDecrement={handleDecrement}
         onRemove={handleRemoveFromCart}
         onClearCart={handleClearCart}
+        onDeductPaidItems={handleDeductPaidItems}
         onAddToCart={(item) => handleIncrement(item)}
         onUpdateCartItem={handleUpdateCartItem}
         onReorder={(itemsToReorder) => {

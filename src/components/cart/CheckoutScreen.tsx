@@ -16,7 +16,7 @@ export interface CheckoutScreenProps {
   onRemove: (itemId: string) => void;
   onClearCart: () => void;
   onAddMoreItems: () => void;
-  onOrderSuccess: () => void;
+  onOrderSuccess: (details: { subtotal: number; tipAmount: number; splitFee: number; discount: number; grandTotal: number; selectedCart: CartItem[]; paidItems: { originalIndex: number; quantity: number }[] }) => void;
   language?: 'ENGLISH' | 'ARABIC';
   tableName?: string;
 }
@@ -58,12 +58,12 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
   const [selectedSplitIds, setSelectedSplitIds] = useState<Set<string>>(new Set());
 
-  // Automatically select all expanded items whenever split check is turned ON or cart changes
-  React.useEffect(() => {
-    if (isSplitCheck) {
+  const handleToggleSplitCheck = () => {
+    if (!isSplitCheck) {
       setSelectedSplitIds(new Set(expandedSplitItems.map((item) => item.splitId)));
     }
-  }, [isSplitCheck, expandedSplitItems]);
+    setIsSplitCheck((prev) => !prev);
+  };
 
   const [promoCode, setPromoCode] = useState('');
   const [promoStatus, setPromoStatus] = useState<'none' | 'applied' | 'error'>('none');
@@ -106,8 +106,9 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   else if (selectedTip === '15') tipAmount = 15;
   else if (selectedTip === 'custom') tipAmount = parseFloat(customTipAmount) || 0;
 
+  const splitFee = isSplitCheck ? 5 : 0;
   const discount = promoStatus === 'applied' ? subtotal * 0.2 : 0;
-  const grandTotal = Math.max(0, subtotal + tipAmount - discount);
+  const grandTotal = Math.max(0, subtotal + tipAmount + splitFee - discount);
 
   const handleApplyPromo = () => {
     const code = promoCode.trim().toUpperCase();
@@ -117,6 +118,34 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
       setPromoStatus('error');
     }
   };
+
+  const { selectedCart, paidItems } = React.useMemo(() => {
+    if (!isSplitCheck) {
+      return { 
+        selectedCart: cart,
+        paidItems: cart.map((ci, idx) => ({ originalIndex: idx, quantity: ci.quantity }))
+      };
+    }
+    const itemsToPay = expandedSplitItems.filter((item) => selectedSplitIds.has(item.splitId));
+    
+    // Group back by cartItem reference
+    const grouped = new Map<CartItem, number>();
+    for (const splitItem of itemsToPay) {
+      grouped.set(splitItem.cartItem, (grouped.get(splitItem.cartItem) || 0) + 1);
+    }
+    
+    const paidItemsInfo = Array.from(grouped.entries()).map(([ci, qty]) => ({
+      originalIndex: cart.indexOf(ci),
+      quantity: qty
+    }));
+
+    const selectedCartArray = Array.from(grouped.entries()).map(([ci, qty]) => ({
+      ...ci,
+      quantity: qty,
+    }));
+
+    return { selectedCart: selectedCartArray, paidItems: paidItemsInfo };
+  }, [isSplitCheck, expandedSplitItems, selectedSplitIds, cart]);
 
   return (
     <div
@@ -168,7 +197,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
           <button
             type="button"
-            onClick={() => setIsSplitCheck(!isSplitCheck)}
+            onClick={handleToggleSplitCheck}
             aria-label="Toggle Split Check"
             className={`relative w-12 h-6 sm:w-14 sm:h-7 rounded-full transition-colors cursor-pointer p-0.5 ${
               isSplitCheck ? 'bg-[#026F4F]' : 'bg-zinc-200'
@@ -420,7 +449,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             {isSplitCheck && (
               <div className="flex justify-between text-rose-500 font-medium">
                 <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                <span className="font-bold">{formatPrice(0, activeLanguage)}</span>
+                <span className="font-bold">{formatPrice(splitFee, activeLanguage)}</span>
               </div>
             )}
 
@@ -482,16 +511,17 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
       <PaymentScreen
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
-        cart={cart}
+        cart={selectedCart}
         onPaymentSuccess={() => {
           setShowPaymentModal(false);
-          onOrderSuccess();
+          onOrderSuccess({ subtotal, tipAmount, splitFee, discount, grandTotal, selectedCart, paidItems });
         }}
         language={activeLanguage}
         subtotal={subtotal}
         serviceCharge={serviceCharge}
         vat={vat}
         tipAmount={tipAmount}
+        splitFee={splitFee}
         discount={discount}
         grandTotal={grandTotal}
       />

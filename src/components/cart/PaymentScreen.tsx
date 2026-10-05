@@ -23,9 +23,45 @@ export interface PaymentScreenProps {
   serviceCharge: number;
   vat: number;
   tipAmount: number;
+  splitFee?: number;
   discount?: number;
   grandTotal: number;
 }
+
+interface CountryCode {
+  code: string;
+  country: string;
+  flag: string;
+}
+
+const COUNTRY_CODES: CountryCode[] = [
+  { code: '+20', country: 'Egypt', flag: '🇪🇬' },
+  { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
+  { code: '+971', country: 'UAE', flag: '🇦🇪' },
+  { code: '+967', country: 'Yemen', flag: '🇾🇪' },
+  { code: '+965', country: 'Kuwait', flag: '🇰🇼' },
+  { code: '+974', country: 'Qatar', flag: '🇶🇦' },
+  { code: '+968', country: 'Oman', flag: '🇴🇲' },
+  { code: '+973', country: 'Bahrain', flag: '🇧🇭' },
+  { code: '+962', country: 'Jordan', flag: '🇯🇴' },
+  { code: '+961', country: 'Lebanon', flag: '🇱🇧' },
+  { code: '+964', country: 'Iraq', flag: '🇮🇶' },
+  { code: '+218', country: 'Libya', flag: '🇱🇾' },
+  { code: '+213', country: 'Algeria', flag: '🇩🇿' },
+  { code: '+212', country: 'Morocco', flag: '🇲🇦' },
+  { code: '+249', country: 'Sudan', flag: '🇸🇩' },
+  { code: '+1', country: 'USA / Canada', flag: '🇺🇸' },
+  { code: '+44', country: 'UK', flag: '🇬🇧' },
+  { code: '+49', country: 'Germany', flag: '🇩🇪' },
+  { code: '+33', country: 'France', flag: '🇫🇷' },
+  { code: '+39', country: 'Italy', flag: '🇮🇹' },
+  { code: '+91', country: 'India', flag: '🇮🇳' },
+  { code: '+86', country: 'China', flag: '🇨🇳' },
+  { code: '+81', country: 'Japan', flag: '🇯🇵' },
+  { code: '+82', country: 'South Korea', flag: '🇰🇷' },
+  { code: '+7', country: 'Russia', flag: '🇷🇺' },
+  { code: '+90', country: 'Turkey', flag: '🇹🇷' },
+];
 
 export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   isOpen,
@@ -37,6 +73,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   serviceCharge: _serviceCharge,
   vat: _vat,
   tipAmount,
+  splitFee = 0,
   discount = 0,
   grandTotal,
 }) => {
@@ -45,6 +82,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const isArabic = activeLanguage === 'ARABIC';
 
   const [fullName, setFullName] = useState('');
+  const [selectedCountryCode, setSelectedCountryCode] = useState('+20');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
 
@@ -167,22 +205,48 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 {isArabic ? 'رقم الهاتف' : 'Phone Number'} <span className="text-red-500">*</span>
               </label>
               <div
-                className={`bg-[#f4f4f5] rounded-2xl px-4 py-3 sm:py-3.5 flex items-center gap-3 border transition-colors ${
-                  showErrors && !phoneNumber.trim() ? 'border-red-400 bg-red-50/70 shadow-xs' : 'border-transparent focus-within:border-[#026F4F]'
+                className={`bg-[#f4f4f5] rounded-2xl p-1.5 sm:p-2 flex items-center gap-2 border transition-colors ${
+                  showErrors && !phoneNumber.trim()
+                    ? 'border-red-400 bg-red-50/70 shadow-xs'
+                    : 'border-transparent focus-within:border-[#026F4F]'
                 }`}
               >
-                <Phone className={`w-5 h-5 shrink-0 ${showErrors && !phoneNumber.trim() ? 'text-red-500' : 'text-zinc-400'}`} />
-                <input
-                  ref={phoneInputRef}
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => {
-                    setPhoneNumber(e.target.value);
-                    if (showErrors) setShowErrors(false);
-                  }}
-                  placeholder={isArabic ? 'أدخل رقم هاتفك' : 'Enter your number'}
-                  className="w-full bg-transparent text-xs sm:text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
-                />
+                {/* Country Code Dropdown */}
+                <div className="relative shrink-0 flex items-center bg-white rounded-xl px-2.5 sm:px-3 py-2 border border-zinc-200/80 shadow-2xs">
+                  <select
+                    value={selectedCountryCode}
+                    onChange={(e) => setSelectedCountryCode(e.target.value)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-xs z-10"
+                    aria-label="Country Code"
+                  >
+                    {COUNTRY_CODES.map((c) => (
+                      <option key={`${c.country}-${c.code}`} value={c.code}>
+                        {c.flag} {c.code} ({c.country})
+                      </option>
+                    ))}
+                  </select>
+                  <div className="flex items-center gap-1.5 pointer-events-none">
+                    <span className="text-sm">{COUNTRY_CODES.find((c) => c.code === selectedCountryCode)?.flag || '🇪🇬'}</span>
+                    <span className="text-xs sm:text-sm font-bold text-zinc-800">{selectedCountryCode}</span>
+                    <ChevronDown className="w-3.5 h-3.5 text-zinc-400 shrink-0 ml-0.5" />
+                  </div>
+                </div>
+
+                {/* Number Input */}
+                <div className="flex-1 flex items-center gap-2.5 px-1.5 sm:px-2">
+                  <Phone className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 ${showErrors && !phoneNumber.trim() ? 'text-red-500' : 'text-zinc-400'}`} />
+                  <input
+                    ref={phoneInputRef}
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => {
+                      setPhoneNumber(e.target.value);
+                      if (showErrors) setShowErrors(false);
+                    }}
+                    placeholder={isArabic ? 'أدخل رقم هاتفك' : 'Enter your number'}
+                    className="w-full bg-transparent text-xs sm:text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
+                  />
+                </div>
               </div>
               {showErrors && !phoneNumber.trim() && (
                 <p className="text-[11px] text-red-500 font-semibold mt-1 flex items-center gap-1">
@@ -268,6 +332,13 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
               <span className="text-zinc-800 font-bold">{formatPrice(tipAmount, activeLanguage)}</span>
             </div>
+
+            {splitFee > 0 && (
+              <div className="flex justify-between text-rose-500 font-medium">
+                <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
+                <span className="font-bold">{formatPrice(splitFee, activeLanguage)}</span>
+              </div>
+            )}
 
             {discount > 0 && (
               <div className="flex justify-between text-[#026F4F] font-medium">
