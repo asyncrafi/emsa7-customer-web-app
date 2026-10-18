@@ -124,53 +124,51 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
   return (
     <div
       dir={isArabic ? 'rtl' : 'ltr'}
-      className="fixed inset-0 z-[70] bg-white antialiased select-none flex flex-col h-full w-full overflow-hidden font-sans"
+      className="fixed inset-0 z-[70] bg-[#f4f4f5] antialiased select-none flex flex-col h-full w-full overflow-hidden font-sans"
     >
-      {/* Scrollable Content Area */}
+      {/* Scrollable Content Area: Mobile 440px width matching Figma */}
       <div className="flex-1 overflow-y-auto min-h-0 w-full">
-        {/* Top Header Section with Dish Image & Floating Back Arrow */}
-        <div className="relative w-full bg-white pt-5 pb-4 sm:pt-7 sm:pb-6 flex flex-col items-center justify-center shrink-0">
-          {/* Floating Back Circle Button */}
-          <div className="max-w-4xl w-full mx-auto px-4 sm:px-6 absolute top-4 inset-x-0 z-20 flex justify-between items-center">
+        <div className="w-full max-w-[440px] mx-auto flex flex-col min-h-full">
+          {/* Top Header Section with Dish Image & Floating Back Arrow on #f4f4f5 */}
+          <div className="relative w-full pt-4 pb-6 flex flex-col items-center justify-center shrink-0">
+            {/* Floating Back Circle Button - Top Left matching Food Detail.png */}
             <button
               type="button"
               onClick={onBack}
               aria-label="Back to menu"
-              className="w-10 h-10 rounded-full bg-zinc-100 hover:bg-zinc-200 text-zinc-800 shadow-sm flex items-center justify-center cursor-pointer transition-transform active:scale-95"
+              className="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-4 rtl:rotate-180"
             >
               {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
             </button>
+
+            {/* Center Dish Image */}
+            <div className="w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center p-2 mt-4">
+              <img
+                src={item.imageUrl}
+                alt={title}
+                className="w-full h-full object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/images/food/ramen.png';
+                }}
+              />
+            </div>
           </div>
 
-          {/* Center Dish Image */}
-          <div className="w-44 h-44 sm:w-56 sm:h-56 md:w-64 md:h-64 flex items-center justify-center p-2">
-            <img
-              src={item.imageUrl}
-              alt={title}
-              className="w-full h-full object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/images/food/ramen.png';
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Main Content Body */}
-        <div className="w-full bg-white pt-2 pb-8">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 space-y-6 sm:space-y-7">
+          {/* Main White Content Card with rounded-t-[32px] matching Figma */}
+          <div className="w-full bg-white rounded-t-[32px] pt-6 px-5 pb-8 flex-1 space-y-6 shadow-xs">
             {/* Title & Base Price Row */}
             <div>
               <div className="flex items-center justify-between gap-4">
-                <h1 className="text-2xl sm:text-3xl font-semibold text-[#2D2F33] tracking-tight leading-tight">
+                <h1 className="text-2xl font-semibold text-[#2D2F33] tracking-tight leading-tight">
                   {title}
                 </h1>
-                <span className="text-xl sm:text-2xl font-semibold text-[#026F4F] shrink-0">
+                <span className="text-xl font-semibold text-[#026F4F] shrink-0">
                   {formatPrice(item.price, activeLanguage)}
                 </span>
               </div>
 
               {/* Description */}
-              <p className="text-xs sm:text-sm text-[#8E8E93] font-normal leading-relaxed mt-2 max-w-2xl">
+              <p className="text-xs text-[#8E8E93] font-normal leading-relaxed mt-2">
                 {description}
               </p>
             </div>
@@ -185,14 +183,14 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                   <div key={group.id} className="pt-4 border-t border-zinc-100">
                     {/* Option Group Header & Badge */}
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-base sm:text-lg font-semibold text-[#2D2F33] tracking-tight">
+                      <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight">
                         {groupTitle}
                       </h2>
                       <span
-                        className={`text-[11px] sm:text-xs font-medium px-3 py-1 rounded-full tracking-wide ${
+                        className={`text-[12px] font-medium px-3 py-0.5 rounded-full tracking-wide ${
                           group.required
-                            ? 'bg-zinc-900 text-white'
-                            : 'bg-zinc-100 text-zinc-600'
+                            ? 'bg-[#2D2F33] text-white'
+                            : 'bg-[#F0F0F0] text-[#8E8E93]'
                         }`}
                       >
                         {group.required
@@ -216,14 +214,14 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                           <div
                             key={opt.id}
                             onClick={() => handleSelectOption(group.id, opt.id, isSingle)}
-                            className="flex items-center justify-between py-3 px-2 cursor-pointer hover:bg-zinc-50 rounded-2xl transition-colors select-none"
+                            className="flex items-center justify-between py-2.5 px-1 cursor-pointer hover:bg-zinc-50 rounded-xl transition-colors select-none"
                           >
-                            <span className="text-xs sm:text-sm font-medium text-[#2D2F33]">
+                            <span className="text-sm font-medium text-[#2D2F33]">
                               {optName}
                             </span>
 
                             <div className="flex items-center gap-3">
-                              <span className="text-xs sm:text-sm font-medium text-zinc-400">
+                              <span className="text-xs sm:text-sm font-medium text-[#8E8E93]">
                                 {opt.price === 0
                                   ? isArabic
                                     ? 'مجاني'
@@ -231,14 +229,14 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                                   : `+${formatPrice(opt.price, activeLanguage)}`}
                               </span>
 
-                              {/* Radio / Checkbox Indicator Circle */}
+                              {/* Radio / Checkbox Indicator Circle with Charcoal #2D2F33 matching Figma */}
                               <div
                                 className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
-                                  isSelected ? 'border-[#026F4F]' : 'border-zinc-300'
+                                  isSelected ? 'border-[#2D2F33]' : 'border-zinc-300'
                                 }`}
                               >
                                 {isSelected && (
-                                  <div className="w-2.5 h-2.5 rounded-full bg-[#026F4F]" />
+                                  <div className="w-2.5 h-2.5 rounded-full bg-[#2D2F33]" />
                                 )}
                               </div>
                             </div>
@@ -252,7 +250,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
 
             {/* Special Instructions Field */}
             <div className="pt-4 border-t border-zinc-100">
-              <h2 className="text-base sm:text-lg font-semibold text-[#2D2F33] tracking-tight mb-2.5">
+              <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight mb-2.5">
                 {isArabic ? 'تعليمات خاصة' : 'Special instructions'}
               </h2>
               <textarea
@@ -263,28 +261,28 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                     ? 'أضف ملاحظة (مثال: بدون فلفل حار، ملح أقل)'
                     : 'Add note (e.g. no spicy, less salt)'
                 }
-                className="w-full bg-zinc-50 border border-zinc-200/80 rounded-2xl p-4 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all min-h-[95px] resize-none"
+                className="w-full bg-[#F8F9FA] border border-[#E5E5EA] rounded-[16px] p-3.5 text-xs text-[#2D2F33] placeholder-[#8E8E93] focus:outline-none focus:border-[#026F4F] transition-all min-h-[90px] resize-none"
               />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Sticky Fixed Bottom Action Bar (Always visible at bottom) */}
-      <div className="shrink-0 w-full bg-white border-t border-zinc-100 p-4 sm:p-5 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] z-20">
-        <div className="max-w-4xl mx-auto flex items-center gap-3 sm:gap-4">
+      {/* Sticky Fixed Bottom Action Bar: Mobile 440px width matching Figma */}
+      <div className="shrink-0 w-full bg-white/95 backdrop-blur-md border-t border-zinc-100 py-3 sm:py-4 px-4 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] z-20">
+        <div className="w-full max-w-[440px] mx-auto flex items-center gap-3">
           {/* Quantity Stepper Pill */}
-          <div dir="ltr" className="bg-zinc-100 rounded-full p-1.5 flex items-center gap-2 sm:gap-3 shrink-0">
+          <div dir="ltr" className="bg-[#EEEEEE] rounded-full p-1.5 flex items-center gap-2.5 shrink-0">
             <button
               type="button"
               onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
               disabled={quantity <= 1}
               aria-label="Decrease quantity"
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#509B82] disabled:opacity-50 text-white flex items-center justify-center cursor-pointer transition-all active:scale-95 shrink-0"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#509B82] disabled:opacity-40 text-white flex items-center justify-center cursor-pointer transition-all active:scale-95 shrink-0"
             >
-              <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+              <Minus className="w-3.5 h-3.5 stroke-[2.5]" />
             </button>
-            <span className="font-medium text-sm sm:text-base text-zinc-800 w-5 text-center shrink-0">
+            <span className="font-semibold text-sm sm:text-base text-[#2D2F33] w-5 text-center shrink-0">
               {quantity}
             </span>
             <button
@@ -293,7 +291,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
               aria-label="Increase quantity"
               className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#026F4F] text-white flex items-center justify-center cursor-pointer transition-all active:scale-95 shrink-0"
             >
-              <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
             </button>
           </div>
 
@@ -301,7 +299,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
           <button
             type="button"
             onClick={handleAdd}
-            className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3.5 sm:py-4 px-4 sm:px-6 rounded-full font-semibold text-sm sm:text-base flex items-center justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer min-w-0"
+            className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3.5 px-5 rounded-full font-semibold text-sm sm:text-base flex items-center justify-between shadow-xs active:scale-[0.98] transition-all cursor-pointer min-w-0"
           >
             <span className="whitespace-nowrap shrink-0">
               {isEditing
@@ -312,7 +310,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                 ? 'إضافة إلى السلة'
                 : 'Add to Cart'}
             </span>
-            <span className="font-semibold text-sm sm:text-lg whitespace-nowrap shrink-0 ml-1.5 rtl:ml-0 rtl:mr-1.5">
+            <span className="font-semibold text-sm sm:text-base whitespace-nowrap shrink-0 ml-1.5 rtl:ml-0 rtl:mr-1.5">
               {formatPrice(totalPrice, activeLanguage)}
             </span>
           </button>
