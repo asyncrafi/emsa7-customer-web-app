@@ -17,15 +17,18 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
   const { language, setLanguage } = useLanguage();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
+  // Normalize tableName to match Figma format (e.g. Table A08 -> Table A8 if desired, or keep as is)
+  const displayTableName = tableName.replace(/Table\s+([A-Za-z])0+(\d+)/i, 'Table $1$2');
+
   return (
-    <div className="w-full min-h-[100dvh] bg-[#F8F9FA] flex flex-col justify-between items-center px-5 sm:px-6 py-4 sm:py-6 select-none antialiased overflow-x-hidden">
-      {/* Top Header Row - Right-aligned Language Selector */}
-      <header className="w-full max-w-sm sm:max-w-md flex justify-end items-center pt-1">
+    <div className="w-full min-h-[100dvh] bg-[#F8F9FA] flex flex-col justify-between items-center px-6 py-5 select-none antialiased overflow-x-hidden font-['Outfit',sans-serif]">
+      {/* Top Header Row - Right-aligned Language Selector (aligned with ticket & button) */}
+      <header className="w-full max-w-[340px] sm:max-w-[360px] flex justify-end items-center pt-1">
         <div className="relative">
           <button
             type="button"
             onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200/90 bg-white text-[#026F4F] text-[11px] sm:text-xs font-semibold tracking-wider shadow-xs hover:border-zinc-300 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200/90 bg-white text-[#026F4F] text-[11px] sm:text-xs font-semibold tracking-wider shadow-2xs hover:border-zinc-300 transition-colors cursor-pointer"
           >
             <Languages className="h-3.5 w-3.5 text-[#026F4F]" />
             <span>{language === 'ARABIC' ? 'العربية' : 'ENGLISH'}</span>
@@ -88,13 +91,13 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
       </header>
 
       {/* Main Center Content Section */}
-      <main className="w-full max-w-sm sm:max-w-md flex flex-col items-center justify-center my-auto text-center px-2 py-4">
+      <main className="w-full max-w-[340px] sm:max-w-[360px] flex flex-col items-center justify-center my-auto text-center py-4">
         {/* Main Restaurant Logo */}
         <div className="flex justify-center items-center mb-7 sm:mb-8">
           <img
             src="/restaurant-logo.png"
             alt="EMSA7 Logo"
-            className="h-11 sm:h-13 w-auto object-contain transition-transform duration-300"
+            className="h-11 sm:h-12 w-auto object-contain transition-transform duration-300"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/emsa7-logo.svg';
             }}
@@ -102,7 +105,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
         </div>
 
         {/* Green Table Ticket Card Component - Precision Alignment matching Figma */}
-        <div className="relative w-full max-w-[325px] sm:max-w-[360px] aspect-[1632/849] flex items-center drop-shadow-md transition-transform duration-300 hover:scale-[1.01] mb-7 sm:mb-8">
+        <div className="relative w-full aspect-[1632/849] flex items-center drop-shadow-md transition-transform duration-300 hover:scale-[1.01] mb-7 sm:mb-8">
           {/* Ticket Background Image from public/images/auth/table-bg.png / table-bg-arabic.png */}
           <img
             src={
@@ -122,8 +125,8 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
                 : 'pl-[22%] pr-[34%] justify-start text-left'
             }`}
           >
-            <span className="text-[19px] sm:text-2xl font-bold text-white tracking-tight drop-shadow-sm">
-              {tableName}
+            <span className="text-[19px] sm:text-2xl font-bold text-white tracking-tight drop-shadow-xs">
+              {displayTableName}
             </span>
           </div>
         </div>
@@ -133,14 +136,14 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
           <h1 className="text-[26px] sm:text-[28px] font-bold text-zinc-900 tracking-tight leading-tight">
             {language === 'ARABIC' ? 'تم تأكيد الطاولة!' : 'Table Confirmed!'}
           </h1>
-          <p className="text-sm sm:text-[15px] font-normal text-zinc-400">
+          <p className="text-sm sm:text-[15px] font-medium text-[#8E8E93]">
             {language === 'ARABIC' ? 'أهلاً بكم في إمساح 7' : 'Welcome to EMSA7'}
           </p>
         </div>
       </main>
 
       {/* Bottom Footer & Primary Action Button */}
-      <footer className="w-full max-w-sm sm:max-w-md flex flex-col items-center pt-4 pb-2 sm:pb-4">
+      <footer className="w-full max-w-[340px] sm:max-w-[360px] flex flex-col items-center pt-4 pb-2 sm:pb-3">
         {/* Powered By EMSA7 */}
         <div className="mb-4 sm:mb-5">
           <a
@@ -149,11 +152,11 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1.5 leading-none cursor-pointer hover:opacity-80 transition-opacity no-underline"
           >
-            <span className="text-[11px] font-semibold tracking-wider uppercase text-zinc-400 inline-flex items-center">
+            <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.1em] uppercase text-[#989898] inline-flex items-center">
               POWERED BY
             </span>
             <div className="inline-flex items-center justify-center my-auto shrink-0">
-              <SvgEmsa7Icon className="h-3.5 sm:h-4 w-auto" />
+              <SvgEmsa7Icon className="h-3.5 w-auto" />
             </div>
           </a>
         </div>
@@ -162,7 +165,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
         <button
           type="button"
           onClick={onContinue}
-          className="w-full h-13 sm:h-14 rounded-full text-white font-semibold text-base sm:text-[17px] tracking-wide shadow-md transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center"
+          className="w-full h-[52px] sm:h-14 rounded-full text-white font-semibold text-base sm:text-[17px] tracking-wide shadow-md shadow-[#026F4F]/15 transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center"
           style={{ backgroundColor: themeConfig.primaryColor || '#026F4F' }}
         >
           {language === 'ARABIC' ? 'متابعة' : 'Continue'}
