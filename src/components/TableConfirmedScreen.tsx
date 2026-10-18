@@ -21,7 +21,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
   const displayTableName = tableName.replace(/Table\s+([A-Za-z])0+(\d+)/i, 'Table $1$2');
 
   return (
-    <div className="w-full min-h-[100dvh] bg-[#F8F9FA] flex flex-col justify-between items-center px-4 sm:px-6 py-5 select-none antialiased overflow-x-hidden font-sans">
+    <div className="w-full min-h-[100dvh] bg-[#f4f4f5] flex flex-col justify-between items-center px-4 sm:px-6 py-5 select-none antialiased overflow-x-hidden font-sans">
       {/* Top Header Row - Right-aligned Language Selector (aligned with ticket & button) */}
       <header className="w-full max-w-[360px] sm:max-w-[408px] flex justify-end items-center pt-1">
         <div className="relative">
@@ -92,16 +92,9 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
 
       {/* Main Center Content Section */}
       <main className="w-full max-w-[360px] sm:max-w-[408px] flex flex-col items-center justify-center my-auto text-center py-4">
-        {/* Main Restaurant Logo (width ~180px, height ~53px matching Figma mockup) */}
+        {/* Main EMSA7 Logo matching Figma */}
         <div className="flex justify-center items-center mb-7 sm:mb-8">
-          <img
-            src="/restaurant-logo.png"
-            alt="EMSA7 Logo"
-            className="h-[52px] sm:h-[54px] w-auto object-contain transition-transform duration-300"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = '/emsa7-logo.svg';
-            }}
-          />
+          <SvgEmsa7Icon className="h-12 sm:h-14 w-auto" />
         </div>
 
         {/* Green Table Ticket Card Component - Precision Alignment matching Figma */}

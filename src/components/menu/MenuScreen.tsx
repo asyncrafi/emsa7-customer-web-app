@@ -3,6 +3,7 @@ import SvgFilterIcon from '@/components/ui/svg-icons/FilterSvg';
 import SvgBellsIcon from '@/components/ui/svg-icons/BellsSvg';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgEarthIcon from '@/components/ui/svg-icons/EarthSvg';
+import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 import { useLanguage } from '@/providers/LanguageContext';
 import {
   Check,
@@ -339,19 +340,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         <div className="max-w-md mx-auto w-full px-5 space-y-3.5">
           {/* Top Header Row: Logo on Left, Language & Order Pills on Right */}
           <header className="flex items-center justify-between gap-3 pt-1">
-            {/* Brand Logo */}
+            {/* Brand Logo matching Figma Menu.png */}
             <div
               className="flex items-center cursor-pointer hover:opacity-90 transition-opacity"
               onClick={onBackToTableConfirmed}
             >
-              <img
-                src="/restaurant-logo.png"
-                alt="EMSA7"
-                className="h-6 sm:h-6.5 w-auto object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/emsa7-logo.svg';
-                }}
-              />
+              <SvgEmsa7Icon className="h-6 w-auto" />
             </div>
 
             {/* Right Header Buttons: Language Pill & My Order Pill */}
@@ -444,7 +438,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
               {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
             </p>
             <h1 className="text-5xl sm:text-6xl font-medium tracking-tight text-[#026F4F] mt-1 mb-2">
-              {tableName}
+              {tableName.replace(/^Table\s*/i, '').replace(/^([A-Za-z])(\d)$/, '$10$2')}
             </h1>
           </section>
 
