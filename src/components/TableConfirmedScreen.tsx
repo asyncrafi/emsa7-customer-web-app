@@ -21,9 +21,9 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
   const displayTableName = tableName.replace(/Table\s+([A-Za-z])0+(\d+)/i, 'Table $1$2');
 
   return (
-    <div className="w-full min-h-[100dvh] bg-[#F8F9FA] flex flex-col justify-between items-center px-6 py-5 select-none antialiased overflow-x-hidden font-['Inter',sans-serif]">
+    <div className="w-full min-h-[100dvh] bg-[#F8F9FA] flex flex-col justify-between items-center px-4 sm:px-6 py-5 select-none antialiased overflow-x-hidden font-['Inter',sans-serif]">
       {/* Top Header Row - Right-aligned Language Selector (aligned with ticket & button) */}
-      <header className="w-full max-w-[340px] sm:max-w-[360px] flex justify-end items-center pt-1">
+      <header className="w-full max-w-[360px] sm:max-w-[408px] flex justify-end items-center pt-1">
         <div className="relative">
           <button
             type="button"
@@ -91,7 +91,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
       </header>
 
       {/* Main Center Content Section */}
-      <main className="w-full max-w-[340px] sm:max-w-[360px] flex flex-col items-center justify-center my-auto text-center py-4">
+      <main className="w-full max-w-[360px] sm:max-w-[408px] flex flex-col items-center justify-center my-auto text-center py-4">
         {/* Main Restaurant Logo (width ~180px, height ~53px matching Figma mockup) */}
         <div className="flex justify-center items-center mb-7 sm:mb-8">
           <img
@@ -105,7 +105,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
         </div>
 
         {/* Green Table Ticket Card Component - Precision Alignment matching Figma */}
-        <div className="relative w-full aspect-[1632/849] flex items-center drop-shadow-md transition-transform duration-300 hover:scale-[1.01] mb-7 sm:mb-8">
+        <div className="relative w-full aspect-[408/212] flex items-center drop-shadow-md transition-transform duration-300 hover:scale-[1.01] mb-7 sm:mb-8">
           {/* Ticket Background Image from public/images/auth/table-bg.png / table-bg-arabic.png */}
           <img
             src={
@@ -132,7 +132,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
         </div>
 
         {/* Title & Subtitle matching Figma Properties (Inter, 28px/600 #2D2F33 & 16px/500 #989898) */}
-        <div className="text-center">
+        <div className="text-center w-full max-w-[280px]">
           <h1 className="text-[28px] font-semibold text-[#2D2F33] tracking-normal leading-[140%]">
             {language === 'ARABIC' ? 'تم تأكيد الطاولة!' : 'Table Confirmed!'}
           </h1>
@@ -143,7 +143,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
       </main>
 
       {/* Bottom Footer & Primary Action Button */}
-      <footer className="w-full max-w-[340px] sm:max-w-[360px] flex flex-col items-center pt-4 pb-2 sm:pb-3">
+      <footer className="w-full max-w-[360px] sm:max-w-[408px] flex flex-col items-center pt-4 pb-2 sm:pb-3">
         {/* Powered By EMSA7 (Both text and logo matching #989898 in Figma) */}
         <div className="mb-4 sm:mb-5">
           <a
