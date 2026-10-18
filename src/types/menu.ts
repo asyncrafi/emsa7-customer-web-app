@@ -60,7 +60,7 @@ export const getCartSubtotal = (cart: CartItem[]): number => {
   return cart.reduce((sum, ci) => sum + getCartItemTotalPrice(ci), 0);
 };
 
-export type CategoryId = "popular" | "ramen" | "sides" | "drinks" | "desserts";
+export type CategoryId = "all" | "popular" | "ramen" | "sides" | "drinks" | "desserts";
 
 export interface Category {
   id: CategoryId;
@@ -68,14 +68,14 @@ export interface Category {
   nameAr: string;
   icon?: string;
   emoji?: string;
+  image?: string;
 }
 
 export const CATEGORIES: Category[] = [
-  { id: "popular", name: "Popular", nameAr: "الأكثر شعبية", emoji: "🔥" },
-  { id: "ramen", name: "Ramen", nameAr: "رامن", emoji: "🍜" },
-  { id: "sides", name: "Sides", nameAr: "المقبلات", emoji: "🥟" },
-  { id: "drinks", name: "Drinks", nameAr: "المشروبات", emoji: "🍹" },
-  { id: "desserts", name: "Desserts", nameAr: "الحلويات", emoji: "🍰" },
+  { id: "all", name: "All", nameAr: "الكل", emoji: "🍱", image: "/images/food/all.png" },
+  { id: "ramen", name: "Ramen", nameAr: "رامن", emoji: "🍜", image: "/images/food/ramen.png" },
+  { id: "sides", name: "Sides", nameAr: "المقبلات", emoji: "🥟", image: "/images/food/gyoza.png" },
+  { id: "drinks", name: "Drinks", nameAr: "المشروبات", emoji: "🍹", image: "/images/food/iced-tea.png" },
 ];
 
 export const MOCK_MENU_ITEMS: MenuItem[] = [
@@ -84,9 +84,9 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     name: "Shoyu Ramen",
     nameAr: "شويو رامن",
     description:
-      "Rich creamy beef bone broth simmered 18 hours, thin noodles, chashu beef belly, soft-boiled egg, black garlic oil, nori",
+      "Lightly battered, served with zesty lemon garlic aioli.",
     descriptionAr:
-      "مرق عظام البقر الكثيف المطبوخ 18 ساعة مع النودلز الرفيعة والشرائح والبيض المسلوق.",
+      "مقلي خفيف، يقدم مع صلصة الثوم والليمون المنعشة.",
     price: 15.99,
     category: "ramen",
     imageUrl: "/images/food/ramen.png",
@@ -138,8 +138,8 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     id: "drink-1",
     name: "Iced Green Tea",
     nameAr: "شاي أخضر مثلج",
-    description: "Lightly battered, served with fresh mint and lime slice.",
-    descriptionAr: "منعش مع أوراق النعناع وشرائح الليمون الأخضر.",
+    description: "Lightly battered, served with fresh mint and zesty lemon.",
+    descriptionAr: "مقلي خفيف، يقدم مع أوراق النعناع وشرائح الليمون المنعشة.",
     price: 15.99,
     category: "drinks",
     imageUrl: "/images/food/iced-tea.png",
