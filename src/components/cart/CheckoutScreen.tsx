@@ -167,7 +167,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </button>
 
           <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-zinc-900 tracking-tight">
-            {isArabic ? 'الدفع' : 'Checkout'}
+            {isArabic ? 'إتمام الطلب' : 'Checkout'}
           </h1>
         </header>
 
