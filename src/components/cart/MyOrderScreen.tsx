@@ -152,6 +152,26 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
     return DEFAULT_HISTORY_ORDERS;
   });
 
+  // Default Mock Ongoing Order matching Figma #A102 with Preparing status
+  const DEFAULT_ONGOING_ORDER: StoredOrder = {
+    id: '#A102',
+    date: 'Today, 7:42 PM',
+    total: 35.48,
+    subtotal: 31.98,
+    serviceCharge: 3.20,
+    vat: 1.60,
+    tipAmount: 0,
+    status: 'Preparing',
+    items: [
+      { name: 'Shoyu Ramen', qty: 2, image: '/images/food/ramen.png', price: 15.99 },
+      { name: 'Iced Green Tea', qty: 1, image: '/images/food/iced-tea.png', price: 15.99 },
+    ],
+    cartItems: [
+      { item: MOCK_MENU_ITEMS[0], quantity: 2 },
+      { item: MOCK_MENU_ITEMS[1] || MOCK_MENU_ITEMS[0], quantity: 1 },
+    ],
+  };
+
   // Load ongoing order from localStorage
   const [ongoingOrder, setOngoingOrder] = useState<StoredOrder | null>(() => {
     try {
@@ -162,7 +182,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
     } catch (e) {
       console.error('Error loading ongoing order from localStorage:', e);
     }
-    return null;
+    return DEFAULT_ONGOING_ORDER;
   });
 
   if (!isOpen) return null;

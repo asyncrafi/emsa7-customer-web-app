@@ -8,6 +8,7 @@ import {
   Check,
   Search,
   X,
+  QrCode,
 } from 'lucide-react';
 import {
   type MenuItem,
@@ -49,11 +50,15 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   const {
     isFilterOpen,
     isCartOpen,
+    isOngoingOpen,
+    isCheckoutOpen,
     isFoodDetailOpen,
     isWaiterModalOpen,
     activeItemId,
     openFilterModal,
     openCartModal,
+    openOngoingModal: _openOngoingModal,
+    openCheckoutModal: _openCheckoutModal,
     openFoodDetailModal,
     openWaiterModal,
     closeModal,
@@ -436,12 +441,29 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
           {/* Table Seating Greeting & Large Number */}
           <section className="pt-1">
-            <p className="text-xs sm:text-sm text-[#6F7883] font-normal tracking-normal">
-              {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
-            </p>
-            <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-[#026F4F] mt-1 mb-2">
-              {tableName}
-            </h1>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs sm:text-sm text-[#6F7883] font-normal tracking-normal">
+                  {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
+                </p>
+                <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-[#026F4F] mt-1 mb-2">
+                  {tableName}
+                </h1>
+              </div>
+
+              {/* Table / QR Code action pill */}
+              {onBackToTableConfirmed && (
+                <button
+                  type="button"
+                  onClick={onBackToTableConfirmed}
+                  title="Table info / Scan QR"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100/80 text-[#026F4F] border border-[#026F4F]/20 text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+                >
+                  <QrCode className="w-3.5 h-3.5 text-[#026F4F]" />
+                  <span>{language === 'ARABIC' ? 'مسح / طاولة' : 'Scan / Table'}</span>
+                </button>
+              )}
+            </div>
           </section>
 
           {/* Integrated Search & Filter Controls Pill Bar matching Figma */}
@@ -692,8 +714,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           setOpenCheckoutDirectly(false);
           closeModal();
         }}
-        initialShowCheckout={openCheckoutDirectly}
-        initialTab="cart"
+        initialShowCheckout={openCheckoutDirectly || isCheckoutOpen}
+        initialTab={isOngoingOpen ? 'ongoing' : 'cart'}
         cart={cart}
         onIncrement={handleCartItemIncrement}
         onDecrement={handleDecrement}
