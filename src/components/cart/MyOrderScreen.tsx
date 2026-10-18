@@ -180,20 +180,20 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         isArabic ? 'font-sans rtl' : 'ltr'
       }`}
     >
-      {/* Top Main Page Container with Expanded Tablet & Desktop responsive max-width */}
-      <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-5 sm:pt-7 md:pt-10 pb-28 md:pb-36 space-y-6 md:space-y-8 flex-1">
+      {/* Main Page Container: Strictly responsive mobile 440px width matching Figma */}
+      <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-28 space-y-5 flex-1">
         {/* Header Row: Back Arrow + Centered Title */}
-        <header className="relative flex items-center justify-center py-2 md:py-4">
+        <header className="relative flex items-center justify-center py-2">
           <button
             type="button"
             onClick={onClose}
             aria-label="Back"
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white hover:bg-zinc-100 text-zinc-800 shadow-xs border border-zinc-200/60 flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-0"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-0"
           >
-            {isArabic ? <ArrowRight className="w-5 h-5 md:w-6 md:h-6" /> : <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />}
+            {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
 
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-zinc-800 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
             {isArabic ? 'طلباتي' : 'My Order'}
           </h1>
         </header>
@@ -672,7 +672,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             ))}
 
             {/* Floating Call a Waiter Action Button with Tooltip (Figma-Exact) */}
-            <div className="fixed bottom-6 right-4 sm:right-6 md:right-8 z-40 flex flex-col items-end gap-1.5 animate-in fade-in duration-300">
+            <div className="fixed bottom-6 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[150px] rtl:sm:translate-x-[-150px] z-40 flex flex-col items-end gap-1.5 animate-in fade-in duration-300">
               <div className="bg-[#1e1e1e] text-white text-[11px] font-semibold px-3 py-1 rounded-full shadow-md relative after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#1e1e1e]">
                 {isArabic ? 'استدعاء النادل' : 'Call a Waiter'}
               </div>
@@ -710,15 +710,15 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
       {/* Sticky Bottom Action Bar when Cart Has Items */}
       {activeTab === 'cart' && cart.length > 0 && (
-        <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 sm:py-4 px-4 sm:px-6">
-          <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto">
+        <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 sm:py-4 px-4">
+          <div className="w-full max-w-[440px] mx-auto">
             <button
               type="button"
               onClick={() => setShowCheckoutModal(true)}
-              className="w-full py-4 sm:py-4.5 px-6 sm:px-8 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-extrabold text-sm sm:text-base md:text-lg tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
+              className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-extrabold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
             >
               <span>{isArabic ? 'متابعة الشراء' : 'Continue to Checkout'}</span>
-              <span className="font-extrabold text-base sm:text-lg md:text-xl">
+              <span className="font-extrabold text-base sm:text-lg">
                 {formatPrice(grandTotal, activeLanguage)}
               </span>
             </button>

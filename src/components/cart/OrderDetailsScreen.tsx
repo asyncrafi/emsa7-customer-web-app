@@ -95,19 +95,19 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
     >
       <div className="w-full flex-1 flex flex-col justify-between">
         <div>
-          {/* Top Chef Illustration Box: Clean Responsive Container matching card width */}
-          <div className="relative w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto">
+          {/* Top Chef Illustration Box: Strictly responsive mobile 440px container matching Figma */}
+          <div className="relative w-full max-w-[440px] mx-auto">
             {/* Rounded Bottom Illustration Frame */}
-            <div className="w-full aspect-square bg-[#fdfbf7] flex items-center justify-center rounded-b-3xl sm:rounded-b-[2.5rem] md:rounded-b-[3rem] overflow-hidden relative shadow-xs">
+            <div className="w-full aspect-square bg-[#fdfbf7] flex items-center justify-center rounded-b-3xl sm:rounded-b-[2.5rem] overflow-hidden relative shadow-xs">
               {/* Floating Circle Back Button */}
-              <div className="absolute top-4 left-4 sm:top-5 sm:left-5 md:top-6 md:left-6 z-20 rtl:left-auto rtl:right-4 rtl:sm:right-5 rtl:md:right-6">
+              <div className="absolute top-4 left-4 z-20 rtl:left-auto rtl:right-4">
                 <button
                   type="button"
                   onClick={onClose}
                   aria-label="Back"
-                  className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-white/90 hover:bg-white text-zinc-800 backdrop-blur-md shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-95 border border-zinc-200/50"
+                  className="w-10 h-10 rounded-full bg-white/90 hover:bg-white text-zinc-800 backdrop-blur-md shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-95 border border-zinc-200/50"
                 >
-                  {isArabic ? <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" /> : <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />}
+                  {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
                 </button>
               </div>
 
@@ -124,22 +124,22 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
 
             {/* Overlapping Serve Badge */}
             {status === 'preparing' && (
-              <div className="absolute -bottom-12 sm:-bottom-14 md:-bottom-16 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
-                <div className="w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full bg-[#026F4F] border-[5px] border-[#6ca591]/80 text-white flex flex-col items-center justify-center shadow-lg animate-in zoom-in duration-300">
-                  <span className="text-xs sm:text-sm md:text-base font-medium text-emerald-50 leading-tight mb-0.5">
+              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+                <div className="w-28 h-28 sm:w-30 sm:h-30 rounded-full bg-[#026F4F] border-[5px] border-[#6ca591]/80 text-white flex flex-col items-center justify-center shadow-lg animate-in zoom-in duration-300">
+                  <span className="text-xs sm:text-sm font-medium text-emerald-50 leading-tight mb-0.5">
                     {currentConfig.badge}
                   </span>
                   <div className="flex items-baseline gap-1.5 mt-0.5 text-white">
-                    <span className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">25</span>
-                    <span className="text-sm sm:text-base md:text-lg font-semibold">min</span>
+                    <span className="text-2xl sm:text-3xl font-extrabold tracking-tight">25</span>
+                    <span className="text-sm font-semibold">min</span>
                   </div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Content Container for Tablet & Mobile: Increased Width for Tablet as requested! */}
-          <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
+          {/* Content Container: Strictly responsive mobile 440px width matching Figma */}
+          <div className="w-full max-w-[440px] mx-auto px-4">
             {/* Status Title & Description */}
             <div
               className={`text-center space-y-1.5 animate-in fade-in duration-300 ${
@@ -251,11 +251,11 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
         </div>
 
         {/* Bottom Fixed Action Button: New Order */}
-        <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-6">
+        <div className="w-full max-w-[440px] mx-auto px-4 pt-6">
           <button
             type="button"
             onClick={onNewOrder}
-            className="w-full py-4 md:py-5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-bold text-sm sm:text-base md:text-lg lg:text-xl tracking-wide shadow-md active:scale-[0.98] transition-all cursor-pointer text-center"
+            className="w-full py-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-bold text-sm sm:text-base tracking-wide shadow-md active:scale-[0.98] transition-all cursor-pointer text-center"
           >
             {isArabic ? 'طلب جديد' : 'New Order'}
           </button>

@@ -54,8 +54,8 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
         isArabic ? 'font-sans rtl' : 'ltr'
       }`}
     >
-      {/* Scrollable Container with max-width optimization for Mobile & Tablet */}
-      <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto flex-1 flex flex-col pb-28 md:pb-36">
+      {/* Scrollable Container: Strictly responsive mobile 440px width matching Figma */}
+      <div className="w-full max-w-[440px] mx-auto flex-1 flex flex-col pb-28">
         
         {/* 1. Full-Width Top Illustration Banner matching Figma */}
         <div className="w-full bg-[#fdfbf7] rounded-b-3xl sm:rounded-b-[2.5rem] overflow-hidden shadow-xs border-b border-zinc-200/50 flex items-center justify-center p-4 sm:p-6 md:p-8">
@@ -214,8 +214,8 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
       </div>
 
       {/* 5. Sticky Bottom Action Bar with 2 Buttons: Back to Menu & Track My Order */}
-      <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 sm:py-4 px-4 sm:px-6">
-        <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto flex items-center gap-3 sm:gap-4">
+      <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 sm:py-4 px-4">
+        <div className="w-full max-w-[440px] mx-auto flex items-center gap-3">
           {/* Back to Menu Button */}
           <button
             type="button"

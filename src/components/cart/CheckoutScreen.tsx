@@ -153,27 +153,27 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         isArabic ? 'font-sans rtl' : 'ltr'
       }`}
     >
-      {/* Top Page Container with Responsive Max-Width for Mobile and Tablet */}
-      <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 pb-6 sm:pb-8 space-y-4 sm:space-y-5">
+      {/* Top Page Container: Strictly responsive mobile 440px width matching Figma */}
+      <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-28 space-y-4">
         {/* Header Row: Back Arrow + Centered Title */}
-        <header className="relative flex items-center justify-center py-2 md:py-4">
+        <header className="relative flex items-center justify-center py-2">
           <button
             type="button"
             onClick={onClose}
             aria-label="Back"
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white hover:bg-zinc-100 text-zinc-800 shadow-xs border border-zinc-200/60 flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-0"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-0"
           >
-            {isArabic ? <ArrowRight className="w-5 h-5 md:w-6 md:h-6" /> : <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />}
+            {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
 
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-zinc-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
             {isArabic ? 'إتمام الطلب' : 'Checkout'}
           </h1>
         </header>
 
         {/* 1. Dining Location Green Banner Box with SvgChairIcon */}
-        <div className="bg-[#026F4F] rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 sm:gap-4 text-white shadow-xs">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-2xs">
+        <div className="bg-[#026F4F] rounded-3xl p-4 sm:p-5 flex items-center gap-3.5 sm:gap-4 text-white shadow-xs">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#D4E7DF] flex items-center justify-center shrink-0 shadow-2xs">
             <SvgChairIcon className="w-6 h-7 sm:w-7 sm:h-8 text-[#026F4F]" />
           </div>
           <div>
@@ -189,11 +189,24 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </div>
         </div>
 
-        {/* 2. Split Check Toggle Card */}
+        {/* 2. Split Check Toggle Card with User Avatars matching Figma */}
         <div className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-100 flex items-center justify-between shadow-2xs">
-          <span className="font-bold text-sm sm:text-base text-zinc-900">
-            {isArabic ? 'تقسيم الفاتورة' : 'Split Check'}
-          </span>
+          <div className="flex items-center gap-2.5">
+            <span className="font-bold text-sm sm:text-base text-zinc-900">
+              {isArabic ? 'تقسيم الفاتورة' : 'Split Check'}
+            </span>
+            {/* User Presence Avatar chips matching Figma */}
+            <div className="flex items-center -space-x-1.5 rtl:space-x-reverse">
+              <div className="w-6 h-6 rounded-full bg-[#5856D6] text-white flex items-center justify-center text-[10px] font-bold border-2 border-white shadow-2xs">
+                M
+              </div>
+              <img
+                src="/images/food/ramen.png"
+                alt="User"
+                className="w-6 h-6 rounded-full object-cover border-2 border-white shadow-2xs"
+              />
+            </div>
+          </div>
 
           <button
             type="button"
@@ -529,15 +542,15 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
       </div>
 
       {/* Sticky Bottom Action Bar: Continue to Payment */}
-      <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 sm:py-4 px-4 sm:px-6">
-        <div className="w-full max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl mx-auto">
+      <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 sm:py-4 px-4">
+        <div className="w-full max-w-[440px] mx-auto">
           <button
             type="button"
             onClick={() => setShowPaymentModal(true)}
-            className="w-full py-4 sm:py-4.5 px-6 sm:px-8 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-extrabold text-sm sm:text-base md:text-lg tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
+            className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-extrabold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
           >
             <span>{isArabic ? 'متابعة للدفع' : 'Continue to Payment'}</span>
-            <span className="font-extrabold text-base sm:text-lg md:text-xl">
+            <span className="font-extrabold text-base sm:text-lg">
               {formatPrice(grandTotal, activeLanguage)}
             </span>
           </button>
