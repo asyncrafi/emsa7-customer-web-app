@@ -72,10 +72,10 @@ export interface Category {
 }
 
 export const CATEGORIES: Category[] = [
-  { id: "all", name: "All", nameAr: "الكل", emoji: "🍱", image: "/images/food/all.png" },
-  { id: "ramen", name: "Ramen", nameAr: "رامن", emoji: "🍜", image: "/images/food/ramen.png" },
-  { id: "sides", name: "Sides", nameAr: "المقبلات", emoji: "🥟", image: "/images/food/gyoza.png" },
-  { id: "drinks", name: "Drinks", nameAr: "المشروبات", emoji: "🍹", image: "/images/food/iced-tea.png" },
+  { id: "all", name: "All", nameAr: "الكل", emoji: "🍱", image: "/images/food/cat_all.png" },
+  { id: "ramen", name: "Ramen", nameAr: "رامن", emoji: "🍜", image: "/images/food/cat_ramen.png" },
+  { id: "sides", name: "Sides", nameAr: "المقبلات", emoji: "🥟", image: "/images/food/cat_sides.png" },
+  { id: "drinks", name: "Drinks", nameAr: "المشروبات", emoji: "🍹", image: "/images/food/cat_drinks.png" },
 ];
 
 export const MOCK_MENU_ITEMS: MenuItem[] = [
