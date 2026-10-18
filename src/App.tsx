@@ -33,7 +33,7 @@ function MainApp() {
 
   return (
     <MenuScreen
-      tableName="A08"
+      tableName="A8"
       onBackToTableConfirmed={() => {
         setStep('table-confirmed');
       }}
