@@ -8,7 +8,6 @@ import {
   Check,
   Search,
   X,
-  QrCode,
 } from 'lucide-react';
 import {
   type MenuItem,
@@ -431,7 +430,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 <span>{language === 'ARABIC' ? 'طلباتي' : 'My Order'}</span>
 
                 {totalCartCount > 0 && (
-                  <span className="w-4.5 h-4.5 rounded-full bg-white text-[#026F4F] font-bold text-[10px] flex items-center justify-center shadow-xs">
+                  <span className="w-4.5 h-4.5 rounded-full bg-white text-[#026F4F] font-semibold text-[10px] flex items-center justify-center shadow-xs">
                     {totalCartCount}
                   </span>
                 )}
@@ -439,31 +438,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             </div>
           </header>
 
-          {/* Table Seating Greeting & Large Number */}
+          {/* Table Seating Greeting & Large Number matching Figma */}
           <section className="pt-1">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs sm:text-sm text-[#6F7883] font-normal tracking-normal">
-                  {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
-                </p>
-                <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-[#026F4F] mt-1 mb-2">
-                  {tableName}
-                </h1>
-              </div>
-
-              {/* Table / QR Code action pill */}
-              {onBackToTableConfirmed && (
-                <button
-                  type="button"
-                  onClick={onBackToTableConfirmed}
-                  title="Table info / Scan QR"
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100/80 text-[#026F4F] border border-[#026F4F]/20 text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
-                >
-                  <QrCode className="w-3.5 h-3.5 text-[#026F4F]" />
-                  <span>{language === 'ARABIC' ? 'مسح / طاولة' : 'Scan / Table'}</span>
-                </button>
-              )}
-            </div>
+            <p className="text-xs sm:text-sm text-[#6F7883] font-normal tracking-normal">
+              {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
+            </p>
+            <h1 className="text-5xl sm:text-6xl font-medium tracking-tight text-[#026F4F] mt-1 mb-2">
+              {tableName}
+            </h1>
           </section>
 
           {/* Integrated Search & Filter Controls Pill Bar matching Figma */}

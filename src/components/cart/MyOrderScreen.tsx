@@ -755,7 +755,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           dir="ltr"
           className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
         >
-          <span className="text-[11px] sm:text-xs md:text-sm font-bold tracking-wider uppercase text-[#989898] inline-flex items-center">
+          <span className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
             POWERED BY
           </span>
           <div className="inline-flex items-center justify-center my-auto shrink-0">

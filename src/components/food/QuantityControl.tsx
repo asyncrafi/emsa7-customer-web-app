@@ -30,9 +30,9 @@ export const QuantityControl: React.FC<QuantityControlProps> = ({
         type="button"
         onClick={onDecrement}
         aria-label="Decrease quantity"
-        className={`${buttonSizeClass} rounded-full bg-primary/70 hover:bg-primary/85 active:scale-90 transition-all text-white flex items-center justify-center font-bold shadow-2xs cursor-pointer shrink-0`}
+        className={`${buttonSizeClass} rounded-full bg-primary/70 hover:bg-primary/85 active:scale-90 transition-all text-white flex items-center justify-center font-medium shadow-2xs cursor-pointer shrink-0`}
       >
-        <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+        <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-2" />
       </button>
 
       {/* Quantity Display */}
@@ -45,9 +45,9 @@ export const QuantityControl: React.FC<QuantityControlProps> = ({
         type="button"
         onClick={onIncrement}
         aria-label="Increase quantity"
-        className={`${buttonSizeClass} rounded-full bg-primary text-white hover:bg-primary/90 active:scale-90 transition-all flex items-center justify-center font-bold shadow-2xs cursor-pointer shrink-0`}
+        className={`${buttonSizeClass} rounded-full bg-primary text-white hover:bg-primary/90 active:scale-90 transition-all flex items-center justify-center font-medium shadow-2xs cursor-pointer shrink-0`}
       >
-        <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
+        <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-2" />
       </button>
     </div>
   );

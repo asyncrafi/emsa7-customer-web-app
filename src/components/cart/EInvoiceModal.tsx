@@ -116,7 +116,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
         <div className="no-print bg-zinc-900 text-white px-5 py-4 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5">
             <FileText className="w-5 h-5 text-emerald-400" />
-            <h2 className="font-bold text-sm sm:text-base tracking-wide">
+            <h2 className="font-semibold text-sm sm:text-base tracking-wide">
               {isArabic ? 'الفاتورة الإلكترونية' : 'E-Invoice'}
             </h2>
           </div>
@@ -135,7 +135,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
           <div className="flex items-start justify-between border-b border-zinc-200 pb-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="font-extrabold text-lg sm:text-xl text-primary tracking-tight">
+                <span className="font-bold text-lg sm:text-xl text-primary tracking-tight">
                   EMSA7
                 </span>
               </div>
@@ -148,11 +148,11 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
           <div className="bg-zinc-50 rounded-2xl p-3.5 sm:p-4 text-xs space-y-2 border border-zinc-100">
             <div className="flex justify-between">
               <span className="text-zinc-500 font-medium">{isArabic ? 'رقم الفاتورة' : 'Invoice No:'}</span>
-              <span className="font-bold text-zinc-900 font-mono">{invoiceNumber}</span>
+              <span className="font-semibold text-zinc-900 font-mono">{invoiceNumber}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-zinc-500 font-medium">{isArabic ? 'رقم الطلب' : 'Order ID:'}</span>
-              <span className="font-bold text-zinc-900">{orderId}</span>
+              <span className="font-semibold text-zinc-900">{orderId}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-zinc-500 font-medium">{isArabic ? 'التاريخ والوقت' : 'Date & Time:'}</span>
@@ -160,18 +160,18 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
             </div>
             <div className="flex justify-between">
               <span className="text-zinc-500 font-medium">{isArabic ? 'حالة الدفع' : 'Payment Status:'}</span>
-              <span className="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+              <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
                 {isArabic ? 'مدفوع' : 'PAID'}
               </span>
             </div>
           </div>
           {/* Itemized Table */}
           <div className="space-y-2">
-            <h3 className="font-bold text-xs uppercase tracking-wider text-zinc-400">
+            <h3 className="font-semibold text-xs uppercase tracking-wider text-zinc-400">
               {isArabic ? 'الأصناف' : 'Items'}
             </h3>
             <div className="border border-zinc-200 rounded-2xl overflow-hidden divide-y divide-zinc-100 text-xs sm:text-sm">
-              <div className="bg-zinc-100 px-3.5 py-2.5 font-bold text-zinc-700 flex justify-between">
+              <div className="bg-zinc-100 px-3.5 py-2.5 font-semibold text-zinc-700 flex justify-between">
                 <span className="flex-1">{isArabic ? 'الصنف' : 'Item'}</span>
                 <span className="w-12 text-center">{isArabic ? 'العدد' : 'Qty'}</span>
                 <span className="w-20 text-right">{isArabic ? 'السعر' : 'Price'}</span>
@@ -181,8 +181,8 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
                   <span className="flex-1 font-semibold truncate pr-2">
                     {isArabic ? it.nameAr || it.name : it.name}
                   </span>
-                  <span className="w-12 text-center font-bold text-zinc-600">x{it.qty}</span>
-                  <span className="w-20 text-right font-bold text-zinc-900">
+                  <span className="w-12 text-center font-medium text-zinc-600">x{it.qty}</span>
+                  <span className="w-20 text-right font-semibold text-zinc-900">
                     {formatPrice(it.price * it.qty, activeLanguage)}
                   </span>
                 </div>
@@ -259,7 +259,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
             </p>
 
             <div dir="ltr" className="inline-flex items-center justify-center gap-2 pt-1 select-none">
-              <span className="text-[10px] font-bold tracking-wider uppercase text-zinc-400">
+              <span className="text-[10px] font-semibold tracking-wider uppercase text-zinc-400">
                 POWERED BY
               </span>
               <SvgEmsa7Icon className="h-4 w-auto" />
@@ -281,7 +281,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
           <button
             type="button"
             onClick={handlePrint}
-            className="flex-1 py-3 px-4 rounded-xl bg-[#026F4F] hover:bg-[#025a40] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-colors cursor-pointer"
+            className="flex-1 py-3 px-4 rounded-xl bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-colors cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>{isArabic ? 'تحميل الفاتورة' : 'Download Invoice'}</span>

@@ -165,7 +165,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-[#2D2F33] tracking-tight">
             {isArabic ? 'إتمام الطلب' : 'Checkout'}
           </h1>
         </header>
@@ -179,7 +179,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             <p className="text-emerald-100 text-xs sm:text-sm font-medium">
               {isArabic ? 'تناول الطعام في' : 'Dining at'}
             </p>
-            <h2 className="text-white text-base sm:text-lg md:text-xl font-bold tracking-tight leading-snug">
+            <h2 className="text-white text-base sm:text-lg md:text-xl font-semibold tracking-tight leading-snug">
               {tableName}
             </h2>
             <p className="text-emerald-100/80 text-[11px] sm:text-xs font-normal">
@@ -196,7 +196,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             </span>
             {/* User Presence Avatar chips matching Figma */}
             <div className="flex items-center -space-x-1.5 rtl:space-x-reverse">
-              <div className="w-6 h-6 rounded-full bg-[#5856D6] text-white flex items-center justify-center text-[10px] font-bold border-2 border-white shadow-2xs">
+              <div className="w-6 h-6 rounded-full bg-[#5856D6] text-white flex items-center justify-center text-[10px] font-semibold border-2 border-white shadow-2xs">
                 M
               </div>
               <img
@@ -225,7 +225,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
         {/* 3. Order Summary Card */}
         <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-4">
-          <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
+          <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
             {isArabic ? 'ملخص الطلب' : 'Order Summary'}
           </h2>
 
@@ -264,7 +264,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
+                          <h3 className="font-semibold text-xs sm:text-sm md:text-base text-[#2D2F33] truncate">
                             {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                           </h3>
                           {ci.selectedOptions && ci.selectedOptions.length > 0 && (
@@ -344,9 +344,9 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             <button
               type="button"
               onClick={onAddMoreItems}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <Plus className="w-4 h-4 stroke-2" />
               <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
             </button>
           </div>
@@ -359,7 +359,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
               <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[#026F4F]">
                 <Percent className="w-3.5 h-3.5 stroke-[2.5]" />
               </div>
-              <span className="font-bold text-sm sm:text-base text-[#026F4F] tracking-wide">
+              <span className="font-semibold text-sm sm:text-base text-[#026F4F] tracking-wide">
                 {promoCode || 'WELCOME20'}
               </span>
             </div>
@@ -407,12 +407,12 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value)}
               placeholder={isArabic ? 'أدخل رمز العرض' : 'ENTER PROMO CODE'}
-              className="flex-1 bg-transparent px-2 py-2 text-xs sm:text-sm text-zinc-800 placeholder:text-zinc-400 placeholder:font-medium font-bold uppercase outline-none"
+              className="flex-1 bg-transparent px-2 py-2 text-xs sm:text-sm text-zinc-800 placeholder:text-zinc-400 placeholder:font-medium font-medium uppercase outline-none"
             />
             <button
               type="button"
               onClick={handleApplyPromo}
-              className="px-5 py-2.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white text-xs sm:text-sm font-bold tracking-wide transition-colors cursor-pointer shrink-0 shadow-xs active:scale-95"
+              className="px-5 py-2.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white text-xs sm:text-sm font-semibold tracking-wide transition-colors cursor-pointer shrink-0 shadow-xs active:scale-95"
             >
               {isArabic ? 'تطبيق' : 'APPLY'}
             </button>
@@ -421,7 +421,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
         {/* 5. Add a Tip Card */}
         <div className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-100 space-y-3 shadow-2xs">
-          <span className="font-bold text-xs sm:text-sm text-zinc-900 block">
+          <span className="font-semibold text-xs sm:text-sm text-[#2D2F33] block">
             {isArabic ? 'إضافة إكرامية' : 'Add a Tip'}
           </span>
 
@@ -438,7 +438,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                 onClick={() => setSelectedTip(tip.id as any)}
                 className={`py-2.5 px-2 rounded-full text-xs sm:text-sm border transition-all cursor-pointer text-center ${
                   selectedTip === tip.id
-                    ? 'bg-[#026F4F] border-[#026F4F] text-white font-bold shadow-xs'
+                    ? 'bg-[#026F4F] border-[#026F4F] text-white font-semibold shadow-xs'
                     : 'bg-white border-zinc-200 text-zinc-700 font-medium hover:bg-zinc-50'
                 }`}
               >
@@ -459,7 +459,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
           {/* Highest tip today note */}
           <div className="flex items-center gap-1 text-[11px] sm:text-xs font-medium text-zinc-400 pt-0.5">
-            <span className="text-rose-500 font-bold">*</span>
+            <span className="text-rose-500 font-semibold">*</span>
             <span>
               {isArabic
                 ? 'أعلى إكرامية اليوم كانت $10.00'
@@ -470,29 +470,29 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
         {/* 6. Payments Details Card (Figma-Exact) */}
         <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3">
-          <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
+          <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
             {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
           </h2>
 
           <div className="space-y-2 md:space-y-2.5 text-xs sm:text-sm md:text-base font-medium">
             <div className="flex justify-between text-zinc-400">
               <span>{isArabic ? `المجموع الفرعي (${activeItemCount} أصناف)` : `Subtotal (${activeItemCount}Items)`}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
+              <span className="text-[#2D2F33] font-medium">{formatPrice(subtotal, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400">
               <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
+              <span className="text-[#2D2F33] font-medium">{formatPrice(serviceCharge, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400">
               <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(vat, activeLanguage)}</span>
+              <span className="text-[#2D2F33] font-medium">{formatPrice(vat, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400">
               <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(tipAmount, activeLanguage)}</span>
+              <span className="text-[#2D2F33] font-medium">{formatPrice(tipAmount, activeLanguage)}</span>
             </div>
 
             {isSplitCheck && (

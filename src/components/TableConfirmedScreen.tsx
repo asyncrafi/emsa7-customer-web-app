@@ -58,7 +58,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
                 }}
                 className={`w-full text-start px-3.5 py-2.5 transition-colors font-medium flex items-center justify-between cursor-pointer ${
                   language === 'ENGLISH'
-                    ? 'bg-[#026F4F]/10 text-[#026F4F] font-bold'
+                    ? 'bg-[#026F4F]/10 text-[#026F4F] font-semibold'
                     : 'text-zinc-700 hover:bg-zinc-50'
                 }`}
               >
@@ -76,7 +76,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
                 }}
                 className={`w-full text-start px-3.5 py-2.5 transition-colors font-medium flex items-center justify-between cursor-pointer ${
                   language === 'ARABIC'
-                    ? 'bg-[#026F4F]/10 text-[#026F4F] font-bold'
+                    ? 'bg-[#026F4F]/10 text-[#026F4F] font-semibold'
                     : 'text-zinc-700 hover:bg-zinc-50'
                 }`}
               >

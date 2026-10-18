@@ -77,7 +77,7 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
                 aria-label={`Decrease ${title} quantity`}
                 className="w-5.5 h-5.5 rounded-full bg-[#509B82] hover:bg-[#025a40] text-white flex items-center justify-center cursor-pointer active:scale-90 transition-transform"
               >
-                <Minus className="w-3 h-3 stroke-[2.5]" />
+                <Minus className="w-3 h-3 stroke-2" />
               </button>
               <span className="font-medium text-xs text-[#2D2F33] min-w-[1rem] text-center">
                 {quantity}
@@ -92,7 +92,7 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
                 aria-label={`Increase ${title} quantity`}
                 className="w-5.5 h-5.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white flex items-center justify-center cursor-pointer active:scale-90 transition-transform"
               >
-                <Plus className="w-3 h-3 stroke-[2.5]" />
+                <Plus className="w-3 h-3 stroke-2" />
               </button>
             </div>
           ) : (
@@ -107,7 +107,7 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
               aria-label={`Add ${title} to cart`}
               className="w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
             >
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+              <Plus className="w-3.5 h-3.5 stroke-2" />
             </button>
           )}
         </div>
