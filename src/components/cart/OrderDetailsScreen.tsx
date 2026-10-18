@@ -104,7 +104,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                   type="button"
                   onClick={onClose}
                   aria-label="Back"
-                  className="w-10 h-10 rounded-full bg-white/90 hover:bg-white text-zinc-800 backdrop-blur-md shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-95 border border-zinc-200/50"
+                  className="w-10 h-10 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 flex items-center justify-center cursor-pointer transition-transform active:scale-95"
                 >
                   {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
                 </button>
@@ -223,9 +223,9 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                   )}
 
                   {(order?.splitFee ?? 0) > 0 && (
-                    <div className="flex justify-between text-rose-500 font-medium">
+                    <div className="flex justify-between text-[#FF6B6B] font-medium">
                       <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                      <span className="font-semibold">{formatPrice(order?.splitFee || 0, activeLanguage)}</span>
+                      <span>{formatPrice(order?.splitFee || 0, activeLanguage)}</span>
                     </div>
                   )}
 
