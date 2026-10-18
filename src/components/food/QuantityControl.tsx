@@ -36,7 +36,7 @@ export const QuantityControl: React.FC<QuantityControlProps> = ({
       </button>
 
       {/* Quantity Display */}
-      <span className="text-xs sm:text-sm font-extrabold text-zinc-900 min-w-[16px] text-center">
+      <span className="text-xs sm:text-sm font-medium text-[#2D2F33] min-w-[16px] text-center">
         {quantity}
       </span>
 

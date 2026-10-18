@@ -179,7 +179,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             <p className="text-emerald-100 text-xs sm:text-sm font-medium">
               {isArabic ? 'تناول الطعام في' : 'Dining at'}
             </p>
-            <h2 className="text-white text-base sm:text-lg md:text-xl font-extrabold tracking-tight leading-snug">
+            <h2 className="text-white text-base sm:text-lg md:text-xl font-bold tracking-tight leading-snug">
               {tableName}
             </h2>
             <p className="text-emerald-100/80 text-[11px] sm:text-xs font-normal">
@@ -191,7 +191,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         {/* 2. Split Check Toggle Card with User Avatars matching Figma */}
         <div className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-100 flex items-center justify-between shadow-2xs">
           <div className="flex items-center gap-2.5">
-            <span className="font-bold text-sm sm:text-base text-zinc-900">
+            <span className="font-semibold text-sm sm:text-base text-[#2D2F33]">
               {isArabic ? 'تقسيم الفاتورة' : 'Split Check'}
             </span>
             {/* User Presence Avatar chips matching Figma */}
@@ -277,14 +277,14 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                               "{ci.specialInstructions}"
                             </p>
                           )}
-                          <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
+                          <span className="font-semibold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
                             {formatPrice(splitItem.singlePrice, activeLanguage)}
                           </span>
                         </div>
                       </div>
 
                       <div className="shrink-0">
-                        <span className="text-xs sm:text-sm font-bold text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
+                        <span className="text-xs sm:text-sm font-medium text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
                           x1
                         </span>
                       </div>
@@ -307,7 +307,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                         </div>
 
                         <div className="min-w-0">
-                          <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
+                          <h3 className="font-semibold text-xs sm:text-sm md:text-base text-[#2D2F33] truncate">
                             {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                           </h3>
                           {ci.selectedOptions && ci.selectedOptions.length > 0 && (
@@ -320,7 +320,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                               "{ci.specialInstructions}"
                             </p>
                           )}
-                          <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
+                          <span className="font-semibold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
                             {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                           </span>
                         </div>
@@ -498,14 +498,14 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             {isSplitCheck && (
               <div className="flex justify-between text-rose-500 font-medium">
                 <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                <span className="font-bold">{formatPrice(splitFee, activeLanguage)}</span>
+                <span className="font-semibold">{formatPrice(splitFee, activeLanguage)}</span>
               </div>
             )}
 
             {promoStatus === 'applied' && (
               <div className="flex justify-between text-[#026F4F] font-medium">
                 <span>{isArabic ? 'خصم العرض (20%)' : 'Promo Discount'}</span>
-                <span className="font-bold">-{formatPrice(discount, activeLanguage)}</span>
+                <span className="font-semibold">-{formatPrice(discount, activeLanguage)}</span>
               </div>
             )}
           </div>
@@ -514,9 +514,9 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           <div className="border-b border-dashed border-zinc-200 my-2.5 md:my-3.5" />
 
           {/* Total Line */}
-          <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
-            <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
-            <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
+          <div className="flex justify-between items-center font-semibold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
+            <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
+            <span className="text-[#026F4F] font-semibold text-base sm:text-lg md:text-xl lg:text-2xl">
               {formatPrice(grandTotal, activeLanguage)}
             </span>
           </div>
@@ -531,7 +531,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             dir="ltr"
             className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity no-underline"
           >
-            <span className="text-[11px] sm:text-xs md:text-sm font-bold tracking-wider uppercase text-[#989898] inline-flex items-center">
+            <span className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
               POWERED BY
             </span>
             <div className="inline-flex items-center justify-center my-auto shrink-0">
@@ -547,10 +547,10 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           <button
             type="button"
             onClick={() => setShowPaymentModal(true)}
-            className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-extrabold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
+            className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
           >
             <span>{isArabic ? 'متابعة للدفع' : 'Continue to Payment'}</span>
-            <span className="font-extrabold text-base sm:text-lg">
+            <span className="font-semibold text-base sm:text-lg">
               {formatPrice(grandTotal, activeLanguage)}
             </span>
           </button>

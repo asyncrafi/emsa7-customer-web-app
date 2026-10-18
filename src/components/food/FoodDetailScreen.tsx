@@ -161,16 +161,16 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
             {/* Title & Base Price Row */}
             <div>
               <div className="flex items-center justify-between gap-4">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 tracking-tight leading-tight">
+                <h1 className="text-2xl sm:text-3xl font-semibold text-[#2D2F33] tracking-tight leading-tight">
                   {title}
                 </h1>
-                <span className="text-xl sm:text-2xl font-extrabold text-[#026F4F] shrink-0">
+                <span className="text-xl sm:text-2xl font-semibold text-[#026F4F] shrink-0">
                   {formatPrice(item.price, activeLanguage)}
                 </span>
               </div>
 
               {/* Description */}
-              <p className="text-xs sm:text-sm text-zinc-400 font-medium leading-relaxed mt-2 max-w-2xl">
+              <p className="text-xs sm:text-sm text-[#8E8E93] font-normal leading-relaxed mt-2 max-w-2xl">
                 {description}
               </p>
             </div>
@@ -185,11 +185,11 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                   <div key={group.id} className="pt-4 border-t border-zinc-100">
                     {/* Option Group Header & Badge */}
                     <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight">
+                      <h2 className="text-base sm:text-lg font-semibold text-[#2D2F33] tracking-tight">
                         {groupTitle}
                       </h2>
                       <span
-                        className={`text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full tracking-wide ${
+                        className={`text-[11px] sm:text-xs font-medium px-3 py-1 rounded-full tracking-wide ${
                           group.required
                             ? 'bg-zinc-900 text-white'
                             : 'bg-zinc-100 text-zinc-600'
@@ -218,12 +218,12 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                             onClick={() => handleSelectOption(group.id, opt.id, isSingle)}
                             className="flex items-center justify-between py-3 px-2 cursor-pointer hover:bg-zinc-50 rounded-2xl transition-colors select-none"
                           >
-                            <span className="text-xs sm:text-sm font-semibold text-zinc-800">
+                            <span className="text-xs sm:text-sm font-medium text-[#2D2F33]">
                               {optName}
                             </span>
 
                             <div className="flex items-center gap-3">
-                              <span className="text-xs sm:text-sm font-semibold text-zinc-400">
+                              <span className="text-xs sm:text-sm font-medium text-zinc-400">
                                 {opt.price === 0
                                   ? isArabic
                                     ? 'مجاني'
@@ -252,7 +252,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
 
             {/* Special Instructions Field */}
             <div className="pt-4 border-t border-zinc-100">
-              <h2 className="text-base sm:text-lg font-bold text-zinc-900 tracking-tight mb-2.5">
+              <h2 className="text-base sm:text-lg font-semibold text-[#2D2F33] tracking-tight mb-2.5">
                 {isArabic ? 'تعليمات خاصة' : 'Special instructions'}
               </h2>
               <textarea
@@ -284,7 +284,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
             >
               <Minus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
             </button>
-            <span className="font-bold text-sm sm:text-base text-zinc-800 w-5 text-center shrink-0">
+            <span className="font-medium text-sm sm:text-base text-zinc-800 w-5 text-center shrink-0">
               {quantity}
             </span>
             <button
@@ -301,7 +301,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
           <button
             type="button"
             onClick={handleAdd}
-            className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3.5 sm:py-4 px-4 sm:px-6 rounded-full font-bold text-sm sm:text-base flex items-center justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer min-w-0"
+            className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3.5 sm:py-4 px-4 sm:px-6 rounded-full font-semibold text-sm sm:text-base flex items-center justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer min-w-0"
           >
             <span className="whitespace-nowrap shrink-0">
               {isEditing
@@ -312,7 +312,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
                 ? 'إضافة إلى السلة'
                 : 'Add to Cart'}
             </span>
-            <span className="font-extrabold text-sm sm:text-lg whitespace-nowrap shrink-0 ml-1.5 rtl:ml-0 rtl:mr-1.5">
+            <span className="font-semibold text-sm sm:text-lg whitespace-nowrap shrink-0 ml-1.5 rtl:ml-0 rtl:mr-1.5">
               {formatPrice(totalPrice, activeLanguage)}
             </span>
           </button>

@@ -158,21 +158,21 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
             {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-[#2D2F33] tracking-tight">
             {isArabic ? 'الدفع' : 'Payment'}
           </h1>
         </header>
 
         {/* 1. Customer Information Form Card */}
         <div ref={customerFormRef} className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-4 md:space-y-5 scroll-mt-6">
-          <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
+          <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
             {isArabic ? 'معلومات العميل' : 'Customer Information'}
           </h2>
 
           <div className="space-y-3.5 sm:space-y-4">
             {/* Full Name */}
             <div>
-              <label className="block text-xs sm:text-sm font-bold text-zinc-800 mb-1.5">
+              <label className="block text-xs sm:text-sm font-medium text-zinc-700 mb-1.5">
                 {isArabic ? 'الاسم الكامل' : 'Full Name'} <span className="text-red-500">*</span>
               </label>
               <div
@@ -203,7 +203,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
             {/* Phone Number */}
             <div>
-              <label className="block text-xs sm:text-sm font-bold text-zinc-800 mb-1.5">
+              <label className="block text-xs sm:text-sm font-medium text-zinc-700 mb-1.5">
                 {isArabic ? 'رقم الهاتف' : 'Phone Number'} <span className="text-red-500">*</span>
               </label>
               <div
@@ -229,7 +229,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   </select>
                   <div className="flex items-center gap-1.5 pointer-events-none">
                     <span className="text-sm">{COUNTRY_CODES.find((c) => c.code === selectedCountryCode)?.flag || '🇪🇬'}</span>
-                    <span className="text-xs sm:text-sm font-bold text-zinc-800">{selectedCountryCode}</span>
+                    <span className="text-xs sm:text-sm font-medium text-zinc-800">{selectedCountryCode}</span>
                     <ChevronDown className="w-3.5 h-3.5 text-zinc-400 shrink-0 ml-0.5" />
                   </div>
                 </div>
@@ -279,7 +279,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
         {/* 2. Order Summary Card */}
         <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-4">
-          <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
+          <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
             {isArabic ? 'ملخص الطلب' : 'Order Summary'}
           </h2>
 
@@ -296,7 +296,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   </div>
 
                   <div className="min-w-0">
-                    <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
+                    <h3 className="font-semibold text-xs sm:text-sm md:text-base text-[#2D2F33] truncate">
                       {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                     </h3>
                     {ci.selectedOptions && ci.selectedOptions.length > 0 && (
@@ -309,14 +309,14 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                         "{ci.specialInstructions}"
                       </p>
                     )}
-                    <span className="text-xs sm:text-sm text-zinc-500 font-semibold block mt-0.5">
+                    <span className="text-xs sm:text-sm text-zinc-500 font-medium block mt-0.5">
                       x{ci.quantity}
                     </span>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F]">
+                  <span className="font-semibold text-xs sm:text-sm md:text-base text-[#026F4F]">
                     {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                   </span>
                 </div>
@@ -325,37 +325,37 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           </div>
 
           <div className="border-t border-dashed border-zinc-200 my-2 pt-3 space-y-2 text-xs sm:text-sm">
-            <div className="flex justify-between text-zinc-400 font-medium">
+            <div className="flex justify-between text-[#8E8E93] font-normal">
               <span>{isArabic ? `المجموع الفرعي (${cart.length} أصناف)` : `Subtotal (${cart.length}Items)`}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
+              <span className="text-zinc-800 font-semibold">{formatPrice(subtotal, activeLanguage)}</span>
             </div>
 
-            <div className="flex justify-between text-zinc-400 font-medium">
+            <div className="flex justify-between text-[#8E8E93] font-normal">
               <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
+              <span className="text-zinc-800 font-semibold">{formatPrice(serviceCharge, activeLanguage)}</span>
             </div>
 
-            <div className="flex justify-between text-zinc-400 font-medium">
+            <div className="flex justify-between text-[#8E8E93] font-normal">
               <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(vat, activeLanguage)}</span>
+              <span className="text-zinc-800 font-semibold">{formatPrice(vat, activeLanguage)}</span>
             </div>
 
-            <div className="flex justify-between text-zinc-400 font-medium">
+            <div className="flex justify-between text-[#8E8E93] font-normal">
               <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-              <span className="text-zinc-800 font-bold">{formatPrice(tipAmount, activeLanguage)}</span>
+              <span className="text-zinc-800 font-semibold">{formatPrice(tipAmount, activeLanguage)}</span>
             </div>
 
             {splitFee > 0 && (
               <div className="flex justify-between text-rose-500 font-medium">
                 <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                <span className="font-bold">{formatPrice(splitFee, activeLanguage)}</span>
+                <span className="font-semibold">{formatPrice(splitFee, activeLanguage)}</span>
               </div>
             )}
 
             {discount > 0 && (
               <div className="flex justify-between text-[#026F4F] font-medium">
                 <span>{isArabic ? 'خصم العرض' : 'Promo Discount'}</span>
-                <span className="font-bold">-{formatPrice(discount, activeLanguage)}</span>
+                <span className="font-semibold">-{formatPrice(discount, activeLanguage)}</span>
               </div>
             )}
           </div>
@@ -364,9 +364,9 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           <div className="border-b border-dashed border-zinc-200 my-2.5 md:my-3.5" />
 
           {/* Total Line */}
-          <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
-            <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
-            <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
+          <div className="flex justify-between items-center font-semibold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
+            <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
+            <span className="text-[#026F4F] font-semibold text-base sm:text-lg md:text-xl lg:text-2xl">
               {formatPrice(grandTotal, activeLanguage)}
             </span>
           </div>
@@ -374,7 +374,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
         {/* 3. Payment Method Options */}
         <div className="space-y-3 sm:space-y-4">
-          <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900 px-1">
+          <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33] px-1">
             {isArabic ? 'طريقة الدفع' : 'Payment Method'}
           </h2>
 
@@ -390,7 +390,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
                   <img src="/images/payment/pay-online.svg" alt="Pay Online" className="w-full h-full object-cover" />
                 </div>
-                <span className="font-bold text-sm sm:text-base text-zinc-900">
+                <span className="font-semibold text-sm sm:text-base text-[#2D2F33]">
                   {isArabic ? 'الدفع عبر الإنترنت' : 'Pay Online'}
                 </span>
               </div>
@@ -415,7 +415,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/credit-debit-pay.svg" alt="Credit / Debit Card" className="h-7 w-auto object-contain" />
-                    <span className="font-bold text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
                       {isArabic ? 'بطاقة ائتمان / خصم' : 'Credit / Debit Card'}
                     </span>
                   </div>
@@ -433,7 +433,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/google-pay.svg" alt="Google Pay" className="h-7 w-auto object-contain" />
-                    <span className="font-bold text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
                       Google Pay
                     </span>
                   </div>
@@ -451,7 +451,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/apple-pay.svg" alt="Apple Pay" className="h-7 w-auto object-contain" />
-                    <span className="font-bold text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
                       Apple Pay
                     </span>
                   </div>
@@ -473,7 +473,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
                   <img src="/images/payment/get-check.svg" alt="Get the Check" className="w-full h-full object-cover" />
                 </div>
-                <span className="font-bold text-sm sm:text-base text-zinc-900">
+                <span className="font-semibold text-sm sm:text-base text-[#2D2F33]">
                   {isArabic ? 'الحصول على الفاتورة' : 'Get the Check'}
                 </span>
               </div>
@@ -498,7 +498,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/cash.svg" alt="Cash" className="w-7 h-7 object-contain" />
-                    <span className="font-bold text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
                       {isArabic ? 'نقداً' : 'Cash'}
                     </span>
                   </div>
@@ -520,7 +520,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/card-pay.svg" alt="Card" className="w-7 h-7 object-contain" />
-                    <span className="font-bold text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
                       {isArabic ? 'بطاقة' : 'Card'}
                     </span>
                   </div>
@@ -542,10 +542,10 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           <button
             type="button"
             onClick={handlePayNow}
-            className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-extrabold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
+            className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
           >
             <span>{isArabic ? 'الدفع الآن' : 'Pay Now'}</span>
-            <span className="font-extrabold text-base sm:text-lg">
+            <span className="font-semibold text-base sm:text-lg">
               {formatPrice(grandTotal, activeLanguage)}
             </span>
           </button>
@@ -560,7 +560,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-emerald-100 border-t-[#026F4F] animate-spin mx-auto my-2" />
 
             <div>
-              <h3 className="font-extrabold text-xl sm:text-2xl text-zinc-900 tracking-tight">
+              <h3 className="font-semibold text-xl sm:text-2xl text-[#2D2F33] tracking-tight">
                 {isArabic ? 'في انتظار التأكيد' : 'Waiting for Confirmation'}
               </h3>
               <p className="text-xs sm:text-sm text-zinc-400 font-medium mt-2 max-w-xs mx-auto leading-relaxed">

@@ -387,7 +387,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                       }}
                       className={`w-full text-start px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
                         language === 'ENGLISH'
-                          ? 'bg-[#026F4F]/10 text-[#026F4F] font-bold'
+                          ? 'bg-[#026F4F]/10 text-[#026F4F] font-semibold'
                           : 'text-zinc-700 hover:bg-zinc-50'
                       }`}
                     >
@@ -405,7 +405,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                       }}
                       className={`w-full text-start px-3.5 py-2 transition-colors font-medium flex items-center justify-between cursor-pointer ${
                         language === 'ARABIC'
-                          ? 'bg-[#026F4F]/10 text-[#026F4F] font-bold'
+                          ? 'bg-[#026F4F]/10 text-[#026F4F] font-semibold'
                           : 'text-zinc-700 hover:bg-zinc-50'
                       }`}
                     >
@@ -446,7 +446,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 <p className="text-xs sm:text-sm text-[#6F7883] font-normal tracking-normal">
                   {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
                 </p>
-                <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-[#026F4F] mt-1 mb-2">
+                <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-[#026F4F] mt-1 mb-2">
                   {tableName}
                 </h1>
               </div>
@@ -533,7 +533,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                       catPillRefs.current[cat.id] = el;
                     }}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all cursor-pointer shrink-0 ${
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium tracking-normal transition-all cursor-pointer shrink-0 ${
                       isActive
                         ? 'bg-[#026F4F] text-white shadow-xs'
                         : 'bg-[#F3F4F6] hover:bg-zinc-200/80 text-zinc-700'
@@ -559,17 +559,17 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           {searchQuery ? (
             <section className="space-y-3 pt-1">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-bold text-zinc-900 tracking-tight">
+                <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight">
                   {language === 'ARABIC' ? 'نتائج البحث' : 'Search Results'}
                 </h2>
-                <span className="text-xs font-semibold text-zinc-400">
+                <span className="text-xs font-medium text-zinc-400">
                   {searchResults.length} {language === 'ARABIC' ? 'صنف' : 'items'}
                 </span>
               </div>
 
               {searchResults.length === 0 ? (
                 <div className="py-12 text-center text-zinc-400 bg-white rounded-2xl border border-zinc-100 p-6">
-                  <p className="font-bold text-sm text-zinc-700">
+                  <p className="font-medium text-sm text-zinc-700">
                     {language === 'ARABIC'
                       ? 'لم يتم العثور على أطباق مطابقة'
                       : 'No food items found'}
@@ -605,7 +605,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
               <section className="space-y-3">
                 <div className="flex items-center gap-1.5">
                   <span className="text-base">🔥</span>
-                  <h2 className="text-base font-bold text-zinc-900 tracking-tight">
+                  <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight">
                     {language === 'ARABIC' ? 'الأكثر شعبية' : 'Popular Now'}
                   </h2>
                 </div>
@@ -630,7 +630,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
               {/* Section 2: All Items (horizontal cards matching Figma) */}
               <section className="space-y-3 pt-2">
-                <h2 className="text-base font-bold text-zinc-900 tracking-tight">
+                <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight">
                   {language === 'ARABIC' ? 'جميع الأصناف' : 'All Items'}
                 </h2>
 
@@ -655,7 +655,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           ) : (
             /* Filtered Category Section */
             <section className="space-y-3 pt-1">
-              <h2 className="text-base font-bold text-zinc-900 tracking-tight capitalize">
+              <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight capitalize">
                 {CATEGORIES.find((c) => c.id === selectedCategory)?.name || selectedCategory}
               </h2>
 

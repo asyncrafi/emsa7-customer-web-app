@@ -125,7 +125,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
                 : 'left-[20%] sm:left-[21%] justify-start'
             }`}
           >
-            <span className="text-[20px] sm:text-2xl font-bold text-white tracking-tight drop-shadow-xs">
+            <span className="text-[20px] sm:text-2xl font-semibold text-white tracking-tight drop-shadow-xs">
               {displayTableName}
             </span>
           </div>
@@ -153,7 +153,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
             dir="ltr"
             className="inline-flex items-center justify-center gap-1.5 leading-none cursor-pointer hover:opacity-80 transition-opacity no-underline"
           >
-            <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.1em] uppercase text-[#989898] inline-flex items-center">
+            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.1em] uppercase text-[#989898] inline-flex items-center">
               POWERED BY
             </span>
             <div className="inline-flex items-center justify-center my-auto shrink-0">

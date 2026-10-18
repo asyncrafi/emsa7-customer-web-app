@@ -212,7 +212,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
 
-          <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-semibold text-[#2D2F33] tracking-tight">
             {isArabic ? 'طلباتي' : 'My Order'}
           </h1>
         </header>
@@ -270,14 +270,14 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 {/* Order Card Header */}
                 <div className="flex items-start justify-between">
                   <div>
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-zinc-800 tracking-tight">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#2D2F33] tracking-tight">
                       {ongoingOrder.id}
                     </h2>
                     <p className="text-xs sm:text-sm text-zinc-400 font-normal mt-0.5 md:mt-1">
                       {ongoingOrder.date}
                     </p>
                     {(ongoingOrder.tipAmount ?? 0) > 0 && (
-                      <p className="text-[10px] sm:text-xs text-[#026F4F] font-bold mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
+                      <p className="text-[10px] sm:text-xs text-[#026F4F] font-medium mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
                         {isArabic ? 'بما في ذلك إكرامية:' : 'Includes Tip:'} {formatPrice(ongoingOrder.tipAmount || 0, activeLanguage)}
                       </p>
                     )}
@@ -303,7 +303,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                         }}
                       />
                       {/* Big White Circular Badge matching Figma */}
-                      <div className="absolute -top-3 -right-3 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-white shadow-md border border-zinc-100 flex items-center justify-center font-bold text-sm sm:text-base md:text-lg text-zinc-900 z-10">
+                      <div className="absolute -top-3 -right-3 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-white shadow-md border border-zinc-100 flex items-center justify-center font-semibold text-sm sm:text-base md:text-lg text-[#2D2F33] z-10">
                         x{it.qty}
                       </div>
                     </div>
@@ -318,7 +318,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                       <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-[3.5px] border-[#026F4F] bg-white text-[#026F4F] flex items-center justify-center shadow-2xs">
                         <SvgPlacedIcon className="w-6 h-6 sm:w-7 sm:h-7 text-[#026F4F]" />
                       </div>
-                      <span className="text-xs sm:text-sm font-bold text-[#026F4F]">
+                      <span className="text-xs sm:text-sm font-semibold text-[#026F4F]">
                         {isArabic ? 'تم الطلب' : 'Placed'}
                       </span>
                     </div>
@@ -331,7 +331,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                       <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full border-[3.5px] border-[#026F4F] bg-white text-[#026F4F] flex items-center justify-center shadow-2xs">
                         <SvgPrepIcon className="w-6 h-6 sm:w-7 sm:h-7 text-[#026F4F]" />
                       </div>
-                      <span className="text-xs sm:text-sm font-bold text-[#026F4F]">
+                      <span className="text-xs sm:text-sm font-semibold text-[#026F4F]">
                         {isArabic ? 'جاري التحضير' : 'Preparing'}
                       </span>
                     </div>
@@ -382,7 +382,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 </div>
 
                 <div>
-                  <h2 className="font-bold text-lg sm:text-xl md:text-2xl text-zinc-900 tracking-tight">
+                  <h2 className="font-semibold text-lg sm:text-xl md:text-2xl text-[#2D2F33] tracking-tight">
                     {isArabic ? 'لا توجد طلبات جارية' : 'No Active Order'}
                   </h2>
                   <p className="text-xs sm:text-sm text-zinc-400 font-normal mt-1 max-w-xs sm:max-w-sm mx-auto">
@@ -396,7 +396,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-8 sm:px-10 py-3 sm:py-3.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-bold text-xs sm:text-sm md:text-base tracking-wide shadow-md active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
+                    className="px-8 sm:px-10 py-3 sm:py-3.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-xs sm:text-sm md:text-base tracking-wide shadow-md active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
                   >
                     {isArabic ? 'تصفح القائمة' : 'Browse Menu'}
                   </button>
@@ -420,7 +420,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   </div>
 
                   <div>
-                    <h2 className="font-bold text-lg sm:text-xl md:text-2xl text-zinc-900 tracking-tight">
+                    <h2 className="font-semibold text-lg sm:text-xl md:text-2xl text-[#2D2F33] tracking-tight">
                       {isArabic ? 'سلتك فارغة' : 'Your Cart is empty'}
                     </h2>
                     <p className="text-xs sm:text-sm text-zinc-400 font-normal mt-1 max-w-xs sm:max-w-sm mx-auto">
@@ -433,7 +433,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-8 sm:px-10 py-3 sm:py-3.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-bold text-xs sm:text-sm md:text-base tracking-wide shadow-md active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
+                      className="px-8 sm:px-10 py-3 sm:py-3.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-xs sm:text-sm md:text-base tracking-wide shadow-md active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
                     >
                       {isArabic ? 'تصفح القائمة' : 'Browse Menu'}
                     </button>
@@ -442,7 +442,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
                 {/* 🔥 Try Our Popular Menu Section */}
                 <div className="space-y-3 sm:space-y-4">
-                  <div className="flex items-center gap-2 text-base sm:text-lg md:text-xl font-bold text-zinc-900">
+                  <div className="flex items-center gap-2 text-base sm:text-lg md:text-xl font-semibold text-[#2D2F33]">
                     <span className="text-lg sm:text-xl">🔥</span>
                     <span>{isArabic ? 'جرب قائمتنا الشهيرة' : 'Try Our Popular Menu'}</span>
                   </div>
@@ -466,7 +466,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
                           {/* Item Title & Desc */}
                           <div>
-                            <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
+                            <h3 className="font-semibold text-xs sm:text-sm md:text-base text-[#2D2F33] truncate">
                               {isArabic ? popItem.nameAr || popItem.name : popItem.name}
                             </h3>
                             <p className="text-[10px] sm:text-xs text-zinc-400 font-normal line-clamp-1 mt-0.5">
@@ -477,7 +477,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
                         {/* Price & Add (+) Button */}
                         <div className="flex items-center justify-between pt-3 mt-1">
-                          <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F]">
+                          <span className="font-semibold text-xs sm:text-sm md:text-base text-[#026F4F]">
                             {formatPrice(popItem.price, activeLanguage)}
                           </span>
                           <button
@@ -500,7 +500,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 {/* Card 1: Order Summary (Items List) */}
                 <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-4 md:space-y-5">
                   <div className="flex items-center justify-between pb-1 border-b border-zinc-50">
-                    <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
+                    <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
                       {isArabic ? 'ملخص الطلب' : 'Order Summary'}
                     </h2>
                     <button
@@ -527,7 +527,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-1.5">
-                              <h3 className="font-bold text-xs sm:text-sm md:text-base text-zinc-900 truncate">
+                              <h3 className="font-semibold text-xs sm:text-sm md:text-base text-[#2D2F33] truncate">
                                 {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                               </h3>
                               <button
@@ -550,7 +550,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                                 "{ci.specialInstructions}"
                               </p>
                             )}
-                            <span className="font-extrabold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
+                            <span className="font-semibold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
                               {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                             </span>
                           </div>
@@ -573,7 +573,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                     <button
                       type="button"
                       onClick={onClose}
-                      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
                     >
                       <Plus className="w-4 h-4 stroke-[2.5]" />
                       <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
@@ -583,19 +583,19 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
                 {/* Card 2: Order Summary (Financial breakdown matching Figma) */}
                 <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3">
-                  <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
+                  <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
                     {isArabic ? 'ملخص الطلب' : 'Order Summary'}
                   </h2>
 
-                  <div className="space-y-2 md:space-y-2.5 text-xs sm:text-sm md:text-base font-medium">
-                    <div className="flex justify-between text-zinc-400">
+                  <div className="space-y-2 md:space-y-2.5 text-xs sm:text-sm md:text-base font-normal">
+                    <div className="flex justify-between text-[#8E8E93]">
                       <span>{isArabic ? `المجموع الفرعي (${totalCartCount} أصناف)` : `Subtotal (${totalCartCount}items)`}</span>
-                      <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
+                      <span className="text-zinc-800 font-semibold">{formatPrice(subtotal, activeLanguage)}</span>
                     </div>
 
-                    <div className="flex justify-between text-zinc-400">
+                    <div className="flex justify-between text-[#8E8E93]">
                       <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-                      <span className="text-zinc-800 font-bold">{formatPrice(Math.round(subtotal * 0.10 * 100) / 100, activeLanguage)}</span>
+                      <span className="text-zinc-800 font-semibold">{formatPrice(Math.round(subtotal * 0.10 * 100) / 100, activeLanguage)}</span>
                     </div>
                   </div>
 
@@ -603,9 +603,9 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   <div className="border-b border-dashed border-zinc-200 my-2.5 md:my-3.5" />
 
                   {/* Total Line */}
-                  <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
-                    <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
-                    <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
+                  <div className="flex justify-between items-center font-semibold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
+                    <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
+                    <span className="text-[#026F4F] font-semibold text-base sm:text-lg md:text-xl lg:text-2xl">
                       {formatPrice(subtotal + Math.round(subtotal * 0.10 * 100) / 100, activeLanguage)}
                     </span>
                   </div>
@@ -623,15 +623,15 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 {/* Header Row: #A102 and Price */}
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-extrabold text-base md:text-lg text-zinc-900">{ord.id}</h3>
-                    <p className="text-xs sm:text-sm text-zinc-400 font-medium mt-0.5">{ord.date}</p>
+                    <h3 className="font-semibold text-base md:text-lg text-[#2D2F33]">{ord.id}</h3>
+                    <p className="text-xs sm:text-sm text-zinc-400 font-normal mt-0.5">{ord.date}</p>
                     {(ord.tipAmount ?? 0) > 0 && (
-                      <p className="text-[10px] sm:text-xs text-[#026F4F] font-bold mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
+                      <p className="text-[10px] sm:text-xs text-[#026F4F] font-medium mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
                         {isArabic ? 'بما في ذلك إكرامية:' : 'Includes Tip:'} {formatPrice(ord.tipAmount || 0, activeLanguage)}
                       </p>
                     )}
                   </div>
-                  <span className="font-extrabold text-base sm:text-lg md:text-xl text-[#026F4F]">
+                  <span className="font-semibold text-base sm:text-lg md:text-xl text-[#026F4F]">
                     {formatPrice(ord.total, activeLanguage)}
                   </span>
                 </div>
@@ -651,7 +651,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                           (e.target as HTMLImageElement).src = '/images/food/ramen.png';
                         }}
                       />
-                      <span className="absolute -top-2 -right-2 text-[10px] sm:text-xs font-bold px-2 py-0.5 bg-white shadow-xs border border-zinc-200 rounded-full text-zinc-800 z-10">
+                      <span className="absolute -top-2 -right-2 text-[10px] sm:text-xs font-semibold px-2 py-0.5 bg-white shadow-xs border border-zinc-200 rounded-full text-zinc-800 z-10">
                         x{it.qty}
                       </span>
                     </div>
@@ -681,7 +681,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                       }
                       setActiveTab('cart');
                     }}
-                    className="w-full py-3.5 px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-bold text-xs sm:text-sm md:text-base tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    className="w-full py-3.5 px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-medium text-xs sm:text-sm md:text-base tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <span>{isArabic ? 'إعادة الطلب' : 'Reorder'}</span>
                     <ChevronRight className="w-4 h-4 text-zinc-500 rtl:rotate-180 shrink-0" />
@@ -714,7 +714,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 dir="ltr"
                 className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity no-underline"
               >
-                <span className="text-[11px] sm:text-xs md:text-sm font-bold tracking-wider uppercase text-[#989898] inline-flex items-center">
+                <span className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
                   POWERED BY
                 </span>
                 <div className="inline-flex items-center justify-center my-auto shrink-0">
@@ -735,10 +735,10 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             <button
               type="button"
               onClick={() => setShowCheckoutModal(true)}
-              className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-extrabold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
+              className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
             >
               <span>{isArabic ? 'متابعة الشراء' : 'Continue to Checkout'}</span>
-              <span className="font-extrabold text-base sm:text-lg">
+              <span className="font-semibold text-base sm:text-lg">
                 {formatPrice(grandTotal, activeLanguage)}
               </span>
             </button>

@@ -26,7 +26,7 @@ export const SplashLoader: React.FC = () => {
 
         {/* Powered By EMSA7 */}
         <div dir="ltr" className="inline-flex items-center justify-center gap-2 pt-1 leading-none">
-          <span className="text-[11px] sm:text-xs font-bold tracking-wider uppercase text-[#989898] inline-flex items-center my-auto">
+          <span className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center my-auto">
             POWERED BY
           </span>
           <div className="inline-flex items-center justify-center my-auto opacity-90 shrink-0">

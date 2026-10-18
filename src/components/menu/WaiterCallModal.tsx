@@ -76,7 +76,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
 
             {/* Title & Description */}
             <div className="pt-1 space-y-1.5">
-              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-[#2D2F33] tracking-tight">
                 {isArabic ? 'طلب النادل' : 'Call a Waiter'}
               </h2>
               <p className="text-xs sm:text-sm text-zinc-400 font-normal px-2 leading-relaxed max-w-xs mx-auto">
@@ -91,7 +91,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-3.5 sm:py-4 px-4 rounded-full border border-zinc-200 bg-[#eef0f2] hover:bg-zinc-200/90 text-zinc-800 font-bold text-sm sm:text-base tracking-wide transition-colors cursor-pointer text-center"
+                className="flex-1 py-3.5 sm:py-4 px-4 rounded-full border border-zinc-200 bg-[#eef0f2] hover:bg-zinc-200/90 text-zinc-800 font-medium text-sm sm:text-base tracking-wide transition-colors cursor-pointer text-center"
               >
                 {isArabic ? 'إلغاء' : 'Cancel'}
               </button>
@@ -99,7 +99,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
               <button
                 type="button"
                 onClick={handleCallNow}
-                className="flex-1 py-3.5 sm:py-4 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-bold text-sm sm:text-base tracking-wide shadow-md transition-all active:scale-[0.98] cursor-pointer text-center"
+                className="flex-1 py-3.5 sm:py-4 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm sm:text-base tracking-wide shadow-md transition-all active:scale-[0.98] cursor-pointer text-center"
               >
                 {isArabic ? 'اطلب الآن' : 'Call Now'}
               </button>
@@ -114,7 +114,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
             <div className="w-14 h-14 rounded-full border-4 border-emerald-100 border-t-[#026F4F] animate-spin mx-auto my-3" />
 
             <div className="space-y-1">
-              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-[#2D2F33] tracking-tight">
                 {isArabic ? 'جاري إبلاغ النادل' : 'Notifying Staff'}
               </h2>
               <p className="text-xs sm:text-sm text-zinc-400 font-normal">
@@ -140,7 +140,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
             </div>
 
             <div className="space-y-1">
-              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-semibold text-[#2D2F33] tracking-tight">
                 {isArabic ? 'تم بنجاح' : 'Success'}
               </h2>
               <p className="text-xs sm:text-sm text-zinc-400 font-normal">

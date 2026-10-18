@@ -145,10 +145,10 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                 status === 'preparing' ? 'pt-16 sm:pt-18 md:pt-20' : 'pt-6 sm:pt-8 md:pt-10'
               }`}
             >
-              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tight">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-[#2D2F33] tracking-tight">
                 {currentConfig.title}
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-zinc-400 font-medium">
+              <p className="text-xs sm:text-sm md:text-base text-[#8E8E93] font-normal">
                 {currentConfig.subtitle}
               </p>
             </div>
@@ -157,7 +157,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
             <div className="pt-6 space-y-4 md:space-y-6">
               {/* Card 1: Order Summary */}
               <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-4 md:space-y-5">
-                <h2 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl text-zinc-900">
+                <h2 className="font-semibold text-base sm:text-lg md:text-xl lg:text-2xl text-[#2D2F33]">
                   {isArabic ? 'ملخص الطلب' : 'Order Summary'}
                 </h2>
 
@@ -173,13 +173,13 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                           />
                         </div>
                         <div className="min-w-0">
-                          <h3 className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-zinc-900 truncate">
+                          <h3 className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg text-[#2D2F33] truncate">
                             {item.name}
                           </h3>
-                          <span className="font-bold text-xs sm:text-sm md:text-base text-zinc-800 block mt-0.5">x{item.qty}</span>
+                          <span className="font-medium text-xs sm:text-sm md:text-base text-zinc-600 block mt-0.5">x{item.qty}</span>
                         </div>
                       </div>
-                      <span className="font-bold text-xs sm:text-sm md:text-base lg:text-lg text-[#026F4F]">
+                      <span className="font-semibold text-xs sm:text-sm md:text-base lg:text-lg text-[#026F4F]">
                         {formatPrice(item.price * item.qty, activeLanguage)}
                       </span>
                     </div>
@@ -192,44 +192,44 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
 
               {/* Card 2: Payments Details (Figma-Exact) */}
               <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3 md:space-y-4">
-                <h2 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl text-zinc-900">
+                <h2 className="font-semibold text-base sm:text-lg md:text-xl lg:text-2xl text-[#2D2F33]">
                   {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
                 </h2>
 
-                <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base lg:text-lg font-medium">
-                  <div className="flex justify-between text-zinc-400">
+                <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base lg:text-lg font-normal">
+                  <div className="flex justify-between text-[#8E8E93]">
                     <span>{isArabic ? `المجموع الفرعي (${order?.items?.length || 0} أصناف)` : `Subtotal (${order?.items?.length || 0} items)`}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(orderSubtotal, activeLanguage)}</span>
+                    <span className="text-zinc-800 font-semibold">{formatPrice(orderSubtotal, activeLanguage)}</span>
                   </div>
 
-                  <div className="flex justify-between text-zinc-400">
+                  <div className="flex justify-between text-[#8E8E93]">
                     <span>{isArabic ? `رسوم الخدمة (10%)` : 'Service Charge (10%)'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(orderServiceCharge, activeLanguage)}</span>
+                    <span className="text-zinc-800 font-semibold">{formatPrice(orderServiceCharge, activeLanguage)}</span>
                   </div>
 
-                  <div className="flex justify-between text-zinc-400">
+                  <div className="flex justify-between text-[#8E8E93]">
                     <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(orderVat, activeLanguage)}</span>
+                    <span className="text-zinc-800 font-semibold">{formatPrice(orderVat, activeLanguage)}</span>
                   </div>
 
                   {(order?.tipAmount ?? 0) > 0 && (
-                    <div className="flex justify-between text-zinc-400">
+                    <div className="flex justify-between text-[#8E8E93]">
                       <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-                      <span className="text-zinc-800 font-bold">{formatPrice(order?.tipAmount || 0, activeLanguage)}</span>
+                      <span className="text-zinc-800 font-semibold">{formatPrice(order?.tipAmount || 0, activeLanguage)}</span>
                     </div>
                   )}
 
                   {(order?.splitFee ?? 0) > 0 && (
                     <div className="flex justify-between text-rose-500 font-medium">
                       <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                      <span className="font-bold">{formatPrice(order?.splitFee || 0, activeLanguage)}</span>
+                      <span className="font-semibold">{formatPrice(order?.splitFee || 0, activeLanguage)}</span>
                     </div>
                   )}
 
                   {(order?.discount ?? 0) > 0 && (
                     <div className="flex justify-between text-emerald-600">
                       <span>{isArabic ? 'الخصم' : 'Discount'}</span>
-                      <span className="font-bold">-{formatPrice(order?.discount || 0, activeLanguage)}</span>
+                      <span className="font-semibold">-{formatPrice(order?.discount || 0, activeLanguage)}</span>
                     </div>
                   )}
                 </div>
@@ -238,9 +238,9 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                 <div className="border-b border-dashed border-zinc-200 my-2.5 md:my-3.5" />
 
                 {/* Total Line */}
-                <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
-                  <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
-                  <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
+                <div className="flex justify-between items-center font-semibold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
+                  <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
+                  <span className="text-[#026F4F] font-semibold text-base sm:text-lg md:text-xl lg:text-2xl">
                     {formatPrice(order?.total || 45.99, activeLanguage)}
                   </span>
                 </div>
@@ -254,7 +254,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
           <button
             type="button"
             onClick={onNewOrder}
-            className="w-full py-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-bold text-sm sm:text-base tracking-wide shadow-md active:scale-[0.98] transition-all cursor-pointer text-center"
+            className="w-full py-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm sm:text-base tracking-wide shadow-md active:scale-[0.98] transition-all cursor-pointer text-center"
           >
             {isArabic ? 'طلب جديد' : 'New Order'}
           </button>

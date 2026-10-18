@@ -47,17 +47,17 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
       {/* Product Content Details */}
       <div className="flex flex-col flex-1 justify-between">
         <div>
-          <h3 className="font-bold text-zinc-900 text-xs sm:text-sm leading-snug line-clamp-1 tracking-tight">
+          <h3 className="font-semibold text-[#2D2F33] text-xs sm:text-sm leading-snug line-clamp-1 tracking-tight">
             {title}
           </h3>
-          <p className="text-[10px] sm:text-[11px] text-zinc-400 font-normal line-clamp-1 mt-0.5 leading-relaxed">
+          <p className="text-[10px] sm:text-[11px] text-[#8E8E93] font-normal line-clamp-1 mt-0.5 leading-relaxed">
             {description}
           </p>
         </div>
 
         {/* Price & Action Button Footer */}
         <div className="pt-2 flex items-center justify-between mt-auto">
-          <span className="font-bold text-xs sm:text-sm tracking-tight text-[#026F4F]">
+          <span className="font-semibold text-xs sm:text-sm tracking-tight text-[#026F4F]">
             {formatPrice(item.price, activeLanguage)}
           </span>
 
@@ -79,7 +79,7 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
               >
                 <Minus className="w-3 h-3 stroke-[2.5]" />
               </button>
-              <span className="font-bold text-xs text-zinc-900 min-w-[1rem] text-center">
+              <span className="font-medium text-xs text-[#2D2F33] min-w-[1rem] text-center">
                 {quantity}
               </span>
               <button

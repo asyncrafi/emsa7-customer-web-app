@@ -129,7 +129,7 @@ export const QrScannerScreen: React.FC<QrScannerScreenProps> = ({
                   setLangDropdownOpen(false);
                 }}
                 className={`w-full text-start px-3.5 py-2 font-medium ${
-                  language === 'ENGLISH' ? 'text-[#026F4F] font-bold bg-white/5' : 'text-zinc-300 hover:bg-white/5'
+                  language === 'ENGLISH' ? 'text-[#026F4F] font-semibold bg-white/5' : 'text-zinc-300 hover:bg-white/5'
                 }`}
               >
                 English
@@ -141,7 +141,7 @@ export const QrScannerScreen: React.FC<QrScannerScreenProps> = ({
                   setLangDropdownOpen(false);
                 }}
                 className={`w-full text-start px-3.5 py-2 font-medium ${
-                  language === 'ARABIC' ? 'text-[#026F4F] font-bold bg-white/5' : 'text-zinc-300 hover:bg-white/5'
+                  language === 'ARABIC' ? 'text-[#026F4F] font-semibold bg-white/5' : 'text-zinc-300 hover:bg-white/5'
                 }`}
               >
                 العربية

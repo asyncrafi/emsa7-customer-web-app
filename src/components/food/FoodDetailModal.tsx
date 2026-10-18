@@ -170,16 +170,16 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
           {/* Title & Base Price Row */}
           <div>
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight leading-tight">
+              <h2 className="text-xl sm:text-2xl font-semibold text-[#2D2F33] tracking-tight leading-tight">
                 {title}
               </h2>
-              <span className="text-lg sm:text-xl font-extrabold text-[#026F4F] shrink-0">
+              <span className="text-lg sm:text-xl font-semibold text-[#026F4F] shrink-0">
                 {formatPrice(item.price, activeLanguage)}
               </span>
             </div>
 
             {/* Description */}
-            <p className="text-xs sm:text-sm text-zinc-400 font-medium leading-relaxed mt-1.5">
+            <p className="text-xs sm:text-sm text-[#8E8E93] font-normal leading-relaxed mt-1.5">
               {description}
             </p>
           </div>
@@ -194,11 +194,11 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
                 <div key={group.id} className="pt-2 border-t border-zinc-100/80">
                   {/* Option Group Header & Badge */}
                   <div className="flex items-center justify-between mb-2.5">
-                    <h3 className="text-sm font-bold text-zinc-900 tracking-tight">
+                    <h3 className="text-sm font-semibold text-[#2D2F33] tracking-tight">
                       {groupTitle}
                     </h3>
                     <span
-                      className={`text-[10px] font-bold px-2.5 py-1 rounded-full tracking-wide ${
+                      className={`text-[10px] font-medium px-2.5 py-1 rounded-full tracking-wide ${
                         group.required
                           ? 'bg-[#27272a] text-white'
                           : 'bg-[#f4f4f5] text-zinc-500'
@@ -227,12 +227,12 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
                           onClick={() => handleSelectOption(group.id, opt.id, isSingle)}
                           className="flex items-center justify-between py-2.5 px-1 cursor-pointer hover:bg-zinc-50 rounded-xl transition-colors select-none"
                         >
-                          <span className="text-xs sm:text-sm font-semibold text-zinc-700">
+                          <span className="text-xs sm:text-sm font-medium text-[#2D2F33]">
                             {optName}
                           </span>
 
                           <div className="flex items-center gap-3">
-                            <span className="text-xs font-semibold text-zinc-400">
+                            <span className="text-xs font-medium text-zinc-400">
                               {opt.price === 0
                                 ? isArabic
                                   ? 'مجاني'
@@ -261,7 +261,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
 
           {/* Special Instructions Field */}
           <div className="pt-2 border-t border-zinc-100/80">
-            <h3 className="text-sm font-bold text-zinc-900 tracking-tight mb-2">
+            <h3 className="text-sm font-semibold text-[#2D2F33] tracking-tight mb-2">
               {isArabic ? 'تعليمات خاصة' : 'Special instructions'}
             </h3>
             <textarea
@@ -290,7 +290,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
             >
               <Minus className="w-4 h-4 stroke-[2.5]" />
             </button>
-            <span className="font-bold text-sm sm:text-base text-zinc-800 w-5 text-center">
+            <span className="font-medium text-sm sm:text-base text-zinc-800 w-5 text-center">
               {quantity}
             </span>
             <button
@@ -307,7 +307,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
           <button
             type="button"
             onClick={handleAdd}
-            className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3 sm:py-3.5 px-5 rounded-full font-bold text-xs sm:text-base flex items-center justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer"
+            className="flex-1 bg-[#026F4F] hover:bg-[#025a40] text-white py-3 sm:py-3.5 px-5 rounded-full font-semibold text-xs sm:text-base flex items-center justify-between shadow-md active:scale-[0.98] transition-all cursor-pointer"
           >
             <span>
               {isEditing
@@ -318,7 +318,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
                 ? 'إضافة إلى السلة'
                 : 'Add to Cart'}
             </span>
-            <span className="font-extrabold">{formatPrice(totalPrice, activeLanguage)}</span>
+            <span className="font-semibold">{formatPrice(totalPrice, activeLanguage)}</span>
           </button>
         </div>
       </div>
