@@ -117,12 +117,12 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
             className="absolute inset-0 w-full h-full object-contain pointer-events-none"
           />
 
-          {/* Ticket Content: Table Name centered in open space between stars and checkmark */}
+          {/* Ticket Content: Table Name positioned next to the stars matching Figma */}
           <div
-            className={`absolute inset-y-0 flex items-center justify-center z-10 ${
+            className={`absolute inset-y-0 flex items-center z-10 ${
               language === 'ARABIC'
-                ? 'left-[36%] right-[18%]'
-                : 'left-[18%] right-[36%]'
+                ? 'right-[20%] sm:right-[21%] justify-end'
+                : 'left-[20%] sm:left-[21%] justify-start'
             }`}
           >
             <span className="text-[20px] sm:text-2xl font-bold text-white tracking-tight drop-shadow-xs">

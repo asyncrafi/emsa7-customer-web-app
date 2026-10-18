@@ -68,42 +68,52 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   const [cart, setCart] = useState<CartItem[]>([]);
   const [openCheckoutDirectly, setOpenCheckoutDirectly] = useState(false);
 
-  // Sort State
+  // Sort & Filter State
   const [selectedSort, setSelectedSort] = useState<SortOption>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // Sorting helper
+  const sortItems = (items: MenuItem[]) => {
+    if (selectedSort === 'price_low_high') {
+      return [...items].sort((a, b) => a.price - b.price);
+    } else if (selectedSort === 'price_high_low') {
+      return [...items].sort((a, b) => b.price - a.price);
+    } else if (selectedSort === 'popularity') {
+      return [...items].sort((a, b) => (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0));
+    }
+    return items;
+  };
+
+  // Tag filter helper
+  const filterByTags = (items: MenuItem[]) => {
+    if (selectedTags.length === 0) return items;
+    return items.filter((item) =>
+      selectedTags.some((tag) => item.tags?.includes(tag))
+    );
+  };
 
   // Popular items (top 2 popular items matching Figma mockup: Shoyu Ramen & Iced Green Tea)
   const popularItems = useMemo(() => {
     let items = MOCK_MENU_ITEMS.filter((item) => item.isPopular);
-    if (selectedSort === 'price_low_high') {
-      items = [...items].sort((a, b) => a.price - b.price);
-    } else if (selectedSort === 'price_high_low') {
-      items = [...items].sort((a, b) => b.price - a.price);
-    }
-    return items.slice(0, 2);
-  }, [selectedSort]);
+    items = filterByTags(items);
+    return sortItems(items).slice(0, 2);
+  }, [selectedTags, selectedSort]);
 
-  // All items sorted
+  // All items sorted & filtered
   const allItems = useMemo(() => {
     let items = [...MOCK_MENU_ITEMS];
-    if (selectedSort === 'price_low_high') {
-      items = [...items].sort((a, b) => a.price - b.price);
-    } else if (selectedSort === 'price_high_low') {
-      items = [...items].sort((a, b) => b.price - a.price);
-    }
-    return items;
-  }, [selectedSort]);
+    items = filterByTags(items);
+    return sortItems(items);
+  }, [selectedTags, selectedSort]);
 
   // Items for selected category
   const categoryFilteredItems = useMemo(() => {
-    if (selectedCategory === 'all') return allItems;
-    let items = MOCK_MENU_ITEMS.filter((item) => item.category === selectedCategory);
-    if (selectedSort === 'price_low_high') {
-      items = [...items].sort((a, b) => a.price - b.price);
-    } else if (selectedSort === 'price_high_low') {
-      items = [...items].sort((a, b) => b.price - a.price);
-    }
-    return items;
-  }, [selectedCategory, allItems, selectedSort]);
+    let items = selectedCategory === 'all'
+      ? MOCK_MENU_ITEMS
+      : MOCK_MENU_ITEMS.filter((item) => item.category === selectedCategory);
+    items = filterByTags(items);
+    return sortItems(items);
+  }, [selectedCategory, selectedTags, selectedSort]);
 
   // Search Results
   const searchResults = useMemo(() => {
@@ -116,15 +126,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         (item.nameAr && item.nameAr.toLowerCase().includes(query))
       );
     });
-
-    if (selectedSort === 'price_low_high') {
-      result = [...result].sort((a, b) => a.price - b.price);
-    } else if (selectedSort === 'price_high_low') {
-      result = [...result].sort((a, b) => b.price - a.price);
-    }
-
-    return result;
-  }, [searchQuery, selectedSort]);
+    result = filterByTags(result);
+    return sortItems(result);
+  }, [searchQuery, selectedTags, selectedSort]);
 
   // Helper: check if two selected option arrays are identical
   const areSelectedOptionsEqual = (
@@ -473,7 +477,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 className="relative w-8.5 h-8.5 rounded-full bg-[#EAECEF] hover:bg-[#dfe2e7] text-[#555C68] flex items-center justify-center transition-colors cursor-pointer shrink-0"
               >
                 <SvgFilterIcon className="w-4 h-4 text-[#555C68]" />
-                {selectedSort && (
+                {(selectedSort || selectedTags.length > 0) && (
                   <span className="absolute top-1 right-1 rtl:right-auto rtl:left-1 w-2 h-2 bg-[#026F4F] rounded-full border border-white" />
                 )}
               </button>
@@ -723,11 +727,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         onClose={closeModal}
         language={language}
         selectedSort={selectedSort}
-        onApply={(sort) => {
+        selectedTags={selectedTags}
+        onApply={(sort, tags) => {
           setSelectedSort(sort);
+          setSelectedTags(tags);
         }}
         onClear={() => {
           setSelectedSort(null);
+          setSelectedTags([]);
         }}
       />
 

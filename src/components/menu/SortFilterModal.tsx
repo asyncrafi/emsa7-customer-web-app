@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useLanguage } from '@/providers/LanguageContext';
 
 export type SortOption = 'popularity' | 'price_low_high' | 'price_high_low' | null;
+
+export interface FilterTag {
+  id: string;
+  labelEn: string;
+  labelAr: string;
+}
+
+export const FILTER_TAGS: FilterTag[] = [
+  { id: 'bestseller', labelEn: 'Bestseller', labelAr: 'الأكثر مبيعاً' },
+  { id: 'seafood', labelEn: 'Seafood', labelAr: 'مأكولات بحرية' },
+  { id: 'sweet', labelEn: 'Sweet', labelAr: 'حلويات' },
+  { id: 'chefs_pick', labelEn: "Chef's pick", labelAr: 'اختيار الشيف' },
+  { id: 'sharing', labelEn: 'Sharing', labelAr: 'للمشاركة' },
+];
 
 export interface SortFilterModalProps {
   isOpen: boolean;
   onClose: () => void;
   language?: 'ENGLISH' | 'ARABIC';
   selectedSort: SortOption;
-  onApply: (sort: SortOption) => void;
+  selectedTags?: string[];
+  onApply: (sort: SortOption, tags: string[]) => void;
   onClear: () => void;
 }
 
@@ -19,6 +33,7 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
   onClose,
   language: propLanguage,
   selectedSort,
+  selectedTags = [],
   onApply,
   onClear,
 }) => {
@@ -29,11 +44,13 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
   useBodyScrollLock(isOpen);
 
   const [tempSort, setTempSort] = useState<SortOption>(selectedSort);
+  const [tempTags, setTempTags] = useState<string[]>(selectedTags);
 
   // Sync internal state whenever modal opens or props change
   useEffect(() => {
     setTempSort(selectedSort);
-  }, [isOpen, selectedSort]);
+    setTempTags(selectedTags || []);
+  }, [isOpen, selectedSort, selectedTags]);
 
   if (!isOpen) return null;
 
@@ -45,76 +62,102 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
     { id: 'price_high_low', labelEn: 'Price: High → Low', labelAr: 'السعر: من الأعلى للأقل' },
   ];
 
+  const toggleTag = (tagId: string) => {
+    setTempTags((prev) =>
+      prev.includes(tagId) ? prev.filter((t) => t !== tagId) : [...prev, tagId]
+    );
+  };
+
   const handleClear = () => {
     setTempSort(null);
+    setTempTags([]);
     onClear();
     onClose();
   };
 
   const handleApply = () => {
-    onApply(tempSort);
+    onApply(tempSort, tempTags);
     onClose();
   };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs animate-in fade-in duration-200 select-none p-0 sm:p-4"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-xs animate-in fade-in duration-200 select-none p-0 sm:p-4"
       onClick={onClose}
     >
       <div
         dir={isArabic ? 'rtl' : 'ltr'}
-        className="w-full max-w-md bg-white rounded-t-[2rem] sm:rounded-3xl shadow-2xl p-5 sm:p-6 animate-in slide-in-from-bottom duration-300 relative overflow-y-auto max-h-[85vh] font-sans"
+        className="w-full max-w-[440px] bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl p-5 sm:p-6 animate-in slide-in-from-bottom duration-300 relative overflow-y-auto max-h-[88vh] font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Center Drag Handle Pill */}
-        <div className="w-12 h-1 bg-zinc-300 rounded-full mx-auto mb-4" />
+        <div className="w-12 h-1 bg-zinc-300/80 rounded-full mx-auto mb-4" />
 
-        {/* Header Title */}
+        {/* Header Title (Clean medium/semibold matching Figma) */}
         <div className="relative mb-3 text-center">
-          <h2 className="text-xl font-extrabold text-zinc-900 tracking-tight">
+          <h2 className="text-[18px] sm:text-[19px] font-semibold text-[#1C1C1E] tracking-normal">
             {isArabic ? 'الفرز والتصفية' : 'Sort & Filter'}
           </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="absolute right-0 top-0 text-zinc-400 hover:text-zinc-600 p-1 rounded-full cursor-pointer transition-colors rtl:right-auto rtl:left-0"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
 
         {/* Subtle Horizontal Divider */}
         <div className="border-b border-zinc-100 my-3" />
 
         {/* Section 1: Sort By */}
-        <div className="space-y-1 my-4">
-          <p className="text-xs font-semibold text-zinc-400 mb-2 tracking-wide">
+        <div className="space-y-1 my-3">
+          <p className="text-[12px] font-medium text-[#8E8E93] mb-2 tracking-normal">
             {isArabic ? 'ترتيب حسب' : 'Sort By'}
           </p>
 
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {SORT_OPTIONS.map((option) => {
               const isSelected = tempSort === option.id;
               return (
                 <div
                   key={option.id as string}
                   onClick={() => setTempSort(isSelected ? null : option.id)}
-                  className="flex items-center justify-between py-2.5 px-1 cursor-pointer hover:bg-zinc-50/70 rounded-xl transition-colors"
+                  className="flex items-center justify-between py-2 px-1 cursor-pointer hover:bg-zinc-50/70 rounded-xl transition-colors"
                 >
-                  <span className="text-sm font-semibold text-zinc-800">
+                  <span className="text-[15px] font-medium text-[#2D2F33]">
                     {isArabic ? option.labelAr : option.labelEn}
                   </span>
 
                   {/* Radio Circle Icon */}
                   <div
-                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors shrink-0 ${
-                      isSelected ? 'border-[#026F4F]' : 'border-zinc-300'
+                    className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors shrink-0 ${
+                      isSelected ? 'border-2 border-[#026F4F]' : 'border-zinc-300'
                     }`}
                   >
                     {isSelected && <div className="w-2.5 h-2.5 rounded-full bg-[#026F4F]" />}
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Section 2: Filter Tags (Bestseller, Seafood, Sweet, Chef's pick, Sharing) */}
+        <div className="mt-4 pt-1">
+          <p className="text-[12px] font-medium text-[#8E8E93] mb-2.5 tracking-normal">
+            {isArabic ? 'تصفية' : 'Filter'}
+          </p>
+
+          <div className="flex flex-wrap gap-2">
+            {FILTER_TAGS.map((tag) => {
+              const isSelected = tempTags.includes(tag.id);
+              return (
+                <button
+                  key={tag.id}
+                  type="button"
+                  onClick={() => toggleTag(tag.id)}
+                  className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#026F4F] text-white shadow-2xs'
+                      : 'bg-[#F4F5F7] text-[#8E8E93] hover:bg-zinc-200/70'
+                  }`}
+                >
+                  {isArabic ? tag.labelAr : tag.labelEn}
+                </button>
               );
             })}
           </div>
@@ -126,7 +169,7 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
           <button
             type="button"
             onClick={handleClear}
-            className="flex-1 py-3.5 px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200/90 text-zinc-800 font-bold text-sm tracking-wide transition-colors cursor-pointer text-center"
+            className="flex-1 py-3 px-4 rounded-full bg-[#EEF0F2] hover:bg-zinc-200/80 text-[#2D2F33] font-medium text-[14px] transition-colors cursor-pointer text-center"
           >
             {isArabic ? 'إعادة ضبط' : 'Clear Filters'}
           </button>
@@ -135,7 +178,7 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
           <button
             type="button"
             onClick={handleApply}
-            className="flex-1 py-3.5 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-bold text-sm tracking-wide shadow-md transition-all active:scale-[0.98] cursor-pointer text-center"
+            className="flex-1 py-3 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[14px] transition-all active:scale-[0.99] cursor-pointer text-center shadow-xs"
           >
             {isArabic ? 'تطبيق التصفية' : 'Apply Filters'}
           </button>
