@@ -57,11 +57,11 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
       <div className="w-full max-w-[440px] mx-auto flex-1 flex flex-col pb-28">
         
         {/* 1. Full-Width Top Illustration Banner matching Figma */}
-        <div className="w-full bg-[#fdfbf7] rounded-b-3xl sm:rounded-b-[2.5rem] overflow-hidden shadow-xs border-b border-zinc-200/50 flex items-center justify-center p-4 sm:p-6 md:p-8">
+        <div className="w-full bg-[#fdfbf7] rounded-b-3xl overflow-hidden shadow-xs border-b border-zinc-200/50 flex items-center justify-center">
           <img
             src="/images/common/confirm-order-kitcken.png"
             alt="Order Confirmed Kitchen"
-            className="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl h-auto aspect-square object-contain mx-auto"
+            className="w-full h-auto object-cover mx-auto"
           />
         </div>
 
@@ -219,7 +219,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
           <button
             type="button"
             onClick={onBackToMenu}
-            className="flex-1 py-3.5 px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-medium text-xs sm:text-sm tracking-wide border border-zinc-200/80 cursor-pointer transition-all active:scale-[0.98] text-center"
+            className="flex-1 py-3.5 px-4 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-[#2D2F33] font-semibold text-sm tracking-wide cursor-pointer transition-all active:scale-[0.98] text-center"
           >
             {isArabic ? 'العودة للقائمة' : 'Back to Menu'}
           </button>
@@ -228,7 +228,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
           <button
             type="button"
             onClick={onTrackOrder}
-            className="flex-1 py-3.5 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-xs sm:text-sm tracking-wide shadow-xs cursor-pointer transition-all active:scale-[0.98] text-center"
+            className="flex-1 py-3.5 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm tracking-wide shadow-xs cursor-pointer transition-all active:scale-[0.98] text-center"
           >
             {isArabic ? 'تتبع طلبي' : 'Track My Order'}
           </button>
