@@ -52,9 +52,8 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-md bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl p-5 sm:p-6 pb-7 animate-slide-up-modal relative overflow-hidden text-center transition-all ${
-          isArabic ? 'font-sans rtl' : 'ltr'
-        }`}
+        dir={isArabic ? 'rtl' : 'ltr'}
+        className="w-full max-w-md bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl p-5 sm:p-6 pb-7 animate-slide-up-modal relative overflow-hidden text-center transition-all font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Center Drag Handle Pill */}

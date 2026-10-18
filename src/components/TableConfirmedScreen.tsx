@@ -21,7 +21,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
   const displayTableName = tableName.replace(/Table\s+([A-Za-z])0+(\d+)/i, 'Table $1$2');
 
   return (
-    <div className="w-full min-h-[100dvh] bg-[#F8F9FA] flex flex-col justify-between items-center px-4 sm:px-6 py-5 select-none antialiased overflow-x-hidden font-['Inter',sans-serif]">
+    <div className="w-full min-h-[100dvh] bg-[#F8F9FA] flex flex-col justify-between items-center px-4 sm:px-6 py-5 select-none antialiased overflow-x-hidden font-sans">
       {/* Top Header Row - Right-aligned Language Selector (aligned with ticket & button) */}
       <header className="w-full max-w-[360px] sm:max-w-[408px] flex justify-end items-center pt-1">
         <div className="relative">
@@ -117,12 +117,12 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
             className="absolute inset-0 w-full h-full object-contain pointer-events-none"
           />
 
-          {/* Ticket Content: Table Name aligned between stars and checkmark badge */}
+          {/* Ticket Content: Table Name centered in open space between stars and checkmark */}
           <div
-            className={`relative z-10 w-full flex items-center ${
+            className={`absolute inset-y-0 flex items-center justify-center z-10 ${
               language === 'ARABIC'
-                ? 'pr-[22%] pl-[34%] justify-end text-right'
-                : 'pl-[22%] pr-[34%] justify-start text-left'
+                ? 'left-[36%] right-[18%]'
+                : 'left-[18%] right-[36%]'
             }`}
           >
             <span className="text-[20px] sm:text-2xl font-bold text-white tracking-tight drop-shadow-xs">
@@ -131,25 +131,26 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
           </div>
         </div>
 
-        {/* Title & Subtitle matching Figma Properties (Inter, 28px/600 #2D2F33 & 16px/500 #989898) */}
+        {/* Title & Subtitle matching Figma Properties (Satoshi/Cairo, 28px/600 #2D2F33 & 16px/500 #989898) */}
         <div className="text-center w-full max-w-[280px]">
           <h1 className="text-[28px] font-semibold text-[#2D2F33] tracking-normal leading-[140%]">
             {language === 'ARABIC' ? 'تم تأكيد الطاولة!' : 'Table Confirmed!'}
           </h1>
           <p className="text-[16px] font-medium text-[#989898] tracking-normal leading-[140%] mt-1">
-            {language === 'ARABIC' ? 'أهلاً بكم في إمساح 7' : 'Welcome to EMSA7'}
+            {language === 'ARABIC' ? 'أهلاً بكم في EMSA7' : 'Welcome to EMSA7'}
           </p>
         </div>
       </main>
 
       {/* Bottom Footer & Primary Action Button */}
       <footer className="w-full max-w-[360px] sm:max-w-[408px] flex flex-col items-center pt-4 pb-2 sm:pb-3">
-        {/* Powered By EMSA7 (Both text and logo matching #989898 in Figma) */}
+        {/* Powered By EMSA7 (Strictly LTR brand lockup matching #989898 in Figma) */}
         <div className="mb-4 sm:mb-5">
           <a
             href="https://emsa7.com"
             target="_blank"
             rel="noopener noreferrer"
+            dir="ltr"
             className="inline-flex items-center justify-center gap-1.5 leading-none cursor-pointer hover:opacity-80 transition-opacity no-underline"
           >
             <span className="text-[10px] sm:text-[11px] font-bold tracking-[0.1em] uppercase text-[#989898] inline-flex items-center">

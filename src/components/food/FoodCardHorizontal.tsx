@@ -64,6 +64,7 @@ export const FoodCardHorizontal: React.FC<FoodCardHorizontalProps> = ({
           {quantity > 0 ? (
             /* Stepper Pill when Item is in Cart */
             <div
+              dir="ltr"
               onClick={(e) => e.stopPropagation()}
               className="bg-[#f4f4f5] rounded-full p-0.5 flex items-center gap-1 shrink-0 border border-zinc-200/60 shadow-2xs"
             >

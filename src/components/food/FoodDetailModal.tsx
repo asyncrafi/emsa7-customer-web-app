@@ -138,9 +138,8 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
       onClick={onClose}
     >
       <div
-        className={`w-full max-w-lg bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[88vh] sm:max-h-[85vh] relative ${
-          isArabic ? 'font-sans rtl' : 'ltr'
-        }`}
+        dir={isArabic ? 'rtl' : 'ltr'}
+        className="w-full max-w-lg bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[88vh] sm:max-h-[85vh] relative font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Food Image Container */}
@@ -281,7 +280,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
         {/* Sticky Bottom Action Footer Bar */}
         <div className="p-4 sm:p-5 pb-5 sm:pb-6 bg-white border-t border-zinc-100 flex items-center gap-3 shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] z-20">
           {/* Quantity Stepper Pill */}
-          <div className="bg-[#f4f4f5] rounded-full p-1.5 flex items-center gap-2.5 shrink-0">
+          <div dir="ltr" className="bg-[#f4f4f5] rounded-full p-1.5 flex items-center gap-2.5 shrink-0">
             <button
               type="button"
               onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}

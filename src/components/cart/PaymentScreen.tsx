@@ -142,9 +142,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto flex flex-col justify-between ${
-        isArabic ? 'font-sans rtl' : 'ltr'
-      }`}
+      dir={isArabic ? 'rtl' : 'ltr'}
+      className="fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto flex flex-col justify-between font-sans"
     >
       {/* Main Page Container: Strictly responsive mobile 440px width matching Figma */}
       <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-28 space-y-5 flex-1">

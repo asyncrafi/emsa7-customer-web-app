@@ -323,9 +323,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
   return (
     <div
-      className={`min-h-[100dvh] bg-[#E6F1ED] antialiased select-none relative flex flex-col font-['Inter',sans-serif] ${
-        language === 'ARABIC' ? 'rtl' : 'ltr'
-      }`}
+      dir={language === 'ARABIC' ? 'rtl' : 'ltr'}
+      className="min-h-[100dvh] bg-[#E6F1ED] antialiased select-none relative flex flex-col font-sans"
     >
       {/* Top Header Soft Mint Section Container */}
       <div className="w-full bg-[#E6F1ED] pt-3 pb-5 sm:pt-4 sm:pb-5 shrink-0">

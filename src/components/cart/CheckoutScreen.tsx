@@ -149,9 +149,8 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto flex flex-col justify-between ${
-        isArabic ? 'font-sans rtl' : 'ltr'
-      }`}
+      dir={isArabic ? 'rtl' : 'ltr'}
+      className="fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto flex flex-col justify-between font-sans"
     >
       {/* Top Page Container: Strictly responsive mobile 440px width matching Figma */}
       <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-28 space-y-4">
@@ -529,6 +528,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             href="https://emsa7.com"
             target="_blank"
             rel="noopener noreferrer"
+            dir="ltr"
             className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity no-underline"
           >
             <span className="text-[11px] sm:text-xs md:text-sm font-bold tracking-wider uppercase text-[#989898] inline-flex items-center">

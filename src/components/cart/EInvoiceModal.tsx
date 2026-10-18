@@ -258,7 +258,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
               {isArabic ? 'شكراً لكم! نأمل رؤيتكم قريباً.' : 'Thank you! See you again.'}
             </p>
 
-            <div className="inline-flex items-center justify-center gap-2 pt-1 select-none">
+            <div dir="ltr" className="inline-flex items-center justify-center gap-2 pt-1 select-none">
               <span className="text-[10px] font-bold tracking-wider uppercase text-zinc-400">
                 POWERED BY
               </span>

@@ -89,9 +89,8 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto w-full min-h-[100dvh] flex flex-col justify-between pb-8 sm:pb-10 md:pb-12 ${
-        isArabic ? 'font-sans rtl' : 'ltr'
-      }`}
+      dir={isArabic ? 'rtl' : 'ltr'}
+      className="fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto w-full min-h-[100dvh] flex flex-col justify-between pb-8 sm:pb-10 md:pb-12 font-sans"
     >
       <div className="w-full flex-1 flex flex-col justify-between">
         <div>

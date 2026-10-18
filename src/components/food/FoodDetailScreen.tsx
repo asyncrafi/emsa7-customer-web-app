@@ -123,9 +123,8 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-[70] bg-white antialiased select-none flex flex-col h-full w-full overflow-hidden ${
-        isArabic ? 'font-sans rtl' : 'ltr'
-      }`}
+      dir={isArabic ? 'rtl' : 'ltr'}
+      className="fixed inset-0 z-[70] bg-white antialiased select-none flex flex-col h-full w-full overflow-hidden font-sans"
     >
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto min-h-0 w-full">
@@ -275,7 +274,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
       <div className="shrink-0 w-full bg-white border-t border-zinc-100 p-4 sm:p-5 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] z-20">
         <div className="max-w-4xl mx-auto flex items-center gap-3 sm:gap-4">
           {/* Quantity Stepper Pill */}
-          <div className="bg-zinc-100 rounded-full p-1.5 flex items-center gap-2 sm:gap-3 shrink-0">
+          <div dir="ltr" className="bg-zinc-100 rounded-full p-1.5 flex items-center gap-2 sm:gap-3 shrink-0">
             <button
               type="button"
               onClick={() => setQuantity((q) => (q > 1 ? q - 1 : 1))}
