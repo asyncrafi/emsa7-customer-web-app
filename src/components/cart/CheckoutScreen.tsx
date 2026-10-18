@@ -338,18 +338,18 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                   );
                 })}
           </div>
+        </div>
 
-          {/* + Add More Items Link (Figma-Exact start aligned) */}
-          <div className="pt-3 border-t border-zinc-100 flex justify-start">
-            <button
-              type="button"
-              onClick={onAddMoreItems}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
-            >
-              <Plus className="w-4 h-4 stroke-2" />
-              <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
-            </button>
-          </div>
+        {/* + Add More Items Link (Figma-Exact: Directly below card on page background) */}
+        <div className="py-0.5">
+          <button
+            type="button"
+            onClick={onAddMoreItems}
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
+          </button>
         </div>
 
         {/* 4. Promo Code Card (Handles 3 states: Default, Valid, Error matching Figma) */}

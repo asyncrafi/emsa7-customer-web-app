@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { X, Printer, FileText } from 'lucide-react';
+import { ArrowLeft, Printer } from 'lucide-react';
 import { formatPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
 import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
@@ -31,15 +31,15 @@ export interface EInvoiceModalProps {
 export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
   isOpen,
   onClose,
-  orderId = '#A102',
-  date = 'Today, 7:42 PM',
-  tableName = 'Table A08',
+  orderId: _orderId = '#A102',
+  date: _date = 'Today, 7:42 PM',
+  tableName: _tableName = 'Table A08',
   items,
   subtotal: propSubtotal,
   vat: propVat,
   serviceCharge: propServiceCharge,
   tipAmount = 0,
-  splitFee = 0,
+  splitFee: _splitFee = 0,
   discount = 0,
   total,
   language: propLanguage,
@@ -75,15 +75,15 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
     calculatedVat = propVat ?? 0;
   }
 
-  const invoiceNumber = `INV-${orderId.replace('#', '')}-${Math.floor(1000 + Math.random() * 9000)}`;
-  const formattedDate = date || new Date().toLocaleString(isArabic ? 'ar-EG' : 'en-US');
-
   const handlePrint = () => {
     window.print();
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
+    <div
+      dir={isArabic ? 'rtl' : 'ltr'}
+      className="fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto flex flex-col justify-between font-sans p-4"
+    >
       <style>{`
         @media print {
           body * {
@@ -110,181 +110,119 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
         }
       `}</style>
 
-      {/* Modal Dialog Card */}
-      <div className="bg-white w-full max-w-md md:max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col my-auto max-h-[92vh] border border-zinc-100">
-        {/* Header Bar */}
-        <div className="no-print bg-zinc-900 text-white px-5 py-4 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2.5">
-            <FileText className="w-5 h-5 text-emerald-400" />
-            <h2 className="font-semibold text-sm sm:text-base tracking-wide">
-              {isArabic ? 'الفاتورة الإلكترونية' : 'E-Invoice'}
-            </h2>
-          </div>
+      {/* Main Page Container: Strictly mobile 440px width matching Figma */}
+      <div className="w-full max-w-[440px] mx-auto flex-1 flex flex-col justify-between space-y-4">
+        {/* Header Row: Back Arrow + Centered Title */}
+        <header className="relative flex items-center justify-center py-2 no-print">
           <button
             type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-zinc-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Back"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-0"
           >
-            <X className="w-4 h-4" />
+            <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
           </button>
-        </div>
 
-        {/* Scrollable Printable Invoice Content */}
-        <div className="overflow-y-auto p-5 sm:p-6 space-y-5 bg-white text-zinc-800" id="printable-invoice-container" ref={printRef}>
-          {/* Header Branding & Restaurant Info */}
-          <div className="flex items-start justify-between border-b border-zinc-200 pb-4">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-bold text-lg sm:text-xl text-primary tracking-tight">
-                  EMSA7
+          <h1 className="text-xl font-semibold text-[#2D2F33] tracking-tight">
+            {isArabic ? 'الإيصال' : 'Receipt'}
+          </h1>
+        </header>
+
+        {/* White Receipt Card matching Figma Reciept.png */}
+        <div
+          id="printable-invoice-container"
+          ref={printRef}
+          className="bg-white rounded-[20px] p-6 shadow-2xs border border-[#F4F4F5] space-y-4 text-center text-[#2D2F33]"
+        >
+          {/* EMSA7 Brand Logo */}
+          <div className="flex justify-center pt-2">
+            <SvgEmsa7Icon className="h-7 w-auto" />
+          </div>
+
+          <div className="space-y-0.5">
+            <p className="text-sm font-medium text-zinc-700">
+              {isArabic ? 'شكراً لتناولك الطعام معنا !' : 'Thank you for dining With us !'}
+            </p>
+            <p className="text-xs text-zinc-500 font-normal">
+              Follow us @EMSA7
+            </p>
+          </div>
+
+          {/* Dashed Divider 1 */}
+          <div className="border-b border-dashed border-zinc-200 my-3" />
+
+          {/* Itemized List */}
+          <div className="space-y-2.5 text-sm text-left rtl:text-right">
+            {items.map((it, i) => (
+              <div key={i} className="flex justify-between items-center text-zinc-700">
+                <span className="font-normal">
+                  {it.qty}x {isArabic ? it.nameAr || it.name : it.name}
+                </span>
+                <span className="font-medium text-zinc-800">
+                  {formatPrice(it.price * it.qty, activeLanguage)}
                 </span>
               </div>
-              <p className="text-xs text-zinc-500 font-medium">Tax Reg #: 394-819-204</p>
-              <p className="text-xs text-zinc-500 font-medium">{tableName}</p>
-            </div>
+            ))}
           </div>
 
-          {/* Invoice Meta Grid */}
-          <div className="bg-zinc-50 rounded-2xl p-3.5 sm:p-4 text-xs space-y-2 border border-zinc-100">
-            <div className="flex justify-between">
-              <span className="text-zinc-500 font-medium">{isArabic ? 'رقم الفاتورة' : 'Invoice No:'}</span>
-              <span className="font-semibold text-zinc-900 font-mono">{invoiceNumber}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-500 font-medium">{isArabic ? 'رقم الطلب' : 'Order ID:'}</span>
-              <span className="font-semibold text-zinc-900">{orderId}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-500 font-medium">{isArabic ? 'التاريخ والوقت' : 'Date & Time:'}</span>
-              <span className="font-medium text-zinc-800">{formattedDate}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-zinc-500 font-medium">{isArabic ? 'حالة الدفع' : 'Payment Status:'}</span>
-              <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
-                {isArabic ? 'مدفوع' : 'PAID'}
-              </span>
-            </div>
-          </div>
-          {/* Itemized Table */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-xs uppercase tracking-wider text-zinc-400">
-              {isArabic ? 'الأصناف' : 'Items'}
-            </h3>
-            <div className="border border-zinc-200 rounded-2xl overflow-hidden divide-y divide-zinc-100 text-xs sm:text-sm">
-              <div className="bg-zinc-100 px-3.5 py-2.5 font-semibold text-zinc-700 flex justify-between">
-                <span className="flex-1">{isArabic ? 'الصنف' : 'Item'}</span>
-                <span className="w-12 text-center">{isArabic ? 'العدد' : 'Qty'}</span>
-                <span className="w-20 text-right">{isArabic ? 'السعر' : 'Price'}</span>
-              </div>
-              {items.map((it, i) => (
-                <div key={i} className="px-3.5 py-2.5 flex justify-between items-center text-zinc-800">
-                  <span className="flex-1 font-semibold truncate pr-2">
-                    {isArabic ? it.nameAr || it.name : it.name}
-                  </span>
-                  <span className="w-12 text-center font-medium text-zinc-600">x{it.qty}</span>
-                  <span className="w-20 text-right font-semibold text-zinc-900">
-                    {formatPrice(it.price * it.qty, activeLanguage)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* Dashed Divider 2 */}
+          <div className="border-b border-dashed border-zinc-200 my-3" />
 
-          {/* Payment Summary */}
-          <div className="space-y-2 text-xs sm:text-sm border-t border-zinc-200 pt-3">
-            <div className="flex justify-between text-zinc-500">
+          {/* Financial Breakdown */}
+          <div className="space-y-2 text-sm text-left rtl:text-right text-zinc-600">
+            <div className="flex justify-between">
               <span>{isArabic ? 'المجموع الفرعي' : 'Subtotal'}</span>
-              <span className="font-semibold text-zinc-800">
-                {formatPrice(calculatedSubtotal, activeLanguage)}
-              </span>
+              <span className="font-medium text-zinc-800">{formatPrice(calculatedSubtotal, activeLanguage)}</span>
             </div>
-
-            {calculatedServiceCharge > 0 && (
-              <div className="flex justify-between text-zinc-500">
-                <span>{isArabic ? 'رسوم الخدمة' : 'Service Charge'}</span>
-                <span className="font-semibold text-zinc-800">
-                  {formatPrice(calculatedServiceCharge, activeLanguage)}
-                </span>
-              </div>
-            )}
 
             {calculatedVat > 0 && (
-              <div className="flex justify-between text-zinc-500">
-                <span>{isArabic ? 'الضريبة' : 'Taxes'}</span>
-                <span className="font-semibold text-zinc-800">
-                  {formatPrice(calculatedVat, activeLanguage)}
-                </span>
+              <div className="flex justify-between">
+                <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'Vat (5%)'}</span>
+                <span className="font-medium text-zinc-800">{formatPrice(calculatedVat, activeLanguage)}</span>
               </div>
             )}
 
-            {tipAmount !== undefined && (
-              <div className="flex justify-between text-zinc-500">
-                <span>{isArabic ? 'الإكرامية' : 'Tip'}</span>
-                <span className="font-semibold text-zinc-800">
-                  {formatPrice(tipAmount, activeLanguage)}
-                </span>
+            {calculatedServiceCharge > 0 && (
+              <div className="flex justify-between">
+                <span>{isArabic ? 'الخدمة (10%)' : 'Service (10%)'}</span>
+                <span className="font-medium text-zinc-800">{formatPrice(calculatedServiceCharge, activeLanguage)}</span>
               </div>
             )}
 
-            {splitFee > 0 && (
-              <div className="flex justify-between text-zinc-500">
-                <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                <span className="font-semibold text-zinc-800">
-                  {formatPrice(splitFee, activeLanguage)}
-                </span>
-              </div>
-            )}
-
-            {discount > 0 && (
-              <div className="flex justify-between text-emerald-600">
-                <span>{isArabic ? 'الخصم' : 'Discount'}</span>
-                <span className="font-semibold">
-                  -{formatPrice(discount, activeLanguage)}
-                </span>
-              </div>
-            )}
-
-            <div className="flex justify-between items-center text-sm sm:text-base font-extrabold text-zinc-900 pt-2 border-t border-zinc-200">
-              <span>{isArabic ? 'الإجمالي الشامل' : 'Grand Total'}</span>
-              <span className="text-[#026F4F] text-base sm:text-lg">
-                {formatPrice(total, activeLanguage)}
-              </span>
+            {/* Total Line (Bold) */}
+            <div className="flex justify-between items-center font-bold text-base text-zinc-900 pt-1">
+              <span>{isArabic ? 'المجموع' : 'Total'}</span>
+              <span>{formatPrice(total, activeLanguage)}</span>
             </div>
           </div>
 
-          {/* E-Invoice Footer & Branding */}
-          <div className="pt-4 border-t border-zinc-200/80 text-center space-y-2">
-            <p className="text-xs text-zinc-500 font-medium">
-              {isArabic ? 'شكراً لكم! نأمل رؤيتكم قريباً.' : 'Thank you! See you again.'}
-            </p>
+          {/* Dashed Divider 3 */}
+          <div className="border-b border-dashed border-zinc-200 my-3" />
 
-            <div dir="ltr" className="inline-flex items-center justify-center gap-2 pt-1 select-none">
-              <span className="text-[10px] font-semibold tracking-wider uppercase text-zinc-400">
-                POWERED BY
-              </span>
-              <SvgEmsa7Icon className="h-4 w-auto" />
-            </div>
+          {/* Footer note */}
+          <div className="space-y-1 text-xs text-zinc-500 pt-1">
+            <p className="font-medium">{isArabic ? 'يرجى الحضور مرة أخرى' : 'Please Come Again'}</p>
+            <p className="font-normal">Wifi: 12345678</p>
           </div>
         </div>
 
-        {/* Modal Action Buttons (Hidden on Print) */}
-        <div className="no-print bg-zinc-50 p-4 border-t border-zinc-200/80 flex items-center justify-between gap-3 shrink-0">
-          {/* <button
+        {/* Bottom Action Buttons (Hidden on Print): Add Items & Save */}
+        <div className="no-print pt-4 pb-2 flex items-center gap-3">
+          <button
             type="button"
-            onClick={handleShare}
-            className="flex-1 py-3 px-4 rounded-xl bg-white border border-zinc-200 hover:bg-zinc-100 text-zinc-800 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            onClick={onClose}
+            className="flex-1 py-3.5 px-4 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 font-semibold text-sm tracking-wide text-center cursor-pointer transition-all active:scale-[0.98]"
           >
-            {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4 text-zinc-600" />}
-            <span>{copied ? (isArabic ? 'تم النسخ!' : 'Copied!') : (isArabic ? 'مشاركة' : 'Share')}</span>
-          </button> */}
+            {isArabic ? 'إضافة أصناف' : 'Add Items'}
+          </button>
 
           <button
             type="button"
             onClick={handlePrint}
-            className="flex-1 py-3 px-4 rounded-xl bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md transition-colors cursor-pointer"
+            className="flex-1 py-3.5 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm tracking-wide flex items-center justify-center gap-2 shadow-xs cursor-pointer transition-all active:scale-[0.98]"
           >
             <Printer className="w-4 h-4" />
-            <span>{isArabic ? 'تحميل الفاتورة' : 'Download Invoice'}</span>
+            <span>{isArabic ? 'حفظ' : 'Save'}</span>
           </button>
         </div>
       </div>

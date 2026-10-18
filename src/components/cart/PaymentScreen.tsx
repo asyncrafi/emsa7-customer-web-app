@@ -28,41 +28,6 @@ export interface PaymentScreenProps {
   grandTotal: number;
 }
 
-interface CountryCode {
-  code: string;
-  country: string;
-  flag: string;
-}
-
-const COUNTRY_CODES: CountryCode[] = [
-  { code: '+20', country: 'Egypt', flag: '🇪🇬' },
-  { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
-  { code: '+971', country: 'UAE', flag: '🇦🇪' },
-  { code: '+967', country: 'Yemen', flag: '🇾🇪' },
-  { code: '+965', country: 'Kuwait', flag: '🇰🇼' },
-  { code: '+974', country: 'Qatar', flag: '🇶🇦' },
-  { code: '+968', country: 'Oman', flag: '🇴🇲' },
-  { code: '+973', country: 'Bahrain', flag: '🇧🇭' },
-  { code: '+962', country: 'Jordan', flag: '🇯🇴' },
-  { code: '+961', country: 'Lebanon', flag: '🇱🇧' },
-  { code: '+964', country: 'Iraq', flag: '🇮🇶' },
-  { code: '+218', country: 'Libya', flag: '🇱🇾' },
-  { code: '+213', country: 'Algeria', flag: '🇩🇿' },
-  { code: '+212', country: 'Morocco', flag: '🇲🇦' },
-  { code: '+249', country: 'Sudan', flag: '🇸🇩' },
-  { code: '+1', country: 'USA / Canada', flag: '🇺🇸' },
-  { code: '+44', country: 'UK', flag: '🇬🇧' },
-  { code: '+49', country: 'Germany', flag: '🇩🇪' },
-  { code: '+33', country: 'France', flag: '🇫🇷' },
-  { code: '+39', country: 'Italy', flag: '🇮🇹' },
-  { code: '+91', country: 'India', flag: '🇮🇳' },
-  { code: '+86', country: 'China', flag: '🇨🇳' },
-  { code: '+81', country: 'Japan', flag: '🇯🇵' },
-  { code: '+82', country: 'South Korea', flag: '🇰🇷' },
-  { code: '+7', country: 'Russia', flag: '🇷🇺' },
-  { code: '+90', country: 'Turkey', flag: '🇹🇷' },
-];
-
 export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   isOpen,
   onClose,
@@ -85,7 +50,6 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const vat = propVat !== undefined && propVat > 0 ? propVat : Math.round(subtotal * 0.05 * 100) / 100;
 
   const [fullName, setFullName] = useState('');
-  const [selectedCountryCode, setSelectedCountryCode] = useState('+20');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
 
@@ -163,20 +127,20 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           </h1>
         </header>
 
-        {/* 1. Customer Information Form Card */}
-        <div ref={customerFormRef} className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3.5 scroll-mt-6">
+        {/* 1. Customer Information Section (Figma-Exact: Directly on page background) */}
+        <div ref={customerFormRef} className="space-y-3 scroll-mt-6">
           <h2 className="font-semibold text-base text-[#2D2F33]">
             {isArabic ? 'معلومات العميل' : 'Customer Information'}
           </h2>
 
-          <div className="space-y-3.5 sm:space-y-4">
+          <div className="space-y-3">
             {/* Full Name */}
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-zinc-700 mb-1.5">
+              <label className="block text-xs font-medium text-zinc-600 mb-1.5">
                 {isArabic ? 'الاسم الكامل' : 'Full Name'} <span className="text-red-500">*</span>
               </label>
               <div
-                className={`bg-[#f4f4f5] rounded-2xl px-4 py-3 sm:py-3.5 flex items-center gap-3 border transition-colors ${
+                className={`bg-[#EEEEEE] rounded-2xl px-4 py-3 flex items-center gap-3 border transition-colors ${
                   showErrors && !fullName.trim() ? 'border-red-400 bg-red-50/70 shadow-xs' : 'border-transparent focus-within:border-[#026F4F]'
                 }`}
               >
@@ -190,7 +154,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                     if (showErrors) setShowErrors(false);
                   }}
                   placeholder={isArabic ? 'أدخل اسمك' : 'Enter your name'}
-                  className="w-full bg-transparent text-xs sm:text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
+                  className="w-full bg-transparent text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
                 />
               </div>
               {showErrors && !fullName.trim() && (
@@ -203,52 +167,28 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
             {/* Phone Number */}
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-zinc-700 mb-1.5">
+              <label className="block text-xs font-medium text-zinc-600 mb-1.5">
                 {isArabic ? 'رقم الهاتف' : 'Phone Number'} <span className="text-red-500">*</span>
               </label>
               <div
-                className={`bg-[#f4f4f5] rounded-2xl p-1.5 sm:p-2 flex items-center gap-2 border transition-colors ${
+                className={`bg-[#EEEEEE] rounded-2xl px-4 py-3 flex items-center gap-3 border transition-colors ${
                   showErrors && !phoneNumber.trim()
                     ? 'border-red-400 bg-red-50/70 shadow-xs'
                     : 'border-transparent focus-within:border-[#026F4F]'
                 }`}
               >
-                {/* Country Code Dropdown */}
-                <div className="relative shrink-0 flex items-center bg-white rounded-xl px-2.5 sm:px-3 py-2 border border-zinc-200/80 shadow-2xs">
-                  <select
-                    value={selectedCountryCode}
-                    onChange={(e) => setSelectedCountryCode(e.target.value)}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer text-xs z-10"
-                    aria-label="Country Code"
-                  >
-                    {COUNTRY_CODES.map((c) => (
-                      <option key={`${c.country}-${c.code}`} value={c.code}>
-                        {c.flag} {c.code} ({c.country})
-                      </option>
-                    ))}
-                  </select>
-                  <div className="flex items-center gap-1.5 pointer-events-none">
-                    <span className="text-sm">{COUNTRY_CODES.find((c) => c.code === selectedCountryCode)?.flag || '🇪🇬'}</span>
-                    <span className="text-xs sm:text-sm font-medium text-zinc-800">{selectedCountryCode}</span>
-                    <ChevronDown className="w-3.5 h-3.5 text-zinc-400 shrink-0 ml-0.5" />
-                  </div>
-                </div>
-
-                {/* Number Input */}
-                <div className="flex-1 flex items-center gap-2.5 px-1.5 sm:px-2">
-                  <Phone className={`w-4 h-4 sm:w-5 sm:h-5 shrink-0 ${showErrors && !phoneNumber.trim() ? 'text-red-500' : 'text-zinc-400'}`} />
-                  <input
-                    ref={phoneInputRef}
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => {
-                      setPhoneNumber(e.target.value);
-                      if (showErrors) setShowErrors(false);
-                    }}
-                    placeholder={isArabic ? 'أدخل رقم هاتفك' : 'Enter your number'}
-                    className="w-full bg-transparent text-xs sm:text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
-                  />
-                </div>
+                <Phone className={`w-5 h-5 shrink-0 ${showErrors && !phoneNumber.trim() ? 'text-red-500' : 'text-zinc-400'}`} />
+                <input
+                  ref={phoneInputRef}
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => {
+                    setPhoneNumber(e.target.value);
+                    if (showErrors) setShowErrors(false);
+                  }}
+                  placeholder={isArabic ? 'أدخل رقم هاتفك' : 'Enter your number'}
+                  className="w-full bg-transparent text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
+                />
               </div>
               {showErrors && !phoneNumber.trim() && (
                 <p className="text-[11px] text-red-500 font-semibold mt-1 flex items-center gap-1">
@@ -260,24 +200,24 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
             {/* Email (Optional) */}
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-zinc-500 mb-1.5">
+              <label className="block text-xs font-medium text-zinc-600 mb-1.5">
                 {isArabic ? 'إرسال الإيصال إلى البريد الإلكتروني (اختياري)' : 'Send Receipt to Email (Optional)'}
               </label>
-              <div className="bg-[#f4f4f5] rounded-2xl px-4 py-3 sm:py-3.5 flex items-center gap-3 border border-transparent focus-within:border-[#026F4F] transition-colors">
+              <div className="bg-[#EEEEEE] rounded-2xl px-4 py-3 flex items-center gap-3 border border-transparent focus-within:border-[#026F4F] transition-colors">
                 <Mail className="w-5 h-5 text-zinc-400 shrink-0" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={isArabic ? 'أدخل بريدك الإلكتروني...' : 'Enter your email...'}
-                  className="w-full bg-transparent text-xs sm:text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
+                  className="w-full bg-transparent text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* 2. Order Summary Card */}
+        {/* 2. Order Summary Card (Figma-Exact: Items only) */}
         <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3">
           <h2 className="font-semibold text-base text-[#2D2F33]">
             {isArabic ? 'ملخص الطلب' : 'Order Summary'}
@@ -302,24 +242,31 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                     <p className="text-xs text-[#8E8E93] font-normal truncate">
                       "No Sauce"
                     </p>
-                    <span className="text-xs text-zinc-500 font-medium block mt-0.5">
+                    <span className="text-xs text-zinc-800 font-medium block mt-0.5">
                       x{ci.quantity}
                     </span>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className="font-semibold text-sm sm:text-base text-[#026F4F]">
+                  <span className="font-semibold text-base text-[#026F4F]">
                     {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                   </span>
                 </div>
               </div>
             ))}
           </div>
+        </div>
 
-          <div className="border-t border-dashed border-zinc-200 my-2 pt-2.5 space-y-2 text-xs sm:text-sm font-normal">
+        {/* 3. Payments Details Card (Figma-Exact: Separate Card) */}
+        <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3">
+          <h2 className="font-semibold text-base text-[#2D2F33]">
+            {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
+          </h2>
+
+          <div className="space-y-2 text-sm font-medium">
             <div className="flex justify-between text-[#8E8E93]">
-              <span>{isArabic ? `المجموع الفرعي (${cart.length} أصناف)` : `Subtotal (${cart.length}Items)`}</span>
+              <span>{isArabic ? `المجموع الفرعي (${cart.length} أصناف)` : `Subtotal (${cart.length}items)`}</span>
               <span className="text-[#2D2F33] font-medium">{formatPrice(subtotal, activeLanguage)}</span>
             </div>
 
@@ -354,61 +301,57 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           </div>
 
           {/* Dashed Separator Line */}
-          <div className="border-b border-dashed border-zinc-200 my-2" />
+          <div className="border-b border-dashed border-[#E5E5EA] my-3" />
 
           {/* Total Line */}
-          <div className="flex justify-between items-center font-semibold text-sm sm:text-base pt-0.5">
+          <div className="flex justify-between items-center font-semibold text-base pt-0.5">
             <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
-            <span className="text-[#026F4F] font-semibold text-base sm:text-lg">
+            <span className="text-[#026F4F] font-semibold text-lg">
               {formatPrice(grandTotal, activeLanguage)}
             </span>
           </div>
         </div>
 
-        {/* 3. Payment Method Options */}
-        <div className="space-y-3 sm:space-y-4">
-          <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33] px-1">
+        {/* 4. Payment Method Options */}
+        <div className="space-y-3">
+          <h2 className="font-semibold text-base text-[#2D2F33]">
             {isArabic ? 'طريقة الدفع' : 'Payment Method'}
           </h2>
 
-          {/* Accordion 1: Pay Online */}
-          <div className="bg-white rounded-3xl border border-zinc-200/80 overflow-hidden shadow-2xs">
+          {/* Accordion 1: Pay Online (Figma-Exact: Green border, rounded-[16px]) */}
+          <div className="bg-white rounded-[16px] border border-[#026F4F] overflow-hidden shadow-2xs">
             {/* Accordion Header */}
             <button
               type="button"
               onClick={() => setIsPayOnlineOpen(!isPayOnlineOpen)}
-              className="w-full p-4 sm:p-5 flex items-center justify-between bg-white cursor-pointer select-none"
+              className="w-full p-4 flex items-center justify-between bg-white cursor-pointer select-none"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
+                <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
                   <img src="/images/payment/pay-online.svg" alt="Pay Online" className="w-full h-full object-cover" />
                 </div>
-                <span className="font-semibold text-sm sm:text-base text-[#2D2F33]">
+                <span className="font-semibold text-sm text-[#2D2F33]">
                   {isArabic ? 'الدفع عبر الإنترنت' : 'Pay Online'}
                 </span>
               </div>
               {isPayOnlineOpen ? (
-                <ChevronUp className="w-5 h-5 text-zinc-400" />
+                <ChevronUp className="w-5 h-5 text-zinc-600" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-zinc-400" />
+                <ChevronDown className="w-5 h-5 text-zinc-600" />
               )}
             </button>
 
             {/* Accordion Content */}
             {isPayOnlineOpen && (
-              <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-1 space-y-2.5 sm:space-y-3 border-t border-zinc-100">
+              <div className="px-4 pb-3 pt-1 space-y-1 border-t border-zinc-100">
                 {/* Option 1: Credit / Debit Card */}
                 <div
                   onClick={() => setSelectedMethod('card')}
-                  className={`p-3.5 sm:p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
-                    selectedMethod === 'card'
-                      ? 'border-[#026F4F] bg-emerald-50/40 shadow-xs'
-                      : 'border-zinc-100 hover:border-zinc-200'
-                  }`}
+                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/credit-debit-pay.svg" alt="Credit / Debit Card" className="h-7 w-auto object-contain" />
-                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-sm text-[#2D2F33]">
                       {isArabic ? 'بطاقة ائتمان / خصم' : 'Credit / Debit Card'}
                     </span>
                   </div>
@@ -418,15 +361,11 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 {/* Option 2: Google Pay */}
                 <div
                   onClick={() => setSelectedMethod('gpay')}
-                  className={`p-3.5 sm:p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
-                    selectedMethod === 'gpay'
-                      ? 'border-[#026F4F] bg-emerald-50/40 shadow-xs'
-                      : 'border-zinc-100 hover:border-zinc-200'
-                  }`}
+                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/google-pay.svg" alt="Google Pay" className="h-7 w-auto object-contain" />
-                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-sm text-[#2D2F33]">
                       Google Pay
                     </span>
                   </div>
@@ -436,15 +375,11 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 {/* Option 3: Apple Pay */}
                 <div
                   onClick={() => setSelectedMethod('applepay')}
-                  className={`p-3.5 sm:p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
-                    selectedMethod === 'applepay'
-                      ? 'border-[#026F4F] bg-emerald-50/40 shadow-xs'
-                      : 'border-zinc-100 hover:border-zinc-200'
-                  }`}
+                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/apple-pay.svg" alt="Apple Pay" className="h-7 w-auto object-contain" />
-                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-sm text-[#2D2F33]">
                       Apple Pay
                     </span>
                   </div>
@@ -454,44 +389,40 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
             )}
           </div>
 
-          {/* Accordion 2: Get the Check */}
-          <div className="bg-white rounded-3xl border border-zinc-200/80 overflow-hidden shadow-2xs">
+          {/* Accordion 2: Get the Check (Figma-Exact: rounded-[16px]) */}
+          <div className="bg-white rounded-[16px] border border-zinc-200/80 overflow-hidden shadow-2xs">
             {/* Accordion Header */}
             <button
               type="button"
               onClick={() => setIsGetCheckOpen(!isGetCheckOpen)}
-              className="w-full p-4 sm:p-5 flex items-center justify-between bg-white cursor-pointer select-none"
+              className="w-full p-4 flex items-center justify-between bg-white cursor-pointer select-none"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
+                <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
                   <img src="/images/payment/get-check.svg" alt="Get the Check" className="w-full h-full object-cover" />
                 </div>
-                <span className="font-semibold text-sm sm:text-base text-[#2D2F33]">
+                <span className="font-semibold text-sm text-[#2D2F33]">
                   {isArabic ? 'الحصول على الفاتورة' : 'Get the Check'}
                 </span>
               </div>
               {isGetCheckOpen ? (
-                <ChevronUp className="w-5 h-5 text-zinc-400" />
+                <ChevronUp className="w-5 h-5 text-zinc-600" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-zinc-400" />
+                <ChevronDown className="w-5 h-5 text-zinc-600" />
               )}
             </button>
 
             {/* Accordion Content */}
             {isGetCheckOpen && (
-              <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-1 space-y-2.5 sm:space-y-3 border-t border-zinc-100">
+              <div className="px-4 pb-3 pt-1 space-y-1 border-t border-zinc-100">
                 {/* Option 1: Cash */}
                 <div
                   onClick={() => setSelectedMethod('cash')}
-                  className={`p-3.5 sm:p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
-                    selectedMethod === 'cash'
-                      ? 'border-[#026F4F] bg-emerald-50/40 shadow-xs'
-                      : 'border-zinc-100 hover:border-zinc-200'
-                  }`}
+                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/cash.svg" alt="Cash" className="w-7 h-7 object-contain" />
-                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-sm text-[#2D2F33]">
                       {isArabic ? 'نقداً' : 'Cash'}
                     </span>
                   </div>
@@ -505,15 +436,11 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 {/* Option 2: Card */}
                 <div
                   onClick={() => setSelectedMethod('pos_card')}
-                  className={`p-3.5 sm:p-4 rounded-2xl border flex items-center justify-between cursor-pointer transition-all ${
-                    selectedMethod === 'pos_card'
-                      ? 'border-[#026F4F] bg-emerald-50/40 shadow-xs'
-                      : 'border-zinc-100 hover:border-zinc-200'
-                  }`}
+                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <img src="/images/payment/card-pay.svg" alt="Card" className="w-7 h-7 object-contain" />
-                    <span className="font-medium text-xs sm:text-sm text-zinc-800">
+                    <span className="font-medium text-sm text-[#2D2F33]">
                       {isArabic ? 'بطاقة' : 'Card'}
                     </span>
                   </div>
