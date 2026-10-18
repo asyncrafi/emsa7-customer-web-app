@@ -172,52 +172,39 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
         {/* 1. Dining Location Green Banner Box with SvgChairIcon */}
         <div className="bg-[#026F4F] rounded-[16px] p-4 flex items-center gap-3.5 text-white shadow-xs">
-          <div className="w-12 h-12 rounded-xl bg-[#D4E7DF] flex items-center justify-center shrink-0 shadow-2xs">
-            <SvgChairIcon className="w-6 h-7 text-[#026F4F]" />
+          <div className="w-14 h-14 rounded-2xl bg-[#E8F5E9] flex items-center justify-center shrink-0">
+            <SvgChairIcon className="w-7 h-7 text-[#026F4F]" />
           </div>
           <div>
             <p className="text-emerald-100 text-xs font-normal">
               {isArabic ? 'تناول الطعام في' : 'Dining at'}
             </p>
-            <h2 className="text-white text-base sm:text-lg font-semibold tracking-tight leading-snug">
+            <h2 className="text-white text-base font-semibold tracking-tight leading-snug">
               {tableName}
             </h2>
-            <p className="text-emerald-100/80 text-[11px] sm:text-xs font-normal">
+            <p className="text-emerald-100/80 text-xs font-normal">
               {isArabic ? 'بجانب النافذة، الطابق الثاني' : 'Window Side, Floor 2'}
             </p>
           </div>
         </div>
 
-        {/* 2. Split Check Toggle Card with User Avatars matching Figma */}
+        {/* 2. Split Check Toggle Card matching Figma */}
         <div className="bg-white rounded-[16px] p-4 border border-[#F4F4F5] flex items-center justify-between shadow-2xs">
-          <div className="flex items-center gap-2.5">
-            <span className="font-semibold text-sm sm:text-base text-[#2D2F33]">
-              {isArabic ? 'تقسيم الفاتورة' : 'Split Check'}
-            </span>
-            {/* User Presence Avatar chips matching Figma */}
-            <div className="flex items-center -space-x-1.5 rtl:space-x-reverse">
-              <div className="w-6 h-6 rounded-full bg-[#5856D6] text-white flex items-center justify-center text-[10px] font-semibold border-2 border-white shadow-2xs">
-                M
-              </div>
-              <img
-                src="/images/food/ramen.png"
-                alt="User"
-                className="w-6 h-6 rounded-full object-cover border-2 border-white shadow-2xs"
-              />
-            </div>
-          </div>
+          <span className="font-semibold text-sm text-[#2D2F33]">
+            {isArabic ? 'تقسيم الفاتورة' : 'Split Check'}
+          </span>
 
           <button
             type="button"
             onClick={handleToggleSplitCheck}
             aria-label="Toggle Split Check"
-            className={`relative w-12 h-6 sm:w-14 sm:h-7 rounded-full transition-colors cursor-pointer p-0.5 ${
-              isSplitCheck ? 'bg-[#026F4F]' : 'bg-zinc-200'
+            className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer p-0.5 ${
+              isSplitCheck ? 'bg-[#34C759]' : 'bg-[#E5E5EA]'
             }`}
           >
             <span
-              className={`block w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white shadow-md transition-transform duration-200 ${
-                isSplitCheck ? 'translate-x-6 sm:translate-x-7 rtl:-translate-x-6 sm:rtl:-translate-x-7' : 'translate-x-0'
+              className={`block w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-200 ${
+                isSplitCheck ? 'translate-x-6 rtl:-translate-x-6' : 'translate-x-0'
               }`}
             />
           </button>
@@ -229,7 +216,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             {isArabic ? 'ملخص الطلب' : 'Order Summary'}
           </h2>
 
-          <div className="space-y-3.5 md:space-y-4 divide-y divide-zinc-100">
+          <div className="space-y-3 divide-y divide-zinc-100">
             {isSplitCheck
               ? expandedSplitItems.map((splitItem) => {
                   const isChecked = selectedSplitIds.has(splitItem.splitId);
@@ -239,23 +226,21 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                     <div
                       key={splitItem.splitId}
                       onClick={() => toggleSplitItem(splitItem.splitId)}
-                      className={`pt-3.5 first:pt-0 flex items-center justify-between gap-3 md:gap-4 cursor-pointer p-2 sm:p-2.5 rounded-2xl transition-all ${
-                        isChecked ? 'bg-emerald-50/40' : 'hover:bg-zinc-50 opacity-60'
-                      }`}
+                      className="pt-3 first:pt-0 flex items-center justify-between gap-3 cursor-pointer select-none"
                     >
-                      <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                        {/* Checkbox for Split Check */}
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        {/* Checkbox matching Figma Checkout ( Split Bill ).png */}
                         <div
-                          className={`w-5 h-5 sm:w-6 sm:h-6 rounded-md flex items-center justify-center transition-colors shrink-0 border ${
+                          className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors shrink-0 ${
                             isChecked
-                              ? 'bg-[#026F4F] border-[#026F4F] text-white'
-                              : 'border-zinc-300 bg-white'
+                              ? 'bg-[#026F4F] text-white'
+                              : 'border border-zinc-400 bg-white'
                           }`}
                         >
                           {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
                         </div>
 
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-zinc-50 p-2 flex items-center justify-center shrink-0 border border-zinc-100">
+                        <div className="w-14 h-14 rounded-xl bg-[#F4F5F7] p-1.5 flex items-center justify-center shrink-0">
                           <img
                             src={ci.item.imageUrl}
                             alt={ci.item.name}
@@ -267,25 +252,22 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                           <h3 className="font-semibold text-sm text-[#2D2F33] truncate">
                             {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                           </h3>
-                          {ci.selectedOptions && ci.selectedOptions.length > 0 && (
-                            <p className="text-xs text-zinc-500 font-normal truncate">
-                              {ci.selectedOptions.map((so) => so.optionName).join(', ')}
-                            </p>
-                          )}
-                          {ci.specialInstructions && (
-                            <p className="text-xs text-zinc-400 font-normal italic truncate">
-                              "{ci.specialInstructions}"
-                            </p>
-                          )}
-                          <span className="font-semibold text-sm sm:text-base text-[#026F4F] block mt-0.5">
-                            {formatPrice(splitItem.singlePrice, activeLanguage)}
+                          <p className="text-xs text-[#8E8E93] font-normal truncate">
+                            {ci.selectedOptions && ci.selectedOptions.length > 0
+                              ? `"${ci.selectedOptions.map((so) => so.optionName).join(', ')}"`
+                              : ci.specialInstructions
+                              ? `"${ci.specialInstructions}"`
+                              : '"No Sauce"'}
+                          </p>
+                          <span className="text-xs font-semibold text-[#2D2F33] block mt-0.5">
+                            x1
                           </span>
                         </div>
                       </div>
 
                       <div className="shrink-0">
-                        <span className="text-xs font-medium text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
-                          x1
+                        <span className="font-semibold text-sm text-[#026F4F]">
+                          {formatPrice(splitItem.singlePrice, activeLanguage)}
                         </span>
                       </div>
                     </div>
@@ -352,14 +334,14 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </button>
         </div>
 
-        {/* 4. Promo Code Card (Handles 3 states: Default, Valid, Error matching Figma) */}
+        {/* 4. Promo Code Card (Figma-Exact 3 states: Default, Applied, Denied) */}
         {promoStatus === 'applied' ? (
-          <div className="bg-emerald-50/70 rounded-2xl p-4 sm:p-5 border border-emerald-200/80 flex items-center justify-between shadow-2xs">
+          <div className="bg-[#EAF5F0] rounded-[16px] p-3 border border-[#D4EBE0] flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[#026F4F]">
+              <div className="w-7 h-7 rounded-lg bg-[#D4EBE0] flex items-center justify-center text-[#026F4F]">
                 <Percent className="w-3.5 h-3.5 stroke-[2.5]" />
               </div>
-              <span className="font-semibold text-sm sm:text-base text-[#026F4F] tracking-wide">
+              <span className="font-semibold text-xs text-[#026F4F] tracking-wider uppercase">
                 {promoCode || 'WELCOME20'}
               </span>
             </div>
@@ -369,20 +351,20 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                 setPromoStatus('none');
                 setPromoCode('');
               }}
-              className="w-7 h-7 rounded-full bg-[#026F4F] text-white flex items-center justify-center cursor-pointer shadow-2xs hover:bg-[#025a40] transition-colors"
+              className="w-6 h-6 rounded-full bg-[#026F4F] text-white flex items-center justify-center cursor-pointer shadow-2xs hover:bg-[#025a40] transition-colors"
               title="Remove promo code"
             >
-              <Check className="w-4 h-4 stroke-[3]" />
+              <Check className="w-3.5 h-3.5 stroke-[3]" />
             </button>
           </div>
         ) : promoStatus === 'error' ? (
-          <div className="bg-rose-50/70 rounded-2xl p-4 sm:p-5 border border-rose-200/80 flex items-center justify-between shadow-2xs">
+          <div className="bg-[#FDF0F0] rounded-[16px] p-3 border border-[#FADBD8] flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
+              <div className="w-7 h-7 rounded-lg bg-[#FADBD8] flex items-center justify-center text-[#E05656]">
                 <Percent className="w-3.5 h-3.5 stroke-[2.5]" />
               </div>
-              <span className="font-bold text-sm sm:text-base text-rose-600 tracking-wide uppercase">
-                {promoCode || 'INVALID'}
+              <span className="font-semibold text-xs text-[#E05656] tracking-wider uppercase">
+                {promoCode || 'WELCOME20'}
               </span>
             </div>
             <button
@@ -391,28 +373,28 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                 setPromoStatus('none');
                 setPromoCode('');
               }}
-              className="w-7 h-7 rounded-full bg-rose-500 text-white flex items-center justify-center cursor-pointer shadow-2xs hover:bg-rose-600 transition-colors"
+              className="w-6 h-6 rounded-full bg-[#E05656] text-white flex items-center justify-center cursor-pointer shadow-2xs hover:bg-[#c93f3f] transition-colors"
               title="Clear"
             >
-              <X className="w-4 h-4 stroke-[2.5]" />
+              <X className="w-3.5 h-3.5 stroke-[2.5]" />
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl p-2.5 sm:p-3 border border-zinc-100 shadow-2xs flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 shrink-0 ml-1">
-              <Percent className="w-4 h-4 stroke-[2.5]" />
+          <div className="bg-white rounded-[16px] p-2 pl-3 border border-[#F4F4F5] shadow-2xs flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-400 shrink-0">
+              <Percent className="w-3.5 h-3.5 stroke-[2.5]" />
             </div>
             <input
               type="text"
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value)}
               placeholder={isArabic ? 'أدخل رمز العرض' : 'ENTER PROMO CODE'}
-              className="flex-1 bg-transparent px-2 py-2 text-xs sm:text-sm text-zinc-800 placeholder:text-zinc-400 placeholder:font-medium font-medium uppercase outline-none"
+              className="flex-1 bg-transparent px-2 py-1.5 text-xs text-zinc-800 placeholder:text-zinc-400 placeholder:font-medium font-medium uppercase outline-none"
             />
             <button
               type="button"
               onClick={handleApplyPromo}
-              className="px-5 py-2.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white text-xs sm:text-sm font-semibold tracking-wide transition-colors cursor-pointer shrink-0 shadow-xs active:scale-95"
+              className="px-5 py-2.5 rounded-xl bg-[#026F4F] hover:bg-[#025a40] text-white text-xs font-semibold tracking-wide transition-colors cursor-pointer shrink-0 shadow-xs active:scale-95"
             >
               {isArabic ? 'تطبيق' : 'APPLY'}
             </button>
@@ -496,9 +478,9 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             </div>
 
             {isSplitCheck && (
-              <div className="flex justify-between text-rose-500 font-medium">
+              <div className="flex justify-between text-[#FF6B6B] font-medium">
                 <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                <span className="font-semibold">{formatPrice(splitFee, activeLanguage)}</span>
+                <span>{formatPrice(splitFee, activeLanguage)}</span>
               </div>
             )}
 
