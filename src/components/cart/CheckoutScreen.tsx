@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Plus, Percent, X } from 'lucide-react';
 import { type CartItem, formatPrice, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { PaymentScreen } from '@/components/cart/PaymentScreen';
@@ -98,17 +98,17 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
     ? expandedSplitItems.filter((item) => selectedSplitIds.has(item.splitId)).length
     : cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  const serviceCharge = 0;
-  const vat = 0;
+  const serviceCharge = Math.round(subtotal * 0.10 * 100) / 100;
+  const vat = Math.round(subtotal * 0.05 * 100) / 100;
 
   let tipAmount = 0;
-  if (selectedTip === '10') tipAmount = 10;
-  else if (selectedTip === '15') tipAmount = 15;
+  if (selectedTip === '10') tipAmount = Math.round(subtotal * 0.10 * 100) / 100;
+  else if (selectedTip === '15') tipAmount = Math.round(subtotal * 0.15 * 100) / 100;
   else if (selectedTip === 'custom') tipAmount = parseFloat(customTipAmount) || 0;
 
-  const splitFee = isSplitCheck ? 5 : 0;
-  const discount = promoStatus === 'applied' ? subtotal * 0.2 : 0;
-  const grandTotal = Math.max(0, subtotal + tipAmount + splitFee - discount);
+  const splitFee = isSplitCheck ? 0 : 0;
+  const discount = promoStatus === 'applied' ? Math.round(subtotal * 0.20 * 100) / 100 : 0;
+  const grandTotal = Math.max(0, subtotal + serviceCharge + vat + tipAmount + splitFee - discount);
 
   const handleApplyPromo = () => {
     const code = promoCode.trim().toUpperCase();
@@ -327,80 +327,107 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                 })}
           </div>
 
-          {/* + Add More Items Link */}
-          <div className="pt-3 border-t border-zinc-100 flex justify-end">
+          {/* + Add More Items Link (Figma-Exact start aligned) */}
+          <div className="pt-3 border-t border-zinc-100 flex justify-start">
             <button
               type="button"
               onClick={onAddMoreItems}
               className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
             >
-              <Plus className="w-4 h-4" />
-              <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add more items'}</span>
+              <Plus className="w-4 h-4 stroke-[2.5]" />
+              <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
             </button>
           </div>
         </div>
 
-        {/* 4. Promo Code Card (Handles 3 states: Default, Valid, Error) */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-100 space-y-2.5 shadow-2xs">
-          <span className="font-bold text-xs sm:text-sm text-zinc-900 block">
-            {isArabic ? 'رمز العرض' : 'Promo Code'}
-          </span>
-
-          <div className="flex gap-2">
+        {/* 4. Promo Code Card (Handles 3 states: Default, Valid, Error matching Figma) */}
+        {promoStatus === 'applied' ? (
+          <div className="bg-emerald-50/70 rounded-2xl p-4 sm:p-5 border border-emerald-200/80 flex items-center justify-between shadow-2xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center text-[#026F4F]">
+                <Percent className="w-3.5 h-3.5 stroke-[2.5]" />
+              </div>
+              <span className="font-bold text-sm sm:text-base text-[#026F4F] tracking-wide">
+                {promoCode || 'WELCOME20'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setPromoStatus('none');
+                setPromoCode('');
+              }}
+              className="w-7 h-7 rounded-full bg-[#026F4F] text-white flex items-center justify-center cursor-pointer shadow-2xs hover:bg-[#025a40] transition-colors"
+              title="Remove promo code"
+            >
+              <Check className="w-4 h-4 stroke-[3]" />
+            </button>
+          </div>
+        ) : promoStatus === 'error' ? (
+          <div className="bg-rose-50/70 rounded-2xl p-4 sm:p-5 border border-rose-200/80 flex items-center justify-between shadow-2xs">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-full bg-rose-100 flex items-center justify-center text-rose-600">
+                <Percent className="w-3.5 h-3.5 stroke-[2.5]" />
+              </div>
+              <span className="font-bold text-sm sm:text-base text-rose-600 tracking-wide uppercase">
+                {promoCode || 'INVALID'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setPromoStatus('none');
+                setPromoCode('');
+              }}
+              className="w-7 h-7 rounded-full bg-rose-500 text-white flex items-center justify-center cursor-pointer shadow-2xs hover:bg-rose-600 transition-colors"
+              title="Clear"
+            >
+              <X className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl p-2.5 sm:p-3 border border-zinc-100 shadow-2xs flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 shrink-0 ml-1">
+              <Percent className="w-4 h-4 stroke-[2.5]" />
+            </div>
             <input
               type="text"
               value={promoCode}
-              onChange={(e) => {
-                setPromoCode(e.target.value);
-                if (promoStatus !== 'none') setPromoStatus('none');
-              }}
-              placeholder={isArabic ? 'أدخل الرمز (جرب: WELCOME20)' : 'Enter Code (Try: WELCOME20)'}
-              className="flex-1 bg-[#f4f4f5] border border-zinc-200/80 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 font-medium focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all uppercase"
+              onChange={(e) => setPromoCode(e.target.value)}
+              placeholder={isArabic ? 'أدخل رمز العرض' : 'ENTER PROMO CODE'}
+              className="flex-1 bg-transparent px-2 py-2 text-xs sm:text-sm text-zinc-800 placeholder:text-zinc-400 placeholder:font-medium font-bold uppercase outline-none"
             />
             <button
               type="button"
               onClick={handleApplyPromo}
-              className="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/80 text-white text-xs sm:text-sm font-bold transition-colors cursor-pointer shrink-0"
+              className="px-5 py-2.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white text-xs sm:text-sm font-bold tracking-wide transition-colors cursor-pointer shrink-0 shadow-xs active:scale-95"
             >
-              {isArabic ? 'تطبيق' : 'Apply'}
+              {isArabic ? 'تطبيق' : 'APPLY'}
             </button>
           </div>
-
-          {promoStatus === 'applied' && (
-            <p className="text-xs text-[#026F4F] font-bold flex items-center gap-1">
-              <Check className="w-3.5 h-3.5" />
-              <span>{isArabic ? 'تم تطبيق خصم 20%!' : '20% discount applied!'}</span>
-            </p>
-          )}
-
-          {promoStatus === 'error' && (
-            <p className="text-xs text-rose-500 font-bold">
-              {isArabic ? 'رمز الترويج غير صالحة' : 'Invalid Promo Code'}
-            </p>
-          )}
-        </div>
+        )}
 
         {/* 5. Add a Tip Card */}
         <div className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-100 space-y-3 shadow-2xs">
           <span className="font-bold text-xs sm:text-sm text-zinc-900 block">
-            {isArabic ? 'إضافة إكرامية' : 'Add Tip'}
+            {isArabic ? 'إضافة إكرامية' : 'Add a Tip'}
           </span>
 
           <div className="grid grid-cols-4 gap-2">
             {[
-              { id: '0', label: '0' },
-              { id: '10', label: '10' },
-              { id: '15', label: '15' },
+              { id: '0', label: '0%' },
+              { id: '10', label: '10%' },
+              { id: '15', label: '15%' },
               { id: 'custom', label: isArabic ? 'مخصص' : 'Custom' },
             ].map((tip) => (
               <button
                 key={tip.id}
                 type="button"
                 onClick={() => setSelectedTip(tip.id as any)}
-                className={`py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold border transition-all cursor-pointer text-center ${
+                className={`py-2.5 px-2 rounded-full text-xs sm:text-sm border transition-all cursor-pointer text-center ${
                   selectedTip === tip.id
-                    ? 'bg-emerald-50 border-[#026F4F] text-[#026F4F]'
-                    : 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-50'
+                    ? 'bg-[#026F4F] border-[#026F4F] text-white font-bold shadow-xs'
+                    : 'bg-white border-zinc-200 text-zinc-700 font-medium hover:bg-zinc-50'
                 }`}
               >
                 {tip.label}
@@ -413,7 +440,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
               type="number"
               value={customTipAmount}
               onChange={(e) => setCustomTipAmount(e.target.value)}
-              placeholder={isArabic ? 'مبلغ الإكرامية' : 'Tip amount in LE'}
+              placeholder={isArabic ? 'مبلغ الإكرامية' : 'Enter tip amount ($)'}
               className="w-full bg-[#f4f4f5] border border-zinc-200/80 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 font-medium focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all mt-2"
             />
           )}
@@ -423,22 +450,32 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             <span className="text-rose-500 font-bold">*</span>
             <span>
               {isArabic
-                ? 'أعلى إكرامية اليوم كانت 10.00 ج.م'
-                : 'Highest tip today was EGP 10.00'}
+                ? 'أعلى إكرامية اليوم كانت $10.00'
+                : 'Highest tip today was $10.00'}
             </span>
           </div>
         </div>
 
-        {/* 6. Payments Details Card */}
+        {/* 6. Payments Details Card (Figma-Exact) */}
         <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3">
           <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
-            {isArabic ? 'تفاصيل الفاتورة' : 'Payment Details'}
+            {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
           </h2>
 
-          <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base font-medium">
+          <div className="space-y-2 md:space-y-2.5 text-xs sm:text-sm md:text-base font-medium">
             <div className="flex justify-between text-zinc-400">
-              <span>{isArabic ? `المجموع الفرعي (${activeItemCount} أصناف)` : `Subtotal (${activeItemCount} items)`}</span>
+              <span>{isArabic ? `المجموع الفرعي (${activeItemCount} أصناف)` : `Subtotal (${activeItemCount}Items)`}</span>
               <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
+            </div>
+
+            <div className="flex justify-between text-zinc-400">
+              <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
+            </div>
+
+            <div className="flex justify-between text-zinc-400">
+              <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(vat, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400">
@@ -455,7 +492,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
             {promoStatus === 'applied' && (
               <div className="flex justify-between text-[#026F4F] font-medium">
-                <span>{isArabic ? 'خصم العرض (20%)' : 'Promo Discount (20%)'}</span>
+                <span>{isArabic ? 'خصم العرض (20%)' : 'Promo Discount'}</span>
                 <span className="font-bold">-{formatPrice(discount, activeLanguage)}</span>
               </div>
             )}
@@ -499,7 +536,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             onClick={() => setShowPaymentModal(true)}
             className="w-full py-4 sm:py-4.5 px-6 sm:px-8 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-extrabold text-sm sm:text-base md:text-lg tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
           >
-            <span>{isArabic ? 'متابعة الشراء' : 'Continue to Checkout'}</span>
+            <span>{isArabic ? 'متابعة للدفع' : 'Continue to Payment'}</span>
             <span className="font-extrabold text-base sm:text-lg md:text-xl">
               {formatPrice(grandTotal, activeLanguage)}
             </span>

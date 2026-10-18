@@ -70,8 +70,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   onPaymentSuccess,
   language: propLanguage,
   subtotal,
-  serviceCharge: _serviceCharge,
-  vat: _vat,
+  serviceCharge: propServiceCharge,
+  vat: propVat,
   tipAmount,
   splitFee = 0,
   discount = 0,
@@ -80,6 +80,9 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const { language: contextLanguage } = useLanguage();
   const activeLanguage = propLanguage || contextLanguage;
   const isArabic = activeLanguage === 'ARABIC';
+
+  const serviceCharge = propServiceCharge !== undefined && propServiceCharge > 0 ? propServiceCharge : Math.round(subtotal * 0.10 * 100) / 100;
+  const vat = propVat !== undefined && propVat > 0 ? propVat : Math.round(subtotal * 0.05 * 100) / 100;
 
   const [fullName, setFullName] = useState('');
   const [selectedCountryCode, setSelectedCountryCode] = useState('+20');
@@ -324,8 +327,18 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
           <div className="border-t border-dashed border-zinc-200 my-2 pt-3 space-y-2 text-xs sm:text-sm">
             <div className="flex justify-between text-zinc-400 font-medium">
-              <span>{isArabic ? 'المجموع الفرعي' : 'Subtotal'}</span>
+              <span>{isArabic ? `المجموع الفرعي (${cart.length} أصناف)` : `Subtotal (${cart.length}Items)`}</span>
               <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
+            </div>
+
+            <div className="flex justify-between text-zinc-400 font-medium">
+              <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(serviceCharge, activeLanguage)}</span>
+            </div>
+
+            <div className="flex justify-between text-zinc-400 font-medium">
+              <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
+              <span className="text-zinc-800 font-bold">{formatPrice(vat, activeLanguage)}</span>
             </div>
 
             <div className="flex justify-between text-zinc-400 font-medium">
@@ -553,8 +566,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               </h3>
               <p className="text-xs sm:text-sm text-zinc-400 font-medium mt-2 max-w-xs mx-auto leading-relaxed">
                 {isArabic
-                  ? 'يرجى الانتظار بينما يؤكد الموظفون دفعك.'
-                  : 'Please wait while staff confirms your payment.'}
+                  ? (selectedMethod === 'cash' ? 'يرجى الانتظار بينما يؤكد الموظفون دفعك النقدي.' : 'يرجى الانتظار بينما يؤكد الموظفون دفعك.')
+                  : (selectedMethod === 'cash' ? 'Please wait while staff confirms your cash payment.' : 'Please wait while staff confirms your payment.')}
               </p>
             </div>
           </div>

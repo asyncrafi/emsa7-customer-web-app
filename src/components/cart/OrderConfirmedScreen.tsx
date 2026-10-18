@@ -26,8 +26,8 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
   onTrackOrder,
   cart,
   subtotal,
-  serviceCharge: _serviceCharge,
-  vat: _vat,
+  serviceCharge: propServiceCharge,
+  vat: propVat,
   tipAmount,
   splitFee = 0,
   discount = 0,
@@ -41,6 +41,15 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
 
   const isArabic = activeLanguage === 'ARABIC';
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const serviceCharge =
+    propServiceCharge !== undefined && propServiceCharge > 0
+      ? propServiceCharge
+      : Math.round(subtotal * 0.10 * 100) / 100;
+  const vat =
+    propVat !== undefined && propVat > 0
+      ? propVat
+      : Math.round(subtotal * 0.05 * 100) / 100;
 
   return (
     <div
@@ -164,6 +173,20 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
               </div>
 
 
+
+              <div className="flex justify-between text-zinc-400">
+                <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
+                <span className="text-zinc-800 font-bold">
+                  {formatPrice(serviceCharge, activeLanguage)}
+                </span>
+              </div>
+
+              <div className="flex justify-between text-zinc-400">
+                <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
+                <span className="text-zinc-800 font-bold">
+                  {formatPrice(vat, activeLanguage)}
+                </span>
+              </div>
 
               {tipAmount > 0 && (
                 <div className="flex justify-between text-zinc-400">

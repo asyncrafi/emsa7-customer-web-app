@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, ChevronRight, Clock, Trash2, Plus, Pencil, FileText } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronRight, Clock, Trash2, Plus, Pencil, Bell } from 'lucide-react';
 import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
@@ -71,7 +71,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   onAddToCart,
   onUpdateCartItem,
   onReorder,
-  onCallWaiter: _onCallWaiter,
+  onCallWaiter,
   language: propLanguage,
   tableName: _tableName = 'Table A08',
   initialTab = 'ongoing',
@@ -171,8 +171,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = getCartSubtotal(cart);
-  const serviceCharge = 0;
-  const grandTotal = subtotal;
+  const serviceCharge = Math.round(subtotal * 0.10 * 100) / 100;
+  const grandTotal = subtotal + serviceCharge;
 
   return (
     <div
@@ -560,15 +560,34 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                       <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
                     </button>
                   </div>
+                </div>
+
+                {/* Card 2: Order Summary (Financial breakdown matching Figma) */}
+                <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3">
+                  <h2 className="font-bold text-base sm:text-lg md:text-xl text-zinc-900">
+                    {isArabic ? 'ملخص الطلب' : 'Order Summary'}
+                  </h2>
+
+                  <div className="space-y-2 md:space-y-2.5 text-xs sm:text-sm md:text-base font-medium">
+                    <div className="flex justify-between text-zinc-400">
+                      <span>{isArabic ? `المجموع الفرعي (${totalCartCount} أصناف)` : `Subtotal (${totalCartCount}items)`}</span>
+                      <span className="text-zinc-800 font-bold">{formatPrice(subtotal, activeLanguage)}</span>
+                    </div>
+
+                    <div className="flex justify-between text-zinc-400">
+                      <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
+                      <span className="text-zinc-800 font-bold">{formatPrice(Math.round(subtotal * 0.10 * 100) / 100, activeLanguage)}</span>
+                    </div>
+                  </div>
 
                   {/* Dashed Separator Line */}
                   <div className="border-b border-dashed border-zinc-200 my-2.5 md:my-3.5" />
 
-                  {/* Subtotal Line */}
-                  <div className="flex justify-between items-center text-xs sm:text-sm md:text-base font-bold text-zinc-900 pt-0.5">
-                    <span>{isArabic ? 'المجموع الفرعي' : 'Subtotal'}</span>
-                    <span className="text-[#026F4F] font-extrabold text-sm sm:text-base md:text-lg">
-                      {formatPrice(subtotal, activeLanguage)}
+                  {/* Total Line */}
+                  <div className="flex justify-between items-center font-bold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
+                    <span className="text-zinc-900">{isArabic ? 'المجموع' : 'Total'}</span>
+                    <span className="text-[#026F4F] font-bold text-base sm:text-lg md:text-xl lg:text-2xl">
+                      {formatPrice(subtotal + Math.round(subtotal * 0.10 * 100) / 100, activeLanguage)}
                     </span>
                   </div>
                 </div>
@@ -579,7 +598,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
         {/* TAB 3: ORDER HISTORY (FIGMA SCREENSHOT 3 EXACT LAYOUT) */}
         {activeTab === 'history' && (
-          <div className="space-y-4 md:space-y-5 animate-in fade-in duration-200">
+          <div className="space-y-4 md:space-y-5 animate-in fade-in duration-200 relative pb-16">
             {historyOrders.map((ord) => (
               <div key={ord.id} className="bg-white rounded-3xl p-5 sm:p-6 md:p-7 shadow-xs border border-zinc-100 space-y-4">
                 {/* Header Row: #A102 and Price */}
@@ -620,17 +639,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   ))}
                 </div>
 
-                {/* Action Buttons: E-Invoice & Reorder */}
-                <div className="flex items-center gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedInvoiceOrder(ord)}
-                    className="flex-1 py-3 sm:py-3.5 px-3 sm:px-4 rounded-full bg-white hover:bg-zinc-50 border border-zinc-200 text-zinc-800 font-bold text-xs sm:text-sm md:text-base tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-                  >
-                    <FileText className="w-4 h-4 text-[#026F4F] shrink-0" />
-                    <span>{isArabic ? 'الفاتورة الإلكترونية' : 'E-Invoice'}</span>
-                  </button>
-
+                {/* Action Button: Full-Width Reorder > matching Figma */}
+                <div className="pt-1">
                   <button
                     type="button"
                     onClick={() => {
@@ -652,7 +662,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                       }
                       setActiveTab('cart');
                     }}
-                    className="flex-1 py-3 sm:py-3.5 px-3 sm:px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-bold text-xs sm:text-sm md:text-base tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                    className="w-full py-3.5 px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-bold text-xs sm:text-sm md:text-base tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <span>{isArabic ? 'إعادة الطلب' : 'Reorder'}</span>
                     <ChevronRight className="w-4 h-4 text-zinc-500 rtl:rotate-180 shrink-0" />
@@ -660,6 +670,38 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 </div>
               </div>
             ))}
+
+            {/* Floating Call a Waiter Action Button with Tooltip (Figma-Exact) */}
+            <div className="fixed bottom-6 right-4 sm:right-6 md:right-8 z-40 flex flex-col items-end gap-1.5 animate-in fade-in duration-300">
+              <div className="bg-[#1e1e1e] text-white text-[11px] font-semibold px-3 py-1 rounded-full shadow-md relative after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#1e1e1e]">
+                {isArabic ? 'استدعاء النادل' : 'Call a Waiter'}
+              </div>
+              <button
+                type="button"
+                onClick={onCallWaiter}
+                className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#f59e0b] hover:bg-[#d97706] text-white flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
+                aria-label="Call a Waiter"
+              >
+                <Bell className="w-6 h-6 stroke-[2.2] fill-white" />
+              </button>
+            </div>
+
+            {/* Footer Branding Line: POWERED BY EMSA7 */}
+            <div className="pt-6 pb-2 text-center select-none flex justify-center items-center">
+              <a
+                href="https://emsa7.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity no-underline"
+              >
+                <span className="text-[11px] sm:text-xs md:text-sm font-bold tracking-wider uppercase text-[#989898] inline-flex items-center">
+                  POWERED BY
+                </span>
+                <div className="inline-flex items-center justify-center my-auto shrink-0">
+                  <SvgEmsa7Icon className="h-4.5 sm:h-5 md:h-6 w-auto" />
+                </div>
+              </a>
+            </div>
           </div>
         )}
       </div>

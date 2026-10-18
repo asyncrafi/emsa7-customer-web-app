@@ -77,6 +77,18 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
 
   const currentConfig = statusConfig[status];
 
+  const orderSubtotal =
+    order?.subtotal ??
+    (order?.items?.reduce((sum, it) => sum + it.price * it.qty, 0) || 25.99);
+  const orderServiceCharge =
+    order?.serviceCharge !== undefined && order.serviceCharge > 0
+      ? order.serviceCharge
+      : Math.round(orderSubtotal * 0.10 * 100) / 100;
+  const orderVat =
+    order?.vat !== undefined && order.vat > 0
+      ? order.vat
+      : Math.round(orderSubtotal * 0.05 * 100) / 100;
+
   return (
     <div
       className={`fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto w-full min-h-[100dvh] flex flex-col justify-between pb-8 sm:pb-10 md:pb-12 ${
@@ -200,22 +212,18 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                 <div className="space-y-2 md:space-y-3 text-xs sm:text-sm md:text-base lg:text-lg font-medium">
                   <div className="flex justify-between text-zinc-400">
                     <span>{isArabic ? `المجموع الفرعي (${order?.items?.length || 0} أصناف)` : `Subtotal (${order?.items?.length || 0} items)`}</span>
-                    <span className="text-zinc-800 font-bold">{formatPrice(order?.subtotal || 25.99, activeLanguage)}</span>
+                    <span className="text-zinc-800 font-bold">{formatPrice(orderSubtotal, activeLanguage)}</span>
                   </div>
 
-                  {(order?.serviceCharge ?? 0) > 0 && (
-                    <div className="flex justify-between text-zinc-400">
-                      <span>{isArabic ? `رسوم الخدمة (10%)` : 'Service Charge (10%)'}</span>
-                      <span className="text-zinc-800 font-bold">{formatPrice(order?.serviceCharge || 0, activeLanguage)}</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between text-zinc-400">
+                    <span>{isArabic ? `رسوم الخدمة (10%)` : 'Service Charge (10%)'}</span>
+                    <span className="text-zinc-800 font-bold">{formatPrice(orderServiceCharge, activeLanguage)}</span>
+                  </div>
 
-                  {(order?.vat ?? 0) > 0 && (
-                    <div className="flex justify-between text-zinc-400">
-                      <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-                      <span className="text-zinc-800 font-bold">{formatPrice(order?.vat || 0, activeLanguage)}</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between text-zinc-400">
+                    <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
+                    <span className="text-zinc-800 font-bold">{formatPrice(orderVat, activeLanguage)}</span>
+                  </div>
 
                   {(order?.tipAmount ?? 0) > 0 && (
                     <div className="flex justify-between text-zinc-400">
