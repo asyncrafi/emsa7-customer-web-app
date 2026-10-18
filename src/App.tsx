@@ -23,7 +23,7 @@ function MainApp() {
   if (step === 'table-confirmed') {
     return (
       <TableConfirmedScreen
-        tableName="Table A08"
+        tableName="Table A8"
         onContinue={() => {
           setStep('menu');
         }}
