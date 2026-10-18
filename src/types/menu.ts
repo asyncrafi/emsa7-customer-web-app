@@ -285,10 +285,7 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
 
 export function formatPrice(
   price: number,
-  language: "ENGLISH" | "ARABIC" = "ENGLISH",
+  _language: "ENGLISH" | "ARABIC" = "ENGLISH",
 ): string {
-  if (language === "ARABIC") {
-    return `${price.toFixed(2)} ج.م`;
-  }
-  return `EGP ${price.toFixed(2)}`;
+  return `$${price.toFixed(2)}`;
 }
