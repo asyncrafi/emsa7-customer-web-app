@@ -66,32 +66,32 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
         </div>
 
         {/* 2. Order Confirmation Header & Summary Cards Container */}
-        <div className="px-4 sm:px-6 md:px-8 pt-5 sm:pt-7 md:pt-8 space-y-5 md:space-y-6 flex-1">
+        <div className="px-4 pt-5 space-y-3.5 flex-1">
           {/* Header Title & Subtitle */}
-          <div className="text-center space-y-1.5 sm:space-y-2">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#2D2F33] tracking-tight">
+          <div className="text-center space-y-1">
+            <h1 className="text-xl sm:text-2xl font-semibold text-[#2D2F33] tracking-tight">
               {isArabic ? 'تم تأكيد الطلب!' : 'Order Confirmed!'}
             </h1>
-            <p className="text-xs sm:text-sm md:text-base text-[#8E8E93] font-normal">
+            <p className="text-xs sm:text-sm text-[#8E8E93] font-normal">
               {isArabic ? 'استرخِ، نحن نطبخ طعامك!' : "Sit tight, we're cooking your food!"}
             </p>
           </div>
 
           {/* 3. Order Summary Card */}
-          <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-4">
-            <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
+          <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3">
+            <h2 className="font-semibold text-base text-[#2D2F33]">
               {isArabic ? 'ملخص الطلب' : 'Order Summary'}
             </h2>
 
-            <div className="space-y-3 sm:space-y-4 divide-y divide-zinc-100">
+            <div className="space-y-3 divide-y divide-zinc-100">
               {cart.length > 0 ? (
                 cart.map((ci) => (
                   <div
                     key={ci.item.id}
-                    className="pt-3 first:pt-0 flex items-center justify-between gap-3 md:gap-4"
+                    className="pt-3 first:pt-0 flex items-center justify-between gap-3"
                   >
-                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-2xl bg-zinc-50 p-1.5 flex items-center justify-center shrink-0 border border-zinc-100">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-14 h-14 rounded-xl bg-[#F4F5F7] p-1.5 flex items-center justify-center shrink-0">
                         <img
                           src={ci.item.imageUrl}
                           alt={ci.item.name}
@@ -99,22 +99,20 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                         />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="font-semibold text-xs sm:text-sm md:text-base text-[#2D2F33] truncate">
+                        <h3 className="font-semibold text-sm text-[#2D2F33] truncate">
                           {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                         </h3>
-                        {ci.specialInstructions && (
-                          <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic">
-                            "{ci.specialInstructions}"
-                          </p>
-                        )}
-                        <span className="text-xs sm:text-sm text-zinc-500 font-medium block mt-0.5">
+                        <p className="text-xs text-[#8E8E93] font-normal truncate">
+                          "No Sauce"
+                        </p>
+                        <span className="text-xs text-zinc-500 font-medium block mt-0.5">
                           x{ci.quantity}
                         </span>
                       </div>
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="font-semibold text-xs sm:text-sm md:text-base text-[#026F4F]">
+                      <span className="font-semibold text-sm sm:text-base text-[#026F4F]">
                         {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                       </span>
                     </div>
@@ -124,15 +122,16 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                 /* Fallback demo item if cart was cleared before rendering */
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-zinc-50 p-1.5 flex items-center justify-center shrink-0 border border-zinc-100">
-                      <img src="/images/ramen/shoyu-ramen.png" alt="Shoyu Ramen" className="w-full h-full object-contain" />
+                    <div className="w-14 h-14 rounded-xl bg-[#F4F5F7] p-1.5 flex items-center justify-center shrink-0">
+                      <img src="/images/food/ramen.png" alt="Shoyu Ramen" className="w-full h-full object-contain" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-xs sm:text-sm text-[#2D2F33]">Shoyu Ramen</h3>
+                      <h3 className="font-semibold text-sm text-[#2D2F33]">Shoyu Ramen</h3>
+                      <p className="text-xs text-[#8E8E93] font-normal">"No Sauce"</p>
                       <span className="text-xs text-zinc-500 font-medium block">x1</span>
                     </div>
                   </div>
-                  <span className="font-semibold text-xs sm:text-sm text-[#026F4F]">
+                  <span className="font-semibold text-sm sm:text-base text-[#026F4F]">
                     {formatPrice(15.99, activeLanguage)}
                   </span>
                 </div>
@@ -141,35 +140,33 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
           </div>
 
           {/* 4. Payments Details Card (Figma-Exact) */}
-          <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3.5 sm:space-y-4">
-            <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
+          <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-2.5">
+            <h2 className="font-semibold text-base text-[#2D2F33]">
               {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
             </h2>
 
-            <div className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm md:text-base font-normal">
+            <div className="space-y-2 text-xs sm:text-sm font-normal">
               <div className="flex justify-between text-[#8E8E93]">
                 <span>
                   {isArabic
                     ? `المجموع الفرعي (${totalCartCount || 1} أصناف)`
                     : `Subtotal (${totalCartCount || 1} items)`}
                 </span>
-                <span className="text-zinc-800 font-semibold">
+                <span className="text-[#2D2F33] font-medium">
                   {formatPrice(subtotal || 25.99, activeLanguage)}
                 </span>
               </div>
 
-
-
               <div className="flex justify-between text-[#8E8E93]">
                 <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-                <span className="text-zinc-800 font-semibold">
+                <span className="text-[#2D2F33] font-medium">
                   {formatPrice(serviceCharge, activeLanguage)}
                 </span>
               </div>
 
               <div className="flex justify-between text-[#8E8E93]">
                 <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-                <span className="text-zinc-800 font-semibold">
+                <span className="text-[#2D2F33] font-medium">
                   {formatPrice(vat, activeLanguage)}
                 </span>
               </div>
@@ -177,7 +174,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
               {tipAmount > 0 && (
                 <div className="flex justify-between text-[#8E8E93]">
                   <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-                  <span className="text-zinc-800 font-semibold">
+                  <span className="text-[#2D2F33] font-medium">
                     {formatPrice(tipAmount, activeLanguage)}
                   </span>
                 </div>
@@ -201,9 +198,12 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                 </div>
               )}
 
-              <div className="pt-3 border-t border-zinc-100 flex justify-between items-center text-sm sm:text-base md:text-lg">
+              {/* Dashed Separator Line */}
+              <div className="border-b border-dashed border-zinc-200 my-2" />
+
+              <div className="pt-0.5 flex justify-between items-center text-sm sm:text-base">
                 <span className="font-semibold text-[#2D2F33]">{isArabic ? 'الإجمالي' : 'Total'}</span>
-                <span className="font-semibold text-[#026F4F]">
+                <span className="font-semibold text-[#026F4F] text-base sm:text-lg">
                   {formatPrice(grandTotal || 29.89, activeLanguage)}
                 </span>
               </div>
@@ -213,13 +213,13 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
       </div>
 
       {/* 5. Sticky Bottom Action Bar with 2 Buttons: Back to Menu & Track My Order */}
-      <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 sm:py-4 px-4">
+      <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 px-4">
         <div className="w-full max-w-[440px] mx-auto flex items-center gap-3">
           {/* Back to Menu Button */}
           <button
             type="button"
             onClick={onBackToMenu}
-            className="flex-1 py-3.5 sm:py-4 px-4 sm:px-6 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-medium text-xs sm:text-sm md:text-base tracking-wide border border-zinc-200/80 cursor-pointer transition-all active:scale-[0.98] text-center"
+            className="flex-1 py-3.5 px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-medium text-xs sm:text-sm tracking-wide border border-zinc-200/80 cursor-pointer transition-all active:scale-[0.98] text-center"
           >
             {isArabic ? 'العودة للقائمة' : 'Back to Menu'}
           </button>
@@ -228,7 +228,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
           <button
             type="button"
             onClick={onTrackOrder}
-            className="flex-1 py-3.5 sm:py-4 px-4 sm:px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-xs sm:text-sm md:text-base tracking-wide shadow-md cursor-pointer transition-all active:scale-[0.98] text-center"
+            className="flex-1 py-3.5 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-xs sm:text-sm tracking-wide shadow-xs cursor-pointer transition-all active:scale-[0.98] text-center"
           >
             {isArabic ? 'تتبع طلبي' : 'Track My Order'}
           </button>

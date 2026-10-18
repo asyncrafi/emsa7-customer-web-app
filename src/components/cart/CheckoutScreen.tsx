@@ -171,15 +171,15 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         </header>
 
         {/* 1. Dining Location Green Banner Box with SvgChairIcon */}
-        <div className="bg-[#026F4F] rounded-3xl p-4 sm:p-5 flex items-center gap-3.5 sm:gap-4 text-white shadow-xs">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#D4E7DF] flex items-center justify-center shrink-0 shadow-2xs">
-            <SvgChairIcon className="w-6 h-7 sm:w-7 sm:h-8 text-[#026F4F]" />
+        <div className="bg-[#026F4F] rounded-[16px] p-4 flex items-center gap-3.5 text-white shadow-xs">
+          <div className="w-12 h-12 rounded-xl bg-[#D4E7DF] flex items-center justify-center shrink-0 shadow-2xs">
+            <SvgChairIcon className="w-6 h-7 text-[#026F4F]" />
           </div>
           <div>
-            <p className="text-emerald-100 text-xs sm:text-sm font-medium">
+            <p className="text-emerald-100 text-xs font-normal">
               {isArabic ? 'تناول الطعام في' : 'Dining at'}
             </p>
-            <h2 className="text-white text-base sm:text-lg md:text-xl font-semibold tracking-tight leading-snug">
+            <h2 className="text-white text-base sm:text-lg font-semibold tracking-tight leading-snug">
               {tableName}
             </h2>
             <p className="text-emerald-100/80 text-[11px] sm:text-xs font-normal">
@@ -189,7 +189,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         </div>
 
         {/* 2. Split Check Toggle Card with User Avatars matching Figma */}
-        <div className="bg-white rounded-2xl p-4 sm:p-5 border border-zinc-100 flex items-center justify-between shadow-2xs">
+        <div className="bg-white rounded-[16px] p-4 border border-[#F4F4F5] flex items-center justify-between shadow-2xs">
           <div className="flex items-center gap-2.5">
             <span className="font-semibold text-sm sm:text-base text-[#2D2F33]">
               {isArabic ? 'تقسيم الفاتورة' : 'Split Check'}
@@ -224,8 +224,8 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         </div>
 
         {/* 3. Order Summary Card */}
-        <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-4">
-          <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
+        <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3">
+          <h2 className="font-semibold text-base text-[#2D2F33]">
             {isArabic ? 'ملخص الطلب' : 'Order Summary'}
           </h2>
 
@@ -264,27 +264,27 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                         </div>
 
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-semibold text-xs sm:text-sm md:text-base text-[#2D2F33] truncate">
+                          <h3 className="font-semibold text-sm text-[#2D2F33] truncate">
                             {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                           </h3>
                           {ci.selectedOptions && ci.selectedOptions.length > 0 && (
-                            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">
+                            <p className="text-xs text-zinc-500 font-normal truncate">
                               {ci.selectedOptions.map((so) => so.optionName).join(', ')}
                             </p>
                           )}
                           {ci.specialInstructions && (
-                            <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic truncate">
+                            <p className="text-xs text-zinc-400 font-normal italic truncate">
                               "{ci.specialInstructions}"
                             </p>
                           )}
-                          <span className="font-semibold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
+                          <span className="font-semibold text-sm sm:text-base text-[#026F4F] block mt-0.5">
                             {formatPrice(splitItem.singlePrice, activeLanguage)}
                           </span>
                         </div>
                       </div>
 
                       <div className="shrink-0">
-                        <span className="text-xs sm:text-sm font-medium text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
+                        <span className="text-xs font-medium text-zinc-500 bg-zinc-100 px-2.5 py-1 rounded-full">
                           x1
                         </span>
                       </div>
@@ -295,10 +295,10 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                   return (
                     <div
                       key={ci.item.id}
-                      className="pt-3.5 first:pt-0 flex items-center justify-between gap-3 md:gap-4"
+                      className="pt-3 first:pt-0 flex items-center justify-between gap-3"
                     >
-                      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                        <div className="w-13 h-13 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-2xl bg-zinc-50 p-2 flex items-center justify-center shrink-0 border border-zinc-100">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-14 h-14 rounded-xl bg-[#F4F5F7] p-1.5 flex items-center justify-center shrink-0">
                           <img
                             src={ci.item.imageUrl}
                             alt={ci.item.name}
@@ -307,20 +307,20 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                         </div>
 
                         <div className="min-w-0">
-                          <h3 className="font-semibold text-xs sm:text-sm md:text-base text-[#2D2F33] truncate">
+                          <h3 className="font-semibold text-sm text-[#2D2F33] truncate">
                             {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                           </h3>
                           {ci.selectedOptions && ci.selectedOptions.length > 0 && (
-                            <p className="text-[11px] sm:text-xs text-zinc-500 font-medium truncate">
+                            <p className="text-xs text-zinc-500 font-normal truncate">
                               {ci.selectedOptions.map((so) => so.optionName).join(', ')}
                             </p>
                           )}
                           {ci.specialInstructions && (
-                            <p className="text-[11px] sm:text-xs text-zinc-400 font-normal italic truncate">
+                            <p className="text-xs text-zinc-400 font-normal italic truncate">
                               "{ci.specialInstructions}"
                             </p>
                           )}
-                          <span className="font-semibold text-xs sm:text-sm md:text-base text-[#026F4F] block mt-0.5">
+                          <span className="font-semibold text-sm sm:text-base text-[#026F4F] block mt-0.5">
                             {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                           </span>
                         </div>
@@ -468,29 +468,29 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </div>
         </div>
 
-        {/* 6. Payments Details Card (Figma-Exact) */}
-        <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 shadow-xs border border-zinc-100 space-y-3">
-          <h2 className="font-semibold text-base sm:text-lg md:text-xl text-[#2D2F33]">
+        {/* 6. Payments Details Card (Figma-Exact Frame 1171277086) */}
+        <div className="bg-white rounded-[16px] p-4 sm:p-5 shadow-2xs border border-[#F4F4F5] space-y-3">
+          <h2 className="font-semibold text-base text-[#2D2F33]">
             {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
           </h2>
 
-          <div className="space-y-2 md:space-y-2.5 text-xs sm:text-sm md:text-base font-medium">
-            <div className="flex justify-between text-zinc-400">
+          <div className="space-y-2 text-sm font-medium">
+            <div className="flex justify-between text-[#8E8E93]">
               <span>{isArabic ? `المجموع الفرعي (${activeItemCount} أصناف)` : `Subtotal (${activeItemCount}Items)`}</span>
               <span className="text-[#2D2F33] font-medium">{formatPrice(subtotal, activeLanguage)}</span>
             </div>
 
-            <div className="flex justify-between text-zinc-400">
+            <div className="flex justify-between text-[#8E8E93]">
               <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
               <span className="text-[#2D2F33] font-medium">{formatPrice(serviceCharge, activeLanguage)}</span>
             </div>
 
-            <div className="flex justify-between text-zinc-400">
+            <div className="flex justify-between text-[#8E8E93]">
               <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
               <span className="text-[#2D2F33] font-medium">{formatPrice(vat, activeLanguage)}</span>
             </div>
 
-            <div className="flex justify-between text-zinc-400">
+            <div className="flex justify-between text-[#8E8E93]">
               <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
               <span className="text-[#2D2F33] font-medium">{formatPrice(tipAmount, activeLanguage)}</span>
             </div>
@@ -511,12 +511,12 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </div>
 
           {/* Dashed Separator Line */}
-          <div className="border-b border-dashed border-zinc-200 my-2.5 md:my-3.5" />
+          <div className="border-b border-dashed border-[#E5E5EA] my-3" />
 
           {/* Total Line */}
-          <div className="flex justify-between items-center font-semibold text-sm sm:text-base md:text-lg lg:text-xl pt-1">
+          <div className="flex justify-between items-center font-semibold text-base pt-0.5">
             <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
-            <span className="text-[#026F4F] font-semibold text-base sm:text-lg md:text-xl lg:text-2xl">
+            <span className="text-[#026F4F] font-semibold text-lg">
               {formatPrice(grandTotal, activeLanguage)}
             </span>
           </div>
