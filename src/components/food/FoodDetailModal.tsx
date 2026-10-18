@@ -139,17 +139,17 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
     >
       <div
         dir={isArabic ? 'rtl' : 'ltr'}
-        className="w-full max-w-lg bg-white rounded-t-[2.25rem] sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[88vh] sm:max-h-[85vh] relative font-sans"
+        className="w-full max-w-[440px] mx-auto bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom duration-300 flex flex-col max-h-[90vh] sm:max-h-[85vh] relative font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Food Image Container */}
-        <div className="relative w-full h-44 sm:h-52 bg-[#f4f4f5] flex items-center justify-center p-4 shrink-0 overflow-hidden">
+        <div className="relative w-full h-56 bg-[#f4f4f5] flex items-center justify-center p-4 shrink-0 overflow-hidden">
           {/* Back Circular Button */}
           <button
             type="button"
             onClick={onClose}
             aria-label="Back"
-            className="absolute top-3.5 left-4 z-20 w-9 h-9 rounded-full bg-white/95 hover:bg-white text-zinc-700 shadow-md flex items-center justify-center cursor-pointer transition-all active:scale-95 rtl:left-auto rtl:right-4"
+            className="absolute top-4 left-4 z-20 w-10 h-10 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-4"
           >
             {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
@@ -158,7 +158,7 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
           <img
             src={item.imageUrl}
             alt={title}
-            className="w-36 h-36 sm:w-44 sm:h-44 object-contain drop-shadow-md transition-transform duration-300 hover:scale-105"
+            className="w-44 h-44 sm:w-48 sm:h-48 object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/images/food/ramen.png';
             }}
@@ -240,14 +240,14 @@ export const FoodDetailModal: React.FC<FoodDetailModalProps> = ({
                                 : `+${formatPrice(opt.price, activeLanguage)}`}
                             </span>
 
-                            {/* Radio / Checkbox Indicator Circle */}
+                            {/* Radio / Checkbox Indicator Circle matching Figma Food Detail.png */}
                             <div
                               className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
-                                isSelected ? 'border-[#026F4F]' : 'border-zinc-300'
+                                isSelected ? 'border-[#2D2F33]' : 'border-zinc-300'
                               }`}
                             >
                               {isSelected && (
-                                <div className="w-2.5 h-2.5 rounded-full bg-[#026F4F]" />
+                                <div className="w-2.5 h-2.5 rounded-full bg-[#2D2F33]" />
                               )}
                             </div>
                           </div>

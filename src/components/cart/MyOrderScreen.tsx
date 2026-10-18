@@ -408,9 +408,9 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
               /* EMPTY CART SCREEN MATCHING FIGMA DESIGN: Directly on background */
               <div className="space-y-6 pt-6">
                 <div className="text-center space-y-4">
-                  {/* SvgCartIcon Container */}
-                  <div className="w-18 h-18 rounded-3xl bg-[#eef7f4] border border-emerald-100/80 flex items-center justify-center mx-auto text-[#026F4F]">
-                    <SvgCartIcon className="w-10 h-10 text-[#026F4F]" />
+                  {/* SvgCartIcon Container: No box, exactly like Empty Cart.png */}
+                  <div className="flex items-center justify-center mx-auto text-[#026F4F] py-2">
+                    <SvgCartIcon className="w-16 h-16 text-[#026F4F]" />
                   </div>
 
                   <div>
@@ -501,7 +501,10 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   <div className="space-y-3 divide-y divide-zinc-100">
                     {cart.map((ci, idx) => (
                       <div key={`${ci.item.id}-${idx}`} className="pt-3 first:pt-0 flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          className="flex items-center gap-3 min-w-0 cursor-pointer flex-1"
+                          onClick={() => setEditingCartIndex(idx)}
+                        >
                           <div className="w-14 h-14 rounded-xl bg-[#F4F4F5] p-1.5 flex items-center justify-center shrink-0">
                             <img
                               src={ci.item.imageUrl}
@@ -514,7 +517,11 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                               {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                             </h3>
                             <p className="text-xs text-[#8E8E93] font-normal truncate">
-                              "No Sauce"
+                              {ci.selectedOptions && ci.selectedOptions.length > 0
+                                ? `"${ci.selectedOptions.map((o) => o.optionName).join(', ')}"`
+                                : ci.specialInstructions
+                                ? `"${ci.specialInstructions}"`
+                                : '"No Sauce"'}
                             </p>
                             <span className="font-semibold text-sm text-[#026F4F] block mt-0.5">
                               {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
