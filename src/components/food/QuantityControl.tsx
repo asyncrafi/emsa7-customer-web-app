@@ -21,6 +21,7 @@ export const QuantityControl: React.FC<QuantityControlProps> = ({
 
   return (
     <div
+      dir="ltr"
       className="inline-flex items-center gap-2 select-none"
       onClick={(e) => e.stopPropagation()}
     >
