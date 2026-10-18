@@ -17,18 +17,18 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
   const { language, setLanguage } = useLanguage();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
-  // Normalize tableName to match Figma format (e.g. Table A08 -> Table A8 if desired, or keep as is)
+  // Normalize tableName to match Figma format (e.g. Table A08 -> Table A8)
   const displayTableName = tableName.replace(/Table\s+([A-Za-z])0+(\d+)/i, 'Table $1$2');
 
   return (
-    <div className="w-full min-h-[100dvh] bg-[#F8F9FA] flex flex-col justify-between items-center px-6 py-5 select-none antialiased overflow-x-hidden font-['Outfit',sans-serif]">
+    <div className="w-full min-h-[100dvh] bg-[#F8F9FA] flex flex-col justify-between items-center px-6 py-5 select-none antialiased overflow-x-hidden font-['Inter',sans-serif]">
       {/* Top Header Row - Right-aligned Language Selector (aligned with ticket & button) */}
       <header className="w-full max-w-[340px] sm:max-w-[360px] flex justify-end items-center pt-1">
         <div className="relative">
           <button
             type="button"
             onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-zinc-200/90 bg-white text-[#026F4F] text-[11px] sm:text-xs font-semibold tracking-wider shadow-2xs hover:border-zinc-300 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-zinc-200/90 bg-white text-[#026F4F] text-[11px] sm:text-xs font-semibold tracking-wider shadow-2xs hover:border-zinc-300 transition-colors cursor-pointer"
           >
             <Languages className="h-3.5 w-3.5 text-[#026F4F]" />
             <span>{language === 'ARABIC' ? 'العربية' : 'ENGLISH'}</span>
@@ -92,12 +92,12 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
 
       {/* Main Center Content Section */}
       <main className="w-full max-w-[340px] sm:max-w-[360px] flex flex-col items-center justify-center my-auto text-center py-4">
-        {/* Main Restaurant Logo */}
+        {/* Main Restaurant Logo (width ~180px, height ~53px matching Figma mockup) */}
         <div className="flex justify-center items-center mb-7 sm:mb-8">
           <img
             src="/restaurant-logo.png"
             alt="EMSA7 Logo"
-            className="h-11 sm:h-12 w-auto object-contain transition-transform duration-300"
+            className="h-[52px] sm:h-[54px] w-auto object-contain transition-transform duration-300"
             onError={(e) => {
               (e.target as HTMLImageElement).src = '/emsa7-logo.svg';
             }}
@@ -125,18 +125,18 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
                 : 'pl-[22%] pr-[34%] justify-start text-left'
             }`}
           >
-            <span className="text-[19px] sm:text-2xl font-bold text-white tracking-tight drop-shadow-xs">
+            <span className="text-[20px] sm:text-2xl font-bold text-white tracking-tight drop-shadow-xs">
               {displayTableName}
             </span>
           </div>
         </div>
 
-        {/* Title & Subtitle */}
-        <div className="space-y-1.5 text-center">
-          <h1 className="text-[26px] sm:text-[28px] font-bold text-zinc-900 tracking-tight leading-tight">
+        {/* Title & Subtitle matching Figma Properties (Inter, 28px/600 #2D2F33 & 16px/500 #989898) */}
+        <div className="text-center">
+          <h1 className="text-[28px] font-semibold text-[#2D2F33] tracking-normal leading-[140%]">
             {language === 'ARABIC' ? 'تم تأكيد الطاولة!' : 'Table Confirmed!'}
           </h1>
-          <p className="text-sm sm:text-[15px] font-medium text-[#8E8E93]">
+          <p className="text-[16px] font-medium text-[#989898] tracking-normal leading-[140%] mt-1">
             {language === 'ARABIC' ? 'أهلاً بكم في إمساح 7' : 'Welcome to EMSA7'}
           </p>
         </div>
@@ -144,7 +144,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
 
       {/* Bottom Footer & Primary Action Button */}
       <footer className="w-full max-w-[340px] sm:max-w-[360px] flex flex-col items-center pt-4 pb-2 sm:pb-3">
-        {/* Powered By EMSA7 */}
+        {/* Powered By EMSA7 (Both text and logo matching #989898 in Figma) */}
         <div className="mb-4 sm:mb-5">
           <a
             href="https://emsa7.com"
@@ -156,7 +156,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
               POWERED BY
             </span>
             <div className="inline-flex items-center justify-center my-auto shrink-0">
-              <SvgEmsa7Icon className="h-3.5 w-auto" />
+              <SvgEmsa7Icon className="h-3.5 w-auto bg-[#989898]" />
             </div>
           </a>
         </div>
@@ -170,6 +170,9 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
         >
           {language === 'ARABIC' ? 'متابعة' : 'Continue'}
         </button>
+
+        {/* iOS Home Indicator Bar */}
+        <div className="w-32 h-1 bg-black/80 rounded-full mx-auto mt-4" />
       </footer>
     </div>
   );

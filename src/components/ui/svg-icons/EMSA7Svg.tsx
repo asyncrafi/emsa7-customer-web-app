@@ -4,23 +4,26 @@ interface SvgEmsa7IconProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-const SvgEmsa7Icon: React.FC<SvgEmsa7IconProps> = ({ className = '', style, ...props }) => (
-  <div
-    className={`inline-block bg-[#026F4F] bg-primary shrink-0 ${className}`}
-    style={{
-      aspectRatio: '58/17',
-      maskImage: 'url(/emsa7-logo.svg)',
-      WebkitMaskImage: 'url(/emsa7-logo.svg)',
-      maskRepeat: 'no-repeat',
-      WebkitMaskRepeat: 'no-repeat',
-      maskSize: 'contain',
-      WebkitMaskSize: 'contain',
-      maskPosition: 'center',
-      WebkitMaskPosition: 'center',
-      ...style,
-    }}
-    {...props}
-  />
-);
+const SvgEmsa7Icon: React.FC<SvgEmsa7IconProps> = ({ className = '', style, ...props }) => {
+  const hasBg = className.includes('bg-');
+  return (
+    <div
+      className={`inline-block shrink-0 ${hasBg ? '' : 'bg-[#026F4F]'} ${className}`}
+      style={{
+        aspectRatio: '58/17',
+        maskImage: 'url(/emsa7-logo.svg)',
+        WebkitMaskImage: 'url(/emsa7-logo.svg)',
+        maskRepeat: 'no-repeat',
+        WebkitMaskRepeat: 'no-repeat',
+        maskSize: 'contain',
+        WebkitMaskSize: 'contain',
+        maskPosition: 'center',
+        WebkitMaskPosition: 'center',
+        ...style,
+      }}
+      {...props}
+    />
+  );
+};
 
 export default SvgEmsa7Icon;
