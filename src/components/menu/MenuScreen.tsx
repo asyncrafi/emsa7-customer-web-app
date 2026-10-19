@@ -496,7 +496,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             ref={pillContainerRef}
             className="sticky top-0 z-30 bg-white py-1 -mx-5 px-5 overflow-x-auto no-scrollbar"
           >
-            <div className="flex items-center gap-2 min-w-max">
+            <div className="flex items-center gap-[6px] min-w-max">
               {CATEGORIES.map((cat) => {
                 const isActive = selectedCategory === cat.id;
                 const catName = language === 'ARABIC' ? cat.nameAr : cat.name;
@@ -509,20 +509,20 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                       catPillRefs.current[cat.id] = el;
                     }}
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium tracking-normal transition-all cursor-pointer shrink-0 ${
+                    className={`inline-flex items-center gap-[6px] px-[11px] py-[6px] rounded-[40px] text-[16px] font-normal leading-[140%] tracking-normal transition-all cursor-pointer shrink-0 ${
                       isActive
                         ? 'bg-[#026F4F] text-white shadow-xs'
-                        : 'bg-[#F3F4F6] hover:bg-zinc-200/80 text-zinc-700'
+                        : 'bg-[#F3F4F6] hover:bg-zinc-200/80 text-[#686868]'
                     }`}
                   >
                     {cat.image ? (
                       <img
                         src={cat.image}
                         alt={catName}
-                        className="w-5 h-5 rounded-full object-cover shrink-0"
+                        className="w-[22px] h-[22px] rounded-full object-cover shrink-0"
                       />
                     ) : (
-                      <span className="text-sm leading-none">{cat.emoji}</span>
+                      <span className="text-[16px] leading-none">{cat.emoji}</span>
                     )}
                     <span>{catName}</span>
                   </button>
@@ -535,7 +535,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           {searchQuery ? (
             <section className="space-y-3 pt-1">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight">
+                <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%]">
                   {language === 'ARABIC' ? 'نتائج البحث' : 'Search Results'}
                 </h2>
                 <span className="text-xs font-medium text-zinc-400">
@@ -576,12 +576,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
               )}
             </section>
           ) : selectedCategory === 'all' ? (
-            <div className="space-y-6 pt-1">
+            <div className="space-y-5 pt-1">
               {/* Section 1: 🔥 Popular Now (2-column vertical cards) */}
               <section className="space-y-3">
                 <div className="flex items-center gap-1.5">
-                  <img src="/icons/noto_fire.svg" alt="" className="w-4.5 h-4.5 object-contain" />
-                  <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight">
+                  <img src="/icons/noto_fire.svg" alt="" className="w-5 h-5 object-contain" />
+                  <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%]">
                     {language === 'ARABIC' ? 'الأكثر شعبية' : 'Popular Now'}
                   </h2>
                 </div>
@@ -605,8 +605,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
               </section>
 
               {/* Section 2: All Items (horizontal cards matching Figma) */}
-              <section className="space-y-3 pt-2">
-                <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight">
+              <section className="space-y-3">
+                <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%]">
                   {language === 'ARABIC' ? 'جميع الأصناف' : 'All Items'}
                 </h2>
 
@@ -631,7 +631,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           ) : (
             /* Filtered Category Section */
             <section className="space-y-3 pt-1">
-              <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight capitalize">
+              <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%] capitalize">
                 {CATEGORIES.find((c) => c.id === selectedCategory)?.name || selectedCategory}
               </h2>
 
