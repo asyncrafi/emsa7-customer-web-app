@@ -140,7 +140,7 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
       </main>
 
       {/* Bottom Footer & Primary Action Button */}
-      <footer className="w-full max-w-[360px] sm:max-w-[408px] flex flex-col items-center pt-4 pb-2 sm:pb-3">
+      <footer className="w-full max-w-[409px] flex flex-col items-center pt-4 pb-2 sm:pb-3">
         {/* Powered By EMSA7 (Strictly LTR brand lockup matching #989898 in Figma) */}
         <div className="mb-4 sm:mb-5">
           <a
@@ -163,12 +163,15 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
           </a>
         </div>
 
-        {/* Full-width Rounded Continue Button matching Figma */}
+        {/* Full-width Rounded Continue Button matching Figma exactly */}
         <button
           type="button"
           onClick={onContinue}
-          className="w-full h-14 sm:h-[58px] rounded-full text-white font-semibold text-base sm:text-[17px] tracking-wide shadow-md shadow-[#026F4F]/15 transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center"
-          style={{ backgroundColor: themeConfig.primaryColor || '#026F4F' }}
+          className="w-full max-w-[409px] h-[59px] rounded-[30px] text-white font-semibold text-[18px] tracking-normal transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center"
+          style={{
+            backgroundColor: themeConfig.primaryColor || '#026F4F',
+            boxShadow: '0px 4px 16.3px 0px rgba(0, 0, 0, 0.12)',
+          }}
         >
           {language === 'ARABIC' ? 'متابعة' : 'Continue'}
         </button>
