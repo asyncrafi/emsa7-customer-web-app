@@ -1,5 +1,5 @@
 import React from 'react';
-import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
+import emsa7Logo from '@/assets/logo.png';
 
 export const SplashLoader: React.FC = () => {
 
@@ -12,16 +12,24 @@ export const SplashLoader: React.FC = () => {
       <div className="flex flex-col items-center justify-center space-y-4 max-w-sm w-full my-auto text-center">
         {/* Main EMSA7 Brand Logo */}
         <div className="flex justify-center items-center">
-          <SvgEmsa7Icon className="h-12 sm:h-14 w-auto" />
+          <img
+            src={emsa7Logo}
+            alt="EMSA7"
+            className="h-16 sm:h-20 max-w-[220px] sm:max-w-[250px] w-auto object-contain"
+          />
         </div>
 
         {/* Powered By EMSA7 */}
         <div dir="ltr" className="inline-flex items-center justify-center gap-1.5 leading-none">
-          <span className="text-xs font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
+          <span className="text-[11px] sm:text-xs font-semibold tracking-[0.12em] uppercase text-[#989898] inline-flex items-center">
             POWERED BY
           </span>
           <div className="inline-flex items-center justify-center my-auto shrink-0">
-            <SvgEmsa7Icon className="h-3.5 w-auto" />
+            <img
+              src="/emsa7-logo-grey.png"
+              alt="EMSA7"
+              className="h-4 w-auto object-contain"
+            />
           </div>
         </div>
 
