@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Clock, Plus } from 'lucide-react';
-import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
+import { type CartItem, formatPrice, formatOrderDate, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
 import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
 import { PaymentScreen } from '@/components/cart/PaymentScreen';
@@ -27,6 +27,7 @@ export interface StoredOrder {
   isPaid?: boolean;
   items: {
     name: string;
+    nameAr?: string;
     qty: number;
     image: string;
     price: number;
@@ -116,8 +117,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
       total: 15.99,
       status: 'Served',
       items: [
-        { name: 'Shoyu Ramen', qty: 2, image: '/images/food/ramen.png', price: 15.99 },
-        { name: 'Iced Green Tea', qty: 1, image: '/images/food/iced-tea.png', price: 15.99 },
+        { name: 'Shoyu Ramen', nameAr: 'شويو رامن', qty: 2, image: '/images/food/ramen.png', price: 15.99 },
+        { name: 'Iced Green Tea', nameAr: 'شاي أخضر مثلج', qty: 1, image: '/images/food/iced-tea.png', price: 15.99 },
       ],
       cartItems: [
         { item: MOCK_MENU_ITEMS[0], quantity: 2 },
@@ -130,8 +131,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
       total: 31.98,
       status: 'Served',
       items: [
-        { name: 'Shoyu Ramen', qty: 1, image: '/images/food/ramen.png', price: 15.99 },
-        { name: 'Gyoza', qty: 1, image: '/images/food/gyoza.png', price: 15.99 },
+        { name: 'Shoyu Ramen', nameAr: 'شويو رامن', qty: 1, image: '/images/food/ramen.png', price: 15.99 },
+        { name: 'Gyoza', nameAr: 'جيوزا', qty: 1, image: '/images/food/gyoza.png', price: 15.99 },
       ],
       cartItems: [
         { item: MOCK_MENU_ITEMS[0], quantity: 1 },
@@ -164,8 +165,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
     tipAmount: 0,
     status: 'Preparing',
     items: [
-      { name: 'Shoyu Ramen', qty: 2, image: '/images/food/ramen.png', price: 15.99 },
-      { name: 'Iced Green Tea', qty: 1, image: '/images/food/iced-tea.png', price: 15.99 },
+      { name: 'Shoyu Ramen', nameAr: 'شويو رامن', qty: 2, image: '/images/food/ramen.png', price: 15.99 },
+      { name: 'Iced Green Tea', nameAr: 'شاي أخضر مثلج', qty: 1, image: '/images/food/iced-tea.png', price: 15.99 },
     ],
     cartItems: [
       { item: MOCK_MENU_ITEMS[0], quantity: 2 },
@@ -268,10 +269,10 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 <div className="flex items-start justify-between">
                   <div>
                     <h2 className="text-[23px] font-semibold text-[#2D2F33] tracking-tight leading-[140%]">
-                      {ongoingOrder.id}
+                      <bdi dir="ltr">{ongoingOrder.id}</bdi>
                     </h2>
                     <p className="text-[14px] text-[#989898] font-normal mt-0.5 leading-[140%]">
-                      {ongoingOrder.date}
+                      {formatOrderDate(ongoingOrder.date, activeLanguage)}
                     </p>
                     {(ongoingOrder.tipAmount ?? 0) > 0 && (
                       <p className="text-[11px] text-[#026F4F] font-medium mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
@@ -293,15 +294,15 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                     >
                       <img
                         src={it.image || '/images/food/ramen.png'}
-                        alt={it.name}
+                        alt={isArabic ? it.nameAr || it.name : it.name}
                         className="w-[45px] h-[45px] object-contain"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = '/images/food/ramen.png';
                         }}
                       />
                       {/* White Badge matching Figma */}
-                      <div className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
-                        x{it.qty}
+                      <div className="absolute -top-1.5 -right-1.5 rtl:-right-auto rtl:-left-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
+                        {isArabic ? `${it.qty}x` : `x${it.qty}`}
                       </div>
                     </div>
                   ))}
@@ -569,10 +570,10 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                             </h3>
                             <p className="text-[11px] font-normal text-[#989898] leading-[140%] truncate">
                               {ci.selectedOptions && ci.selectedOptions.length > 0
-                                ? `“${ci.selectedOptions.map((o) => o.optionName).join(', ')}”`
+                                ? `“${ci.selectedOptions.map((o) => (isArabic && o.optionNameAr ? o.optionNameAr : o.optionName)).join(', ')}”`
                                 : ci.specialInstructions
                                 ? `“${ci.specialInstructions}”`
-                                : '“No Sauce”'}
+                                : (isArabic ? '“بدون صلصة”' : '“No Sauce”')}
                             </p>
                             <span className="text-[18px] font-semibold text-[#026F4F] block mt-0.5 leading-[140%]">
                               {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
@@ -654,10 +655,10 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 <div className="flex items-start justify-between">
                   <div>
                     <h2 className="text-[23px] font-semibold text-[#2D2F33] tracking-tight leading-[140%]">
-                      {ord.id}
+                      <bdi dir="ltr">{ord.id}</bdi>
                     </h2>
                     <p className="text-[13px] text-[#989898] font-normal mt-0.5 leading-[140%]">
-                      {ord.date}
+                      {formatOrderDate(ord.date, activeLanguage)}
                     </p>
                     {(ord.tipAmount ?? 0) > 0 && (
                       <p className="text-[11px] text-[#026F4F] font-medium mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
@@ -679,15 +680,15 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                     >
                       <img
                         src={it.image || '/images/food/ramen.png'}
-                        alt={it.name}
+                        alt={isArabic ? it.nameAr || it.name : it.name}
                         className="w-[45px] h-[45px] object-contain"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = '/images/food/ramen.png';
                         }}
                       />
                       {/* White Badge matching Figma */}
-                      <div className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
-                        x{it.qty}
+                      <div className="absolute -top-1.5 -right-1.5 rtl:-right-auto rtl:-left-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
+                        {isArabic ? `${it.qty}x` : `x${it.qty}`}
                       </div>
                     </div>
                   ))}
@@ -902,6 +903,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             isPaid: true,
             items: details.selectedCart.map((ci) => ({
               name: ci.item.name,
+              nameAr: ci.item.nameAr,
               qty: ci.quantity,
               image: ci.item.imageUrl || '/images/food/ramen.png',
               price: ci.item.price,

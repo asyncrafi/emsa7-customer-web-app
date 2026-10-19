@@ -190,13 +190,13 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                       </h3>
                       <p className="text-[11px] font-normal text-[#989898] leading-[140%] truncate">
                         {ci.selectedOptions && ci.selectedOptions.length > 0
-                          ? `“${ci.selectedOptions.map((o) => o.optionName).join(', ')}”`
+                          ? `“${ci.selectedOptions.map((o) => (isArabic && o.optionNameAr ? o.optionNameAr : o.optionName)).join(', ')}”`
                           : ci.specialInstructions
                           ? `“${ci.specialInstructions}”`
-                          : '“No Sauce”'}
+                          : (isArabic ? '“بدون صلصة”' : '“No Sauce”')}
                       </p>
                       <span className="text-[12px] font-semibold text-[#2D2F33] block mt-0.5 leading-[140%]">
-                        x{ci.quantity}
+                        {isArabic ? `${ci.quantity}x` : `x${ci.quantity}`}
                       </span>
                     </div>
                   </div>

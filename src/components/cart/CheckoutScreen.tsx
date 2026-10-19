@@ -268,13 +268,13 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                           </h3>
                           <p className="text-[11px] text-[#989898] font-normal truncate leading-[140%]">
                             {ci.selectedOptions && ci.selectedOptions.length > 0
-                              ? `“${ci.selectedOptions.map((so) => so.optionName).join(', ')}”`
+                              ? `“${ci.selectedOptions.map((so) => (isArabic && so.optionNameAr ? so.optionNameAr : so.optionName)).join(', ')}”`
                               : ci.specialInstructions
                               ? `“${ci.specialInstructions}”`
-                              : '“No Sauce”'}
+                              : (isArabic ? '“بدون صلصة”' : '“No Sauce”')}
                           </p>
                           <span className="text-[11px] font-semibold text-[#2D2F33] block mt-0.5">
-                            x1
+                            {isArabic ? '1x' : 'x1'}
                           </span>
                         </div>
                       </div>
@@ -311,10 +311,10 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                           </h3>
                           <p className="text-[11px] text-[#989898] font-normal truncate leading-[140%]">
                             {ci.selectedOptions && ci.selectedOptions.length > 0
-                              ? `“${ci.selectedOptions.map((so) => so.optionName).join(', ')}”`
+                              ? `“${ci.selectedOptions.map((so) => (isArabic && so.optionNameAr ? so.optionNameAr : so.optionName)).join(', ')}”`
                               : ci.specialInstructions
                               ? `“${ci.specialInstructions}”`
-                              : '“No Sauce”'}
+                              : (isArabic ? '“بدون صلصة”' : '“No Sauce”')}
                           </p>
                           <span className="text-[16px] font-semibold text-[#026F4F] block mt-0.5">
                             {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}

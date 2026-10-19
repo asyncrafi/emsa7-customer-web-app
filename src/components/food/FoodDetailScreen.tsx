@@ -106,6 +106,7 @@ export const FoodDetailScreen: React.FC<FoodDetailScreenProps> = ({
             groupTitle: group.title,
             optionId: opt.id,
             optionName: opt.name,
+            optionNameAr: opt.nameAr,
             price: opt.price,
           });
         }

@@ -35,6 +35,7 @@ export interface SelectedOption {
   groupTitle: string;
   optionId: string;
   optionName: string;
+  optionNameAr?: string;
   price: number;
 }
 
@@ -351,7 +352,23 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
 
 export function formatPrice(
   price: number,
-  _language: "ENGLISH" | "ARABIC" = "ENGLISH",
+  language: "ENGLISH" | "ARABIC" = "ENGLISH",
 ): string {
+  if (language === "ARABIC") {
+    return `${price.toFixed(2)} ج.م`;
+  }
   return `$${price.toFixed(2)}`;
+}
+
+export function formatOrderDate(
+  dateStr: string,
+  language: "ENGLISH" | "ARABIC" = "ENGLISH",
+): string {
+  if (language !== "ARABIC" || !dateStr) return dateStr;
+  return dateStr
+    .replace(/\bToday\b/gi, "اليوم")
+    .replace(/\bYesterday\b/gi, "أمس")
+    .replace(/,\s*/g, "، ")
+    .replace(/\bAM\b/gi, "ص")
+    .replace(/\bPM\b/gi, "م");
 }

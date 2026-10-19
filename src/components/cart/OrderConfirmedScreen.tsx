@@ -109,13 +109,13 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                         </h3>
                         <p className="text-[11px] font-normal text-[#989898] leading-[140%] truncate">
                           {ci.selectedOptions && ci.selectedOptions.length > 0
-                            ? `“${ci.selectedOptions.map((o) => o.optionName).join(', ')}”`
+                            ? `“${ci.selectedOptions.map((o) => (isArabic && o.optionNameAr ? o.optionNameAr : o.optionName)).join(', ')}”`
                             : ci.specialInstructions
                             ? `“${ci.specialInstructions}”`
-                            : '“No Sauce”'}
+                            : (isArabic ? '“بدون صلصة”' : '“No Sauce”')}
                         </p>
                         <span className="text-[15px] font-medium text-[#000000] block mt-0.5 leading-[140%]">
-                          x{ci.quantity}
+                          {isArabic ? `${ci.quantity}x` : `x${ci.quantity}`}
                         </span>
                       </div>
                     </div>
@@ -135,9 +135,9 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
                       <img src="/images/food/ramen.png" alt="Shoyu Ramen" className="w-[48px] h-[48px] object-contain" />
                     </div>
                     <div>
-                      <h3 className="text-[15px] font-medium text-[#2D2F33]">Shoyu Ramen</h3>
-                      <p className="text-[11px] font-normal text-[#989898]">“No Sauce”</p>
-                      <span className="text-[15px] font-medium text-[#000000] block mt-0.5">x1</span>
+                      <h3 className="text-[15px] font-medium text-[#2D2F33]">{isArabic ? 'شويو رامن' : 'Shoyu Ramen'}</h3>
+                      <p className="text-[11px] font-normal text-[#989898]">{isArabic ? '“بدون صلصة”' : '“No Sauce”'}</p>
+                      <span className="text-[15px] font-medium text-[#000000] block mt-0.5">{isArabic ? '1x' : 'x1'}</span>
                     </div>
                   </div>
                   <span className="text-[18px] font-semibold text-[#026F4F]">

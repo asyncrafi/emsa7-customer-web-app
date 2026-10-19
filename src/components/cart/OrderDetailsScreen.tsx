@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { formatPrice } from '@/types/menu';
+import { formatPrice, getCartItemTotalPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
 import type { StoredOrder } from '@/components/cart/MyOrderScreen';
 
@@ -67,7 +67,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
         ? 'سنحضره إلى طاولتك عندما يكون جاهزاً'
         : "We'll bring it to your table when it's ready",
       badge: isArabic ? 'تقديم خلال' : 'Serve in',
-      badgeTime: '25 min',
+      badgeTime: isArabic ? '25 دقيقة' : '25 min',
     },
     ready: {
       image: '/images/ongoing/ready.png',
@@ -86,6 +86,11 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
   };
 
   const currentConfig = statusConfig[status];
+
+  const orderItemCount =
+    order?.cartItems?.reduce((sum, ci) => sum + ci.quantity, 0) ??
+    order?.items?.reduce((sum, it) => sum + it.qty, 0) ??
+    3;
 
   const orderSubtotal =
     order?.subtotal ??
@@ -170,7 +175,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                     {currentConfig.badge}
                   </span>
                   <span className="text-[24px] font-semibold text-white tracking-tight leading-none mt-0.5">
-                    25 min
+                    {currentConfig.badgeTime || '25 min'}
                   </span>
                 </div>
               </div>
@@ -202,55 +207,133 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                 </h2>
 
                 <div className="space-y-3">
-                  {/* Item 1 */}
-                  <div className="flex items-center justify-between gap-3 pt-1">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-[70px] h-[70px] rounded-[7px] bg-[#F1F1F1] p-1.5 flex items-center justify-center shrink-0">
-                        <img
-                          src="/images/food/ramen.png"
-                          alt="Shoyu Ramen"
-                          className="w-[49px] h-[49px] object-contain"
-                        />
+                  {order?.cartItems && order.cartItems.length > 0 ? (
+                    order.cartItems.map((ci, idx) => (
+                      <div
+                        key={`${ci.item.id}-${idx}`}
+                        className={`flex items-center justify-between gap-3 ${idx > 0 ? 'pt-3 border-t border-zinc-100/80' : 'pt-1'}`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-[70px] h-[70px] rounded-[7px] bg-[#F1F1F1] p-1.5 flex items-center justify-center shrink-0">
+                            <img
+                              src={ci.item.imageUrl || '/images/food/ramen.png'}
+                              alt={ci.item.name}
+                              className="w-[49px] h-[49px] object-contain"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/images/food/ramen.png';
+                              }}
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="font-medium text-[15px] text-[#2D2F33] leading-[140%] truncate">
+                              {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
+                            </h3>
+                            <p className="text-[11px] text-[#989898] font-normal leading-[140%] truncate">
+                              {ci.selectedOptions && ci.selectedOptions.length > 0
+                                ? `“${ci.selectedOptions.map((o) => (isArabic && o.optionNameAr ? o.optionNameAr : o.optionName)).join(', ')}”`
+                                : ci.specialInstructions
+                                ? `“${ci.specialInstructions}”`
+                                : (isArabic ? '“بدون صلصة”' : '“No Sauce”')}
+                            </p>
+                            <span className="font-medium text-[15px] text-[#000000] block mt-0.5 leading-[140%]">
+                              {isArabic ? `${ci.quantity}x` : `x${ci.quantity}`}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="font-semibold text-[18px] text-[#026F4F] leading-[140%] shrink-0">
+                          {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
+                        </span>
                       </div>
-                      <div className="min-w-0">
-                        <h3 className="font-medium text-[15px] text-[#2D2F33] leading-[140%] truncate">
-                          Shoyu Ramen
-                        </h3>
-                        <p className="text-[11px] text-[#989898] font-normal leading-[140%] truncate">
-                          “No Sauce”
-                        </p>
-                        <span className="font-medium text-[15px] text-[#000000] block mt-0.5 leading-[140%]">x1</span>
+                    ))
+                  ) : order?.items && order.items.length > 0 ? (
+                    order.items.map((it, idx) => (
+                      <div
+                        key={idx}
+                        className={`flex items-center justify-between gap-3 ${idx > 0 ? 'pt-3 border-t border-zinc-100/80' : 'pt-1'}`}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-[70px] h-[70px] rounded-[7px] bg-[#F1F1F1] p-1.5 flex items-center justify-center shrink-0">
+                            <img
+                              src={it.image || '/images/food/ramen.png'}
+                              alt={it.name}
+                              className="w-[49px] h-[49px] object-contain"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/images/food/ramen.png';
+                              }}
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="font-medium text-[15px] text-[#2D2F33] leading-[140%] truncate">
+                              {isArabic ? it.nameAr || it.name : it.name}
+                            </h3>
+                            <p className="text-[11px] text-[#989898] font-normal leading-[140%] truncate">
+                              {isArabic ? '“بدون صلصة”' : '“No Sauce”'}
+                            </p>
+                            <span className="font-medium text-[15px] text-[#000000] block mt-0.5 leading-[140%]">
+                              {isArabic ? `${it.qty}x` : `x${it.qty}`}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="font-semibold text-[18px] text-[#026F4F] leading-[140%] shrink-0">
+                          {formatPrice(it.price * it.qty, activeLanguage)}
+                        </span>
                       </div>
-                    </div>
-                    <span className="font-semibold text-[18px] text-[#026F4F] leading-[140%]">
-                      $15.99
-                    </span>
-                  </div>
-
-                  {/* Item 2 */}
-                  <div className="flex items-center justify-between gap-3 pt-3 border-t border-zinc-100/80">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-[70px] h-[70px] rounded-[7px] bg-[#F1F1F1] p-1.5 flex items-center justify-center shrink-0">
-                        <img
-                          src="/images/food/ramen.png"
-                          alt="Shoyu Ramen"
-                          className="w-[49px] h-[49px] object-contain"
-                        />
+                    ))
+                  ) : (
+                    /* Fallback items */
+                    <>
+                      <div className="flex items-center justify-between gap-3 pt-1">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-[70px] h-[70px] rounded-[7px] bg-[#F1F1F1] p-1.5 flex items-center justify-center shrink-0">
+                            <img
+                              src="/images/food/ramen.png"
+                              alt="Shoyu Ramen"
+                              className="w-[49px] h-[49px] object-contain"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="font-medium text-[15px] text-[#2D2F33] leading-[140%] truncate">
+                              {isArabic ? 'شويو رامن' : 'Shoyu Ramen'}
+                            </h3>
+                            <p className="text-[11px] text-[#989898] font-normal leading-[140%] truncate">
+                              {isArabic ? '“بدون صلصة”' : '“No Sauce”'}
+                            </p>
+                            <span className="font-medium text-[15px] text-[#000000] block mt-0.5 leading-[140%]">
+                              {isArabic ? '1x' : 'x1'}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="font-semibold text-[18px] text-[#026F4F] leading-[140%] shrink-0">
+                          {formatPrice(15.99, activeLanguage)}
+                        </span>
                       </div>
-                      <div className="min-w-0">
-                        <h3 className="font-medium text-[15px] text-[#2D2F33] leading-[140%] truncate">
-                          Shoyu Ramen
-                        </h3>
-                        <p className="text-[11px] text-[#989898] font-normal leading-[140%] truncate">
-                          “No Sauce”
-                        </p>
-                        <span className="font-medium text-[15px] text-[#000000] block mt-0.5 leading-[140%]">x1</span>
+                      <div className="flex items-center justify-between gap-3 pt-3 border-t border-zinc-100/80">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-[70px] h-[70px] rounded-[7px] bg-[#F1F1F1] p-1.5 flex items-center justify-center shrink-0">
+                            <img
+                              src="/images/food/ramen.png"
+                              alt="Shoyu Ramen"
+                              className="w-[49px] h-[49px] object-contain"
+                            />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="font-medium text-[15px] text-[#2D2F33] leading-[140%] truncate">
+                              {isArabic ? 'شويو رامن' : 'Shoyu Ramen'}
+                            </h3>
+                            <p className="text-[11px] text-[#989898] font-normal leading-[140%] truncate">
+                              {isArabic ? '“بدون صلصة”' : '“No Sauce”'}
+                            </p>
+                            <span className="font-medium text-[15px] text-[#000000] block mt-0.5 leading-[140%]">
+                              {isArabic ? '1x' : 'x1'}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="font-semibold text-[18px] text-[#026F4F] leading-[140%] shrink-0">
+                          {formatPrice(15.99, activeLanguage)}
+                        </span>
                       </div>
-                    </div>
-                    <span className="font-semibold text-[18px] text-[#026F4F] leading-[140%]">
-                      $15.99
-                    </span>
-                  </div>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -262,7 +345,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
 
                 <div className="space-y-2 text-[16px] font-normal">
                   <div className="flex justify-between text-[#989898]">
-                    <span>{isArabic ? 'المجموع الفرعي (3 أصناف)' : 'Subtotal (3items)'}</span>
+                    <span>{isArabic ? `المجموع الفرعي (${orderItemCount} أصناف)` : `Subtotal (${orderItemCount}items)`}</span>
                     <span className="text-[#686868] font-semibold">{formatPrice(orderSubtotal, activeLanguage)}</span>
                   </div>
 
@@ -276,10 +359,12 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                     <span className="text-[#686868] font-semibold">{formatPrice(orderVat, activeLanguage)}</span>
                   </div>
 
-                  <div className="flex justify-between text-[#989898]">
-                    <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-                    <span className="text-[#686868] font-semibold">{formatPrice(orderTips, activeLanguage)}</span>
-                  </div>
+                  {orderTips > 0 && (
+                    <div className="flex justify-between text-[#989898]">
+                      <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
+                      <span className="text-[#686868] font-semibold">{formatPrice(orderTips, activeLanguage)}</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Dashed Separator Line matching Figma Vector 13 */}
