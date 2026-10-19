@@ -10,6 +10,8 @@ interface OrderDetailsScreenProps {
   isOpen: boolean;
   onClose: () => void;
   onNewOrder: () => void;
+  onPayNow?: () => void;
+  onAddItems?: () => void;
   language?: 'ENGLISH' | 'ARABIC';
   orderId?: string;
   order?: StoredOrder | null;
@@ -19,6 +21,8 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
   isOpen,
   onClose,
   onNewOrder,
+  onPayNow,
+  onAddItems,
   language: propLanguage,
   orderId: _orderId = '#A102',
   order,
@@ -293,15 +297,27 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
           </div>
         </div>
 
-        {/* Bottom Action Button: New Order matching Figma Button id=211:303 (Height 59px, radius 30px, bg #026F4F) */}
-        <div className="w-full max-w-[440px] mx-auto px-4 pt-5">
-          <button
-            type="button"
-            onClick={onNewOrder}
-            className="w-full h-[59px] rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[19px] leading-[140%] shadow-xs active:scale-[0.99] transition-all cursor-pointer text-center flex items-center justify-center"
-          >
-            {isArabic ? 'طلب جديد' : 'New Order'}
-          </button>
+        {/* Bottom Action Bar matching Figma Frame 1171277297 (841:660): Add Items + Pay Now */}
+        <div className="w-full max-w-[440px] mx-auto px-4 pt-5 pb-2">
+          <div className="flex items-center gap-3">
+            {/* Add Items Button (Button 841:723: radius 30px bg #E9E9E9 border #B9B9B9 text #2D2F33) */}
+            <button
+              type="button"
+              onClick={onAddItems || onNewOrder}
+              className="flex-1 h-[59px] rounded-[30px] bg-[#E9E9E9] hover:bg-[#dedede] border border-[#B9B9B9] text-[#2D2F33] font-medium text-[19px] leading-[140%] cursor-pointer transition-transform active:scale-[0.98] text-center flex items-center justify-center"
+            >
+              {isArabic ? 'إضافة أصناف' : 'Add Items'}
+            </button>
+
+            {/* Pay Now Button (Button 841:662: radius 30px bg #026F4F text white) */}
+            <button
+              type="button"
+              onClick={onPayNow || onNewOrder}
+              className="flex-1 h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[19px] leading-[140%] shadow-md cursor-pointer transition-transform active:scale-[0.98] text-center flex items-center justify-center"
+            >
+              {isArabic ? 'الدفع الآن' : 'Pay Now'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

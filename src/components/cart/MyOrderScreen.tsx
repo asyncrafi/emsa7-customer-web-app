@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, Clock, Plus } from 'lucide-react';
 import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
-import { QuantityControl } from '@/components/food/QuantityControl';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
 import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
+import { PaymentScreen } from '@/components/cart/PaymentScreen';
 import { OrderConfirmedScreen } from '@/components/cart/OrderConfirmedScreen';
 import { EInvoiceModal } from '@/components/cart/EInvoiceModal';
 import { FoodDetailModal } from '@/components/food/FoodDetailModal';
@@ -37,9 +37,9 @@ export interface MyOrderScreenProps {
   isOpen: boolean;
   onClose: () => void;
   cart: CartItem[];
-  onIncrement: (itemId: string) => void;
-  onDecrement: (itemId: string) => void;
-  onRemove: (itemId: string) => void;
+  onIncrement: (itemId: any) => void;
+  onDecrement: (itemId: any) => void;
+  onRemove: (itemId: any) => void;
   onClearCart: () => void;
   onDeductPaidItems?: (paidCart: CartItem[]) => void;
   onAddToCart?: (item: MenuItem) => void;
@@ -81,6 +81,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   const [editingCartIndex, setEditingCartIndex] = useState<number | null>(null);
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const waiterTooltip = useWaiterTooltip();
 
   React.useEffect(() => {
@@ -534,97 +535,118 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 </div>
               </div>
             ) : (
-              /* CART WITH ITEMS SCREEN MATCHING FIGMA DESIGN */
-              <div className="space-y-3">
-                {/* Card 1: Order Summary (Items List) */}
-                <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3">
-                  <h2 className="font-semibold text-base text-[#2D2F33]">
+              /* CART WITH ITEMS SCREEN MATCHING FIGMA DESIGN Frame 841:338 */
+              <div className="space-y-3.5">
+                {/* Card 1: Order Summary (Items List) - Frame 2147226324 */}
+                <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#E9E9E9] space-y-3.5">
+                  <h2 className="text-[19px] font-semibold text-[#2D2F33] leading-[140%]">
                     {isArabic ? 'ملخص الطلب' : 'Order Summary'}
                   </h2>
 
                   {/* Items List */}
-                  <div className="space-y-3 divide-y divide-zinc-100">
+                  <div className="space-y-3.5 divide-y divide-zinc-100">
                     {cart.map((ci, idx) => (
-                      <div key={`${ci.item.id}-${idx}`} className="pt-3 first:pt-0 flex items-center justify-between gap-3">
+                      <div key={`${ci.item.id}-${idx}`} className="pt-3.5 first:pt-0 flex items-center justify-between gap-3">
                         <div
-                          className="flex items-center gap-3 min-w-0 cursor-pointer flex-1"
+                          className="flex items-center gap-3.5 min-w-0 cursor-pointer flex-1"
                           onClick={() => setEditingCartIndex(idx)}
                         >
-                          <div className="w-14 h-14 rounded-xl bg-[#F4F4F5] p-1.5 flex items-center justify-center shrink-0">
+                          <div className="w-[64px] h-[64px] rounded-[7px] bg-[#F1F1F1] p-1 flex items-center justify-center shrink-0">
                             <img
-                              src={ci.item.imageUrl}
+                              src={ci.item.imageUrl || '/images/food/ramen.png'}
                               alt={ci.item.name}
-                              className="w-full h-full object-contain"
+                              className="w-[48px] h-[48px] object-contain"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/images/food/ramen.png';
+                              }}
                             />
                           </div>
                           <div className="min-w-0">
-                            <h3 className="font-semibold text-sm text-[#2D2F33] truncate">
+                            <h3 className="text-[15px] font-medium text-[#2D2F33] leading-[140%] truncate">
                               {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                             </h3>
-                            <p className="text-xs text-[#8E8E93] font-normal truncate">
+                            <p className="text-[11px] font-normal text-[#989898] leading-[140%] truncate">
                               {ci.selectedOptions && ci.selectedOptions.length > 0
-                                ? `"${ci.selectedOptions.map((o) => o.optionName).join(', ')}"`
+                                ? `“${ci.selectedOptions.map((o) => o.optionName).join(', ')}”`
                                 : ci.specialInstructions
-                                ? `"${ci.specialInstructions}"`
-                                : '"No Sauce"'}
+                                ? `“${ci.specialInstructions}”`
+                                : '“No Sauce”'}
                             </p>
-                            <span className="font-semibold text-sm text-[#026F4F] block mt-0.5">
+                            <span className="text-[18px] font-semibold text-[#026F4F] block mt-0.5 leading-[140%]">
                               {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                             </span>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                          <QuantityControl
-                            quantity={ci.quantity}
-                            onIncrement={() => onIncrement(idx as any)}
-                            onDecrement={() => onDecrement(idx as any)}
-                            size="sm"
-                          />
+                        {/* Stepper matching Figma Frame 1171276394 (radius 42px, bg #F1F1F1, padding (4, 5)) */}
+                        <div className="rounded-[42px] bg-[#F1F1F1] px-2.5 py-1 flex items-center gap-2.5 shrink-0 select-none">
+                          <button
+                            type="button"
+                            onClick={() => onDecrement(idx as any)}
+                            className="w-5 h-5 rounded-full flex items-center justify-center text-[#559F89] hover:text-[#026F4F] transition-colors cursor-pointer"
+                            aria-label="Decrease quantity"
+                          >
+                            <span className="text-base font-bold leading-none">−</span>
+                          </button>
+                          <span className="text-[15px] font-semibold text-[#2D2F33] min-w-[14px] text-center">
+                            {ci.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => onIncrement(idx as any)}
+                            className="w-5 h-5 rounded-full flex items-center justify-center text-[#026F4F] hover:text-[#015139] transition-colors cursor-pointer"
+                            aria-label="Increase quantity"
+                          >
+                            <span className="text-base font-bold leading-none">+</span>
+                          </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* + Add More Items Button (Figma-Exact: Directly below Card 1 on background) */}
-                <div className="pt-1 pb-1">
+                {/* + Add More Items Button (Figma Frame 2147226323: Directly below Card 1 on background) */}
+                <div className="pt-0.5 pb-1">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
                   >
-                    <Plus className="w-4 h-4 stroke-[2.5]" />
+                    <div className="w-4 h-4 rounded-full bg-[#026F4F] text-white flex items-center justify-center text-xs font-bold leading-none">
+                      +
+                    </div>
                     <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
                   </button>
                 </div>
 
-                {/* Card 2: Order Summary (Financial breakdown matching Figma) */}
-                <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3">
-                  <h2 className="font-semibold text-base text-[#2D2F33]">
+                {/* Card 2: Order Summary (Totals) matching Figma Frame 1171277086 */}
+                <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#E9E9E9] space-y-3">
+                  <h2 className="text-[19px] font-semibold text-[#2D2F33] leading-[140%]">
                     {isArabic ? 'ملخص الطلب' : 'Order Summary'}
                   </h2>
 
-                  <div className="space-y-2 text-sm font-normal">
-                    <div className="flex justify-between text-[#8E8E93]">
+                  <div className="space-y-2 text-[16px] font-normal leading-[140%]">
+                    <div className="flex justify-between items-center text-[#989898]">
                       <span>{isArabic ? `المجموع الفرعي (${totalCartCount} أصناف)` : `Subtotal (${totalCartCount}items)`}</span>
-                      <span className="text-zinc-800 font-semibold">{formatPrice(subtotal, activeLanguage)}</span>
+                      <span className="text-[#686868] font-semibold">{formatPrice(subtotal, activeLanguage)}</span>
                     </div>
 
-                    <div className="flex justify-between text-[#8E8E93]">
+                    <div className="flex justify-between items-center text-[#989898]">
                       <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-                      <span className="text-zinc-800 font-semibold">{formatPrice(Math.round(subtotal * 0.10 * 100) / 100, activeLanguage)}</span>
+                      <span className="text-[#686868] font-semibold">{formatPrice(serviceCharge, activeLanguage)}</span>
                     </div>
                   </div>
 
-                  {/* Dashed Separator Line */}
-                  <div className="border-b border-dashed border-[#E5E5EA] my-3" />
+                  {/* Dashed Separator Line matching Vector 13 */}
+                  <div className="border-b border-dashed border-[#989898] my-2" />
 
-                  {/* Total Line */}
-                  <div className="flex justify-between items-center font-semibold text-base pt-0.5">
-                    <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
-                    <span className="text-[#026F4F] font-semibold text-lg">
-                      {formatPrice(subtotal + Math.round(subtotal * 0.10 * 100) / 100, activeLanguage)}
+                  {/* Total Line matching Figma Frame 2147226322 */}
+                  <div className="flex justify-between items-center pt-0.5">
+                    <span className="text-[17px] font-medium text-[#000000] leading-[140%]">
+                      {isArabic ? 'المجموع' : 'Total'}
+                    </span>
+                    <span className="text-[17px] font-semibold text-[#026F4F] leading-[140%]">
+                      {formatPrice(grandTotal, activeLanguage)}
                     </span>
                   </div>
                 </div>
@@ -764,19 +786,26 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
 
 
-      {/* Sticky Bottom Action Bar when Cart Has Items */}
+      {/* Sticky Bottom Action Bar when Cart Has Items - Figma Button 841:414 */}
       {activeTab === 'cart' && cart.length > 0 && (
-        <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 sm:py-4 px-4">
+        <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#F4F4F5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3.5 px-4">
           <div className="w-full max-w-[440px] mx-auto">
             <button
               type="button"
               onClick={() => setShowCheckoutModal(true)}
-              className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
+              className="w-full h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white px-6 shadow-md flex items-center justify-between cursor-pointer transition-transform active:scale-[0.99]"
             >
-              <span>{isArabic ? 'متابعة الشراء' : 'Continue to Checkout'}</span>
-              <span className="font-semibold text-base sm:text-lg">
-                {formatPrice(grandTotal, activeLanguage)}
+              <span className="text-[16px] font-normal leading-[140%]">
+                {isArabic ? 'تقديم الطلب' : 'Place Order'}
               </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[16px] font-semibold leading-[140%]">
+                  {formatPrice(grandTotal, activeLanguage)}
+                </span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </div>
             </button>
           </div>
         </div>
@@ -790,9 +819,53 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           setShowOrderDetailsModal(false);
           onClose();
         }}
+        onPayNow={() => {
+          setShowOrderDetailsModal(false);
+          setShowPaymentModal(true);
+        }}
+        onAddItems={() => {
+          setShowOrderDetailsModal(false);
+          onClose();
+        }}
         language={activeLanguage}
         orderId={ongoingOrder?.id || '#A102'}
         order={ongoingOrder}
+      />
+
+      {/* Payment Screen Modal when paying after eating */}
+      <PaymentScreen
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        cart={
+          ongoingOrder?.cartItems && ongoingOrder.cartItems.length > 0
+            ? ongoingOrder.cartItems
+            : cart.length > 0
+            ? cart
+            : [
+                { item: MOCK_MENU_ITEMS[0], quantity: 2 },
+                { item: MOCK_MENU_ITEMS[1] || MOCK_MENU_ITEMS[0], quantity: 1 },
+              ]
+        }
+        subtotal={ongoingOrder?.subtotal || subtotal || 25.99}
+        serviceCharge={ongoingOrder?.serviceCharge || serviceCharge || 2.60}
+        vat={ongoingOrder?.vat || 1.30}
+        tipAmount={ongoingOrder?.tipAmount || 5.00}
+        grandTotal={ongoingOrder?.total || grandTotal || 45.99}
+        onPaymentSuccess={() => {
+          if (ongoingOrder) {
+            const updated = { ...ongoingOrder, isPaid: true };
+            setOngoingOrder(updated);
+            try {
+              localStorage.setItem(LOCAL_STORAGE_ONGOING_KEY, JSON.stringify(updated));
+            } catch (e) {
+              console.error(e);
+            }
+          }
+          setShowPaymentModal(false);
+          setShowOrderConfirmedModal(true);
+        }}
+        language={activeLanguage}
+        tableName={_tableName}
       />
 
       {/* Order Confirmed Screen Modal */}

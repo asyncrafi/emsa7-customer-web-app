@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  ArrowLeft,
-  ArrowRight,
-  User,
-  Phone,
-  Mail,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  AlertCircle,
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp } from 'lucide-react';
 import { type CartItem, formatPrice, getCartItemTotalPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
+
+// Import downloaded Figma assets
+import payOnlineThumb from '@/assets/8d330a1ecbca2cbf06d3bbe653ba94cc9d1c45ce.png';
+import getCheckThumb from '@/assets/aacb11b1986c4fbe89e7246d2b7b4a8fdad3cb42.png';
+import cardPosThumb from '@/assets/043670cd1f7fdd0f435d0395cb8b3e0cd98c0960.png';
+import banknoteSvg from '@/assets/noto_dollar-banknote.svg';
+import visaLogo from '@/assets/selfhst_visa.svg';
+import mastercardLogo from '@/assets/logos_mastercard.svg';
+import meezaLogo from '@/assets/meeza-seeklogo 1.svg';
+import googlePayLogo from '@/assets/logos_google-pay.svg';
+import applePayLogo from '@/assets/cib_cc-apple-pay.svg';
+import arrowRightSvg from '@/assets/weui_arrow-outlined.svg';
 
 export interface PaymentScreenProps {
   isOpen: boolean;
@@ -21,11 +23,12 @@ export interface PaymentScreenProps {
   language?: 'ENGLISH' | 'ARABIC';
   subtotal: number;
   serviceCharge: number;
-  vat: number;
-  tipAmount: number;
+  vat?: number;
+  tipAmount?: number;
   splitFee?: number;
   discount?: number;
   grandTotal: number;
+  tableName?: string;
 }
 
 export const PaymentScreen: React.FC<PaymentScreenProps> = ({
@@ -37,219 +40,129 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   subtotal,
   serviceCharge: propServiceCharge,
   vat: propVat,
-  tipAmount,
+  tipAmount = 0,
   splitFee = 0,
   discount = 0,
   grandTotal,
+  tableName = 'Table 07',
 }) => {
   const { language: contextLanguage } = useLanguage();
   const activeLanguage = propLanguage || contextLanguage;
   const isArabic = activeLanguage === 'ARABIC';
 
-  const serviceCharge = propServiceCharge !== undefined && propServiceCharge > 0 ? propServiceCharge : Math.round(subtotal * 0.10 * 100) / 100;
-  const vat = propVat !== undefined && propVat > 0 ? propVat : Math.round(subtotal * 0.05 * 100) / 100;
+  const serviceCharge =
+    propServiceCharge !== undefined && propServiceCharge > 0
+      ? propServiceCharge
+      : Math.round(subtotal * 0.10 * 100) / 100;
+  const vat =
+    propVat !== undefined && propVat > 0
+      ? propVat
+      : Math.round(subtotal * 0.05 * 100) / 100;
 
-  const [fullName, setFullName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [email, setEmail] = useState('');
-
-  // Refs for auto-scrolling & focusing on validation error
-  const customerFormRef = useRef<HTMLDivElement>(null);
-  const fullNameInputRef = useRef<HTMLInputElement>(null);
-  const phoneInputRef = useRef<HTMLInputElement>(null);
-
-  // Accordion open states
+  // Accordion open states matching Figma: Pay Online is primary open, Get the Check can toggle
   const [isPayOnlineOpen, setIsPayOnlineOpen] = useState(true);
   const [isGetCheckOpen, setIsGetCheckOpen] = useState(true);
 
-  // Selected payment option
+  // Selected payment method
   const [selectedMethod, setSelectedMethod] = useState<'card' | 'gpay' | 'applepay' | 'cash' | 'pos_card'>('cash');
 
-  // Confirmation modal state
+  // Cash payment confirmation modal (Figma Frame 202:65)
   const [showWaitingModal, setShowWaitingModal] = useState(false);
 
-  // Form validation error state
-  const [showErrors, setShowErrors] = useState(false);
-
-  // Handle auto confirmation transition when waiting modal is shown
+  // Auto transition when waiting for confirmation from manager
   useEffect(() => {
     if (!showWaitingModal) return;
     const timer = setTimeout(() => {
       setShowWaitingModal(false);
       onPaymentSuccess();
-    }, 3000);
+    }, 3200);
     return () => clearTimeout(timer);
   }, [showWaitingModal, onPaymentSuccess]);
 
   if (!isOpen) return null;
 
+  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   const handlePayNow = () => {
-    if (!fullName.trim() || !phoneNumber.trim()) {
-      setShowErrors(true);
-
-      // Smooth scroll up to the customer information form section
-      customerFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-      // Focus the first empty required field
-      setTimeout(() => {
-        if (!fullName.trim()) {
-          fullNameInputRef.current?.focus();
-        } else if (!phoneNumber.trim()) {
-          phoneInputRef.current?.focus();
-        }
-      }, 350);
-      return;
+    if (selectedMethod === 'cash' || selectedMethod === 'pos_card') {
+      setShowWaitingModal(true);
+    } else {
+      // Simulate quick online transaction and succeed
+      setShowWaitingModal(true);
     }
-
-    setShowWaitingModal(true);
   };
 
   return (
     <div
       dir={isArabic ? 'rtl' : 'ltr'}
-      className="fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto flex flex-col justify-between font-sans"
+      className="fixed inset-0 z-50 bg-[#F4F4F5] antialiased select-none overflow-y-auto flex flex-col justify-between font-sans"
     >
-      {/* Main Page Container: Strictly responsive mobile 440px width matching Figma */}
-      <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-28 space-y-5 flex-1">
-        {/* Header Row: Back Arrow + Centered Title */}
-        <header className="relative flex items-center justify-center py-2">
+      {/* Main Page Container: Strictly responsive mobile 440px width matching Figma Frame Payment (904:154) */}
+      <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-28 space-y-4 flex-1">
+        {/* Header Row: 50x50 Back Circle Button (bg #E9E9E9) + Centered Title & Subtitle */}
+        <header className="relative flex items-center justify-center py-2 min-h-[50px]">
           <button
             type="button"
             onClick={onClose}
             aria-label="Back"
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-0"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-[50px] h-[50px] rounded-full bg-[#E9E9E9] hover:bg-[#dedede] text-[#2D2F33] flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-0 shadow-2xs"
           >
-            {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
+            {isArabic ? <ArrowRight className="w-5 h-5 text-[#2D2F33]" /> : <ArrowLeft className="w-5 h-5 text-[#2D2F33]" />}
           </button>
 
-          <h1 className="text-xl sm:text-2xl font-semibold text-[#2D2F33] tracking-tight">
-            {isArabic ? 'الدفع' : 'Payment'}
-          </h1>
+          <div className="text-center">
+            <h1 className="text-[28px] font-medium text-[#2D2F33] tracking-tight leading-[130%]">
+              {isArabic ? 'الدفع' : 'Payment'}
+            </h1>
+            <p className="text-[14px] text-[#686868] font-normal leading-[140%]">
+              {isArabic ? `هذه الجلسة • ${tableName}` : `This session • ${tableName}`}
+            </p>
+          </div>
         </header>
 
-        {/* 1. Customer Information Section (Figma-Exact: Directly on page background) */}
-        <div ref={customerFormRef} className="space-y-3 scroll-mt-6">
-          <h2 className="font-semibold text-base text-[#2D2F33]">
-            {isArabic ? 'معلومات العميل' : 'Customer Information'}
-          </h2>
-
-          <div className="space-y-3">
-            {/* Full Name */}
-            <div>
-              <label className="block text-xs font-medium text-zinc-600 mb-1.5">
-                {isArabic ? 'الاسم الكامل' : 'Full Name'} <span className="text-red-500">*</span>
-              </label>
-              <div
-                className={`bg-[#EEEEEE] rounded-2xl px-4 py-3 flex items-center gap-3 border transition-colors ${
-                  showErrors && !fullName.trim() ? 'border-red-400 bg-red-50/70 shadow-xs' : 'border-transparent focus-within:border-[#026F4F]'
-                }`}
-              >
-                <User className={`w-5 h-5 shrink-0 ${showErrors && !fullName.trim() ? 'text-red-500' : 'text-zinc-400'}`} />
-                <input
-                  ref={fullNameInputRef}
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => {
-                    setFullName(e.target.value);
-                    if (showErrors) setShowErrors(false);
-                  }}
-                  placeholder={isArabic ? 'أدخل اسمك' : 'Enter your name'}
-                  className="w-full bg-transparent text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
-                />
-              </div>
-              {showErrors && !fullName.trim() && (
-                <p className="text-[11px] text-red-500 font-semibold mt-1 flex items-center gap-1">
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  <span>{isArabic ? 'الاسم مطلوب' : 'Full name is required'}</span>
-                </p>
-              )}
-            </div>
-
-            {/* Phone Number */}
-            <div>
-              <label className="block text-xs font-medium text-zinc-600 mb-1.5">
-                {isArabic ? 'رقم الهاتف' : 'Phone Number'} <span className="text-red-500">*</span>
-              </label>
-              <div
-                className={`bg-[#EEEEEE] rounded-2xl px-4 py-3 flex items-center gap-3 border transition-colors ${
-                  showErrors && !phoneNumber.trim()
-                    ? 'border-red-400 bg-red-50/70 shadow-xs'
-                    : 'border-transparent focus-within:border-[#026F4F]'
-                }`}
-              >
-                <Phone className={`w-5 h-5 shrink-0 ${showErrors && !phoneNumber.trim() ? 'text-red-500' : 'text-zinc-400'}`} />
-                <input
-                  ref={phoneInputRef}
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => {
-                    setPhoneNumber(e.target.value);
-                    if (showErrors) setShowErrors(false);
-                  }}
-                  placeholder={isArabic ? 'أدخل رقم هاتفك' : 'Enter your number'}
-                  className="w-full bg-transparent text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
-                />
-              </div>
-              {showErrors && !phoneNumber.trim() && (
-                <p className="text-[11px] text-red-500 font-semibold mt-1 flex items-center gap-1">
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  <span>{isArabic ? 'رقم الهاتف مطلوب' : 'Phone number is required'}</span>
-                </p>
-              )}
-            </div>
-
-            {/* Email (Optional) */}
-            <div>
-              <label className="block text-xs font-medium text-zinc-600 mb-1.5">
-                {isArabic ? 'إرسال الإيصال إلى البريد الإلكتروني (اختياري)' : 'Send Receipt to Email (Optional)'}
-              </label>
-              <div className="bg-[#EEEEEE] rounded-2xl px-4 py-3 flex items-center gap-3 border border-transparent focus-within:border-[#026F4F] transition-colors">
-                <Mail className="w-5 h-5 text-zinc-400 shrink-0" />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder={isArabic ? 'أدخل بريدك الإلكتروني...' : 'Enter your email...'}
-                  className="w-full bg-transparent text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 2. Order Summary Card (Figma-Exact: Items only) */}
-        <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3">
-          <h2 className="font-semibold text-base text-[#2D2F33]">
+        {/* 1. Order Summary Card matching Figma Frame 1171277086 (radius 13px bg white border #E9E9E9) */}
+        <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#E9E9E9] space-y-3.5">
+          <h2 className="text-[19px] font-semibold text-[#2D2F33] leading-[140%]">
             {isArabic ? 'ملخص الطلب' : 'Order Summary'}
           </h2>
 
-          <div className="space-y-3 divide-y divide-zinc-100">
-            {cart.map((ci) => (
-              <div key={ci.item.id} className="pt-3 first:pt-0 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-14 h-14 rounded-xl bg-[#F4F5F7] p-1.5 flex items-center justify-center shrink-0">
+          <div className="space-y-3.5 divide-y divide-zinc-100">
+            {cart.map((ci, idx) => (
+              <div
+                key={`${ci.item.id}-${idx}`}
+                className="pt-3.5 first:pt-0 flex items-center justify-between gap-3"
+              >
+                <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                  <div className="w-[64px] h-[64px] rounded-[7px] bg-[#F1F1F1] p-1 flex items-center justify-center shrink-0">
                     <img
-                      src={ci.item.imageUrl}
+                      src={ci.item.imageUrl || '/images/food/ramen.png'}
                       alt={ci.item.name}
-                      className="w-full h-full object-contain"
+                      className="w-[48px] h-[48px] object-contain"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/food/ramen.png';
+                      }}
                     />
                   </div>
 
                   <div className="min-w-0">
-                    <h3 className="font-semibold text-sm text-[#2D2F33] truncate">
+                    <h3 className="text-[15px] font-medium text-[#2D2F33] leading-[140%] truncate">
                       {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
                     </h3>
-                    <p className="text-xs text-[#8E8E93] font-normal truncate">
-                      "No Sauce"
+                    <p className="text-[11px] font-normal text-[#989898] leading-[140%] truncate">
+                      {ci.selectedOptions && ci.selectedOptions.length > 0
+                        ? `“${ci.selectedOptions.map((o) => o.optionName).join(', ')}”`
+                        : ci.specialInstructions
+                        ? `“${ci.specialInstructions}”`
+                        : '“No Sauce”'}
                     </p>
-                    <span className="text-xs text-zinc-800 font-medium block mt-0.5">
+                    <span className="text-[15px] font-medium text-[#000000] block mt-0.5 leading-[140%]">
                       x{ci.quantity}
                     </span>
                   </div>
                 </div>
 
                 <div className="text-right shrink-0">
-                  <span className="font-semibold text-base text-[#026F4F]">
+                  <span className="text-[18px] font-semibold text-[#026F4F] leading-[140%]">
                     {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
                   </span>
                 </div>
@@ -258,235 +171,290 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           </div>
         </div>
 
-        {/* 3. Payments Details Card (Figma-Exact: Separate Card) */}
-        <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3">
-          <h2 className="font-semibold text-base text-[#2D2F33]">
+        {/* 2. Payments Details Card matching Figma Frame 2147226327 */}
+        <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#E9E9E9] space-y-3">
+          <h2 className="text-[19px] font-semibold text-[#2D2F33] leading-[140%]">
             {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
           </h2>
 
-          <div className="space-y-2 text-sm font-medium">
-            <div className="flex justify-between text-[#8E8E93]">
-              <span>{isArabic ? `المجموع الفرعي (${cart.length} أصناف)` : `Subtotal (${cart.length}items)`}</span>
-              <span className="text-[#2D2F33] font-medium">{formatPrice(subtotal, activeLanguage)}</span>
+          <div className="space-y-2 text-[16px] font-normal leading-[140%]">
+            <div className="flex justify-between items-center text-[#989898]">
+              <span>{isArabic ? `المجموع الفرعي (${totalCartCount} أصناف)` : `Subtotal (${totalCartCount}items)`}</span>
+              <span className="text-[#686868] font-semibold">{formatPrice(subtotal, activeLanguage)}</span>
             </div>
 
-            <div className="flex justify-between text-[#8E8E93]">
+            <div className="flex justify-between items-center text-[#989898]">
               <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-              <span className="text-[#2D2F33] font-medium">{formatPrice(serviceCharge, activeLanguage)}</span>
+              <span className="text-[#686868] font-semibold">{formatPrice(serviceCharge, activeLanguage)}</span>
             </div>
 
-            <div className="flex justify-between text-[#8E8E93]">
-              <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-              <span className="text-[#2D2F33] font-medium">{formatPrice(vat, activeLanguage)}</span>
-            </div>
+            {vat > 0 && (
+              <div className="flex justify-between items-center text-[#989898]">
+                <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
+                <span className="text-[#686868] font-semibold">{formatPrice(vat, activeLanguage)}</span>
+              </div>
+            )}
 
-            <div className="flex justify-between text-[#8E8E93]">
-              <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-              <span className="text-[#2D2F33] font-medium">{formatPrice(tipAmount, activeLanguage)}</span>
-            </div>
+            {tipAmount > 0 && (
+              <div className="flex justify-between items-center text-[#989898]">
+                <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
+                <span className="text-[#686868] font-semibold">{formatPrice(tipAmount, activeLanguage)}</span>
+              </div>
+            )}
 
             {splitFee > 0 && (
-              <div className="flex justify-between text-rose-500 font-medium">
+              <div className="flex justify-between items-center text-rose-500">
                 <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
                 <span className="font-semibold">{formatPrice(splitFee, activeLanguage)}</span>
               </div>
             )}
 
             {discount > 0 && (
-              <div className="flex justify-between text-[#026F4F] font-medium">
+              <div className="flex justify-between items-center text-[#026F4F]">
                 <span>{isArabic ? 'خصم العرض' : 'Promo Discount'}</span>
                 <span className="font-semibold">-{formatPrice(discount, activeLanguage)}</span>
               </div>
             )}
           </div>
 
-          {/* Dashed Separator Line */}
-          <div className="border-b border-dashed border-[#E5E5EA] my-3" />
+          {/* Dashed Separator Line matching Vector 13 */}
+          <div className="border-b border-dashed border-[#989898] my-2" />
 
-          {/* Total Line */}
-          <div className="flex justify-between items-center font-semibold text-base pt-0.5">
-            <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
-            <span className="text-[#026F4F] font-semibold text-lg">
+          {/* Total Line matching Figma Frame 2147226322 */}
+          <div className="flex justify-between items-center pt-0.5">
+            <span className="text-[17px] font-medium text-[#000000] leading-[140%]">
+              {isArabic ? 'المجموع' : 'Total'}
+            </span>
+            <span className="text-[17px] font-semibold text-[#026F4F] leading-[140%]">
               {formatPrice(grandTotal, activeLanguage)}
             </span>
           </div>
         </div>
 
-        {/* 4. Payment Method Options */}
-        <div className="space-y-3">
-          <h2 className="font-semibold text-base text-[#2D2F33]">
+        {/* 3. Payment Method Section matching Figma Frame 2147226389 */}
+        <div className="space-y-3.5 pt-1">
+          <h2 className="text-[19px] font-semibold text-[#2D2F33] leading-[140%]">
             {isArabic ? 'طريقة الدفع' : 'Payment Method'}
           </h2>
 
-          {/* Accordion 1: Pay Online (Figma-Exact: Green border, rounded-[16px]) */}
-          <div className="bg-white rounded-[16px] border border-[#026F4F] overflow-hidden shadow-2xs">
-            {/* Accordion Header */}
-            <button
-              type="button"
-              onClick={() => setIsPayOnlineOpen(!isPayOnlineOpen)}
-              className="w-full p-4 flex items-center justify-between bg-white cursor-pointer select-none"
+          <div className="space-y-3.5">
+            {/* Accordion 1: Pay Online (Frame 2147226332: radius 10px, border #026F4F) */}
+            <div
+              className={`bg-white rounded-[10px] border transition-all overflow-hidden ${
+                isPayOnlineOpen ? 'border-[#026F4F] shadow-xs' : 'border-[#E9E9E9]'
+              }`}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
-                  <img src="/images/payment/pay-online.svg" alt="Pay Online" className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={() => setIsPayOnlineOpen(!isPayOnlineOpen)}
+                className="w-full p-4 flex items-center justify-between cursor-pointer select-none bg-white"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-[42px] h-[42px] rounded-[5px] bg-[#E9E9E9] p-1.5 flex items-center justify-center shrink-0">
+                    <img src={payOnlineThumb} alt="Pay Online" className="w-full h-full object-contain" />
+                  </div>
+                  <span className="text-[15px] font-medium text-[#2D2F33] leading-[140%]">
+                    {isArabic ? 'الدفع عبر الإنترنت' : 'Pay Online'}
+                  </span>
                 </div>
-                <span className="font-semibold text-sm text-[#2D2F33]">
-                  {isArabic ? 'الدفع عبر الإنترنت' : 'Pay Online'}
-                </span>
-              </div>
-              {isPayOnlineOpen ? (
-                <ChevronUp className="w-5 h-5 text-zinc-600" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-zinc-600" />
+                <div className="w-5 h-5 flex items-center justify-center text-[#2D2F33]">
+                  {isPayOnlineOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                </div>
+              </button>
+
+              {/* Accordion Items List */}
+              {isPayOnlineOpen && (
+                <div className="px-4 pb-4 pt-1 space-y-2 border-t border-zinc-100/80">
+                  {/* Option 1: Credit / Debit Card (Frame 2147226611) */}
+                  <div
+                    onClick={() => setSelectedMethod('card')}
+                    className={`p-3 rounded-[8px] flex items-center justify-between cursor-pointer transition-colors ${
+                      selectedMethod === 'card' ? 'bg-[#F1F9F6]' : 'hover:bg-zinc-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-[28px] px-2 rounded-[5.3px] bg-[#F1F1F1] flex items-center gap-1.5">
+                        <img src={visaLogo} alt="Visa" className="h-3 w-auto object-contain" />
+                        <img src={mastercardLogo} alt="Mastercard" className="h-3 w-auto object-contain" />
+                        <img src={meezaLogo} alt="Meeza" className="h-3 w-auto object-contain" />
+                      </div>
+                      <span className="text-[15px] font-medium text-[#2D2F33] leading-[140%]">
+                        {isArabic ? 'بطاقة ائتمان / خصم' : 'Credit / Debit Card'}
+                      </span>
+                    </div>
+                    <img src={arrowRightSvg} alt="" className="w-2.5 h-4 object-contain opacity-60 rtl:rotate-180" />
+                  </div>
+
+                  {/* Option 2: Google Pay (Frame 2147226379) */}
+                  <div
+                    onClick={() => setSelectedMethod('gpay')}
+                    className={`p-3 rounded-[8px] flex items-center justify-between cursor-pointer transition-colors ${
+                      selectedMethod === 'gpay' ? 'bg-[#F1F9F6]' : 'hover:bg-zinc-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-[42px] h-[28px] rounded-[6px] bg-[#F1F1F1] flex items-center justify-center">
+                        <img src={googlePayLogo} alt="Google Pay" className="h-4 w-auto object-contain" />
+                      </div>
+                      <span className="text-[15px] font-medium text-[#2D2F33] leading-[140%]">
+                        Google Pay
+                      </span>
+                    </div>
+                    <img src={arrowRightSvg} alt="" className="w-2.5 h-4 object-contain opacity-60 rtl:rotate-180" />
+                  </div>
+
+                  {/* Option 3: Apple Pay (Frame 2147226373) */}
+                  <div
+                    onClick={() => setSelectedMethod('applepay')}
+                    className={`p-3 rounded-[8px] flex items-center justify-between cursor-pointer transition-colors ${
+                      selectedMethod === 'applepay' ? 'bg-[#F1F9F6]' : 'hover:bg-zinc-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-[42px] h-[28px] rounded-[6px] bg-[#F1F1F1] flex items-center justify-center">
+                        <img src={applePayLogo} alt="Apple Pay" className="h-4 w-auto object-contain" />
+                      </div>
+                      <span className="text-[15px] font-medium text-[#2D2F33] leading-[140%]">
+                        Apple Pay
+                      </span>
+                    </div>
+                    <img src={arrowRightSvg} alt="" className="w-2.5 h-4 object-contain opacity-60 rtl:rotate-180" />
+                  </div>
+                </div>
               )}
-            </button>
+            </div>
 
-            {/* Accordion Content */}
-            {isPayOnlineOpen && (
-              <div className="px-4 pb-3 pt-1 space-y-1 border-t border-zinc-100">
-                {/* Option 1: Credit / Debit Card */}
-                <div
-                  onClick={() => setSelectedMethod('card')}
-                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <img src="/images/payment/credit-debit-pay.svg" alt="Credit / Debit Card" className="h-7 w-auto object-contain" />
-                    <span className="font-medium text-sm text-[#2D2F33]">
-                      {isArabic ? 'بطاقة ائتمان / خصم' : 'Credit / Debit Card'}
-                    </span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-zinc-400 rtl:rotate-180" />
-                </div>
-
-                {/* Option 2: Google Pay */}
-                <div
-                  onClick={() => setSelectedMethod('gpay')}
-                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <img src="/images/payment/google-pay.svg" alt="Google Pay" className="h-7 w-auto object-contain" />
-                    <span className="font-medium text-sm text-[#2D2F33]">
-                      Google Pay
-                    </span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-zinc-400 rtl:rotate-180" />
-                </div>
-
-                {/* Option 3: Apple Pay */}
-                <div
-                  onClick={() => setSelectedMethod('applepay')}
-                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <img src="/images/payment/apple-pay.svg" alt="Apple Pay" className="h-7 w-auto object-contain" />
-                    <span className="font-medium text-sm text-[#2D2F33]">
-                      Apple Pay
-                    </span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-zinc-400 rtl:rotate-180" />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Accordion 2: Get the Check (Figma-Exact: rounded-[16px]) */}
-          <div className="bg-white rounded-[16px] border border-zinc-200/80 overflow-hidden shadow-2xs">
-            {/* Accordion Header */}
-            <button
-              type="button"
-              onClick={() => setIsGetCheckOpen(!isGetCheckOpen)}
-              className="w-full p-4 flex items-center justify-between bg-white cursor-pointer select-none"
+            {/* Accordion 2: Get the Check (Frame 2147226329: radius 10px) */}
+            <div
+              className={`bg-white rounded-[10px] border transition-all overflow-hidden ${
+                selectedMethod === 'cash' || selectedMethod === 'pos_card'
+                  ? 'border-[#026F4F] shadow-xs'
+                  : 'border-[#E9E9E9]'
+              }`}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-zinc-100 flex items-center justify-center overflow-hidden">
-                  <img src="/images/payment/get-check.svg" alt="Get the Check" className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={() => setIsGetCheckOpen(!isGetCheckOpen)}
+                className="w-full p-4 flex items-center justify-between cursor-pointer select-none bg-white"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-[42px] h-[42px] rounded-[5px] bg-[#E9E9E9] p-1.5 flex items-center justify-center shrink-0">
+                    <img src={getCheckThumb} alt="Get the Check" className="w-full h-full object-contain" />
+                  </div>
+                  <span className="text-[15px] font-medium text-[#2D2F33] leading-[140%]">
+                    {isArabic ? 'طلب الفاتورة' : 'Get the Check'}
+                  </span>
                 </div>
-                <span className="font-semibold text-sm text-[#2D2F33]">
-                  {isArabic ? 'الحصول على الفاتورة' : 'Get the Check'}
-                </span>
-              </div>
-              {isGetCheckOpen ? (
-                <ChevronUp className="w-5 h-5 text-zinc-600" />
-              ) : (
-                <ChevronDown className="w-5 h-5 text-zinc-600" />
+                <div className="w-5 h-5 flex items-center justify-center text-[#2D2F33]">
+                  {isGetCheckOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                </div>
+              </button>
+
+              {/* Accordion Items List */}
+              {isGetCheckOpen && (
+                <div className="px-4 pb-4 pt-1 space-y-2.5 border-t border-zinc-100/80">
+                  {/* Option 1: Cash (Frame 2147226364) */}
+                  <div
+                    onClick={() => setSelectedMethod('cash')}
+                    className={`p-3 rounded-[8px] flex items-center justify-between cursor-pointer transition-colors ${
+                      selectedMethod === 'cash' ? 'bg-[#F1F9F6]' : 'hover:bg-zinc-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-9 h-9 rounded-full bg-[#E9E9E9] flex items-center justify-center shrink-0 p-1.5">
+                        <img src={banknoteSvg} alt="Cash" className="w-full h-full object-contain" />
+                      </div>
+                      <span className="text-[15px] font-medium text-[#2D2F33] leading-[140%]">
+                        {isArabic ? 'نقداً' : 'Cash'}
+                      </span>
+                    </div>
+
+                    {/* Radio Button */}
+                    <div className="w-5 h-5 rounded-full border-2 border-[#989898] flex items-center justify-center">
+                      {selectedMethod === 'cash' && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#2D2F33]" />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Option 2: Card POS (Frame 2147226365) */}
+                  <div
+                    onClick={() => setSelectedMethod('pos_card')}
+                    className={`p-3 rounded-[8px] flex items-center justify-between cursor-pointer transition-colors ${
+                      selectedMethod === 'pos_card' ? 'bg-[#F1F9F6]' : 'hover:bg-zinc-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-9 h-9 rounded-full bg-[#E9E9E9] flex items-center justify-center shrink-0 p-1.5">
+                        <img src={cardPosThumb} alt="Card POS" className="w-full h-full object-contain" />
+                      </div>
+                      <span className="text-[15px] font-medium text-[#2D2F33] leading-[140%]">
+                        {isArabic ? 'بطاقة عند الطاولة' : 'Card'}
+                      </span>
+                    </div>
+
+                    {/* Radio Button */}
+                    <div className="w-5 h-5 rounded-full border-2 border-[#989898] flex items-center justify-center">
+                      {selectedMethod === 'pos_card' && (
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#2D2F33]" />
+                      )}
+                    </div>
+                  </div>
+                </div>
               )}
-            </button>
-
-            {/* Accordion Content */}
-            {isGetCheckOpen && (
-              <div className="px-4 pb-3 pt-1 space-y-1 border-t border-zinc-100">
-                {/* Option 1: Cash */}
-                <div
-                  onClick={() => setSelectedMethod('cash')}
-                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <img src="/images/payment/cash.svg" alt="Cash" className="w-7 h-7 object-contain" />
-                    <span className="font-medium text-sm text-[#2D2F33]">
-                      {isArabic ? 'نقداً' : 'Cash'}
-                    </span>
-                  </div>
-                  <div className="w-5 h-5 rounded-full border-2 border-zinc-300 flex items-center justify-center">
-                    {selectedMethod === 'cash' && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-                    )}
-                  </div>
-                </div>
-
-                {/* Option 2: Card */}
-                <div
-                  onClick={() => setSelectedMethod('pos_card')}
-                  className="py-3 px-2 rounded-xl flex items-center justify-between cursor-pointer hover:bg-zinc-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <img src="/images/payment/card-pay.svg" alt="Card" className="w-7 h-7 object-contain" />
-                    <span className="font-medium text-sm text-[#2D2F33]">
-                      {isArabic ? 'بطاقة' : 'Card'}
-                    </span>
-                  </div>
-                  <div className="w-5 h-5 rounded-full border-2 border-zinc-300 flex items-center justify-center">
-                    {selectedMethod === 'pos_card' && (
-                      <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Sticky Bottom Action Bar: Pay Now */}
-      <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#f4f4f5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3 sm:py-4 px-4">
+      {/* Sticky Bottom Action Bar with Button: Pay Now matching Figma Button 904:182 */}
+      <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#F4F4F5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3.5 px-4">
         <div className="w-full max-w-[440px] mx-auto">
           <button
             type="button"
             onClick={handlePayNow}
-            className="w-full py-4 px-6 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm sm:text-base tracking-wide shadow-md flex items-center justify-between cursor-pointer transition-all active:scale-[0.99]"
+            className="w-full h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white px-6 shadow-md flex items-center justify-between cursor-pointer transition-transform active:scale-[0.99]"
           >
-            <span>{isArabic ? 'الدفع الآن' : 'Pay Now'}</span>
-            <span className="font-semibold text-base sm:text-lg">
-              {formatPrice(grandTotal, activeLanguage)}
+            <span className="text-[16px] font-normal leading-[140%]">
+              {isArabic ? 'الدفع الآن' : 'Pay Now'}
             </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[16px] font-semibold leading-[140%]">
+                {formatPrice(grandTotal, activeLanguage)}
+              </span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </div>
           </button>
         </div>
       </div>
 
-      {/* Waiting for Confirmation Modal */}
+      {/* Cash payment Confirmation from manager Modal matching Figma Frame 202:65 (408x259 radius 12px bg white) */}
       {showWaitingModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-sm sm:max-w-md bg-white rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-2xl border border-zinc-100 animate-in zoom-in-95 duration-200">
-            {/* Circular Green Spinner */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-emerald-100 border-t-[#026F4F] animate-spin mx-auto my-2" />
+          <div className="w-full max-w-[408px] bg-white rounded-[12px] p-8 text-center space-y-4 shadow-2xl border border-zinc-100 animate-in zoom-in-95 duration-200">
+            {/* Spinning Indicator matching Figma Group 1171276390 (56x56 Ellipse 689 #D9D9D9, Ellipse 690 #026F4F) */}
+            <div className="relative w-14 h-14 mx-auto my-2">
+              <svg className="w-full h-full animate-spin" viewBox="0 0 56 56" fill="none">
+                <circle cx="28" cy="28" r="24" stroke="#D9D9D9" strokeWidth="4" />
+                <path
+                  d="M28 4C41.2548 4 52 14.7452 52 28"
+                  stroke="#026F4F"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </div>
 
-            <div>
-              <h3 className="font-semibold text-xl sm:text-2xl text-[#2D2F33] tracking-tight">
+            <div className="space-y-2">
+              <h3 className="text-[23px] font-semibold text-[#2D2F33] leading-[130%] tracking-tight">
                 {isArabic ? 'في انتظار التأكيد' : 'Waiting for Confirmation'}
               </h3>
-              <p className="text-xs sm:text-sm text-zinc-400 font-medium mt-2 max-w-xs mx-auto leading-relaxed">
+              <p className="text-[13px] text-[#989898] font-normal leading-[140%] max-w-xs mx-auto">
                 {isArabic
-                  ? (selectedMethod === 'cash' ? 'يرجى الانتظار بينما يؤكد الموظفون دفعك النقدي.' : 'يرجى الانتظار بينما يؤكد الموظفون دفعك.')
-                  : (selectedMethod === 'cash' ? 'Please wait while staff confirms your cash payment.' : 'Please wait while staff confirms your payment.')}
+                  ? 'يرجى الانتظار بينما يؤكد الموظفون دفعك.'
+                  : 'Please wait while staff confirms your cash payment.'}
               </p>
             </div>
           </div>
