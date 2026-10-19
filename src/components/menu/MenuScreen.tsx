@@ -1,13 +1,9 @@
 import React, { useState, useMemo, useRef } from 'react';
-import SvgFilterIcon from '@/components/ui/svg-icons/FilterSvg';
 import SvgBellsIcon from '@/components/ui/svg-icons/BellsSvg';
-import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
-import SvgEarthIcon from '@/components/ui/svg-icons/EarthSvg';
 import emsa7Logo from '@/assets/logo.png';
 import { useLanguage } from '@/providers/LanguageContext';
 import {
   Check,
-  Search,
   X,
 } from 'lucide-react';
 import {
@@ -361,7 +357,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   onClick={() => setLangDropdownOpen(!langDropdownOpen)}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 h-8.5 rounded-full border border-zinc-200/90 bg-white text-[#026F4F] text-xs font-medium shadow-2xs hover:bg-zinc-50 transition-colors cursor-pointer"
                 >
-                  <SvgEarthIcon className="h-3.5 w-3.5 text-[#026F4F]" />
+                  <img src="/icons/lsicon_earth-outline.svg" alt="" className="h-4 w-4" />
                   <span>{language === 'ARABIC' ? 'AR' : 'EN'}</span>
                 </button>
 
@@ -424,7 +420,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 }}
                 className="relative inline-flex items-center gap-1.5 px-3.5 py-1.5 h-8.5 rounded-full text-white text-xs font-medium shadow-2xs bg-[#026F4F] hover:bg-[#025a40] active:scale-95 transition-all cursor-pointer"
               >
-                <SvgCartIcon className="w-3.5 h-3.5 text-white fill-white" />
+                <img src="/icons/solar_cart-outline.svg" alt="" className="w-3.5 h-3.5 brightness-0 invert" />
                 <span>{language === 'ARABIC' ? 'طلباتي' : 'My Order'}</span>
 
                 {totalCartCount > 0 && (
@@ -449,7 +445,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           {/* Integrated Search & Filter Controls Pill Bar matching Figma */}
           <section>
             <div className="relative w-full bg-white rounded-full border border-zinc-200/50 shadow-2xs flex items-center p-1 pl-4 pr-1.5">
-              <Search className="h-4 w-4 text-zinc-400 shrink-0" />
+              <img src="/icons/mdi_magnify.svg" alt="" className="h-4 w-4 shrink-0 opacity-60" />
               <input
                 type="text"
                 value={searchQuery}
@@ -478,7 +474,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 aria-label="Filter menu"
                 className="relative w-8.5 h-8.5 rounded-full bg-[#EAECEF] hover:bg-[#dfe2e7] text-[#555C68] flex items-center justify-center transition-colors cursor-pointer shrink-0"
               >
-                <SvgFilterIcon className="w-4 h-4 text-[#555C68]" />
+                <img src="/icons/mage_filter.svg" alt="" className="w-4 h-4" />
                 {(selectedSort || selectedTags.length > 0) && (
                   <span className="absolute top-1 right-1 rtl:right-auto rtl:left-1 w-2 h-2 bg-[#026F4F] rounded-full border border-white" />
                 )}
@@ -584,7 +580,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
               {/* Section 1: 🔥 Popular Now (2-column vertical cards) */}
               <section className="space-y-3">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-base">🔥</span>
+                  <img src="/icons/noto_fire.svg" alt="" className="w-4.5 h-4.5 object-contain" />
                   <h2 className="text-base font-semibold text-[#2D2F33] tracking-tight">
                     {language === 'ARABIC' ? 'الأكثر شعبية' : 'Popular Now'}
                   </h2>

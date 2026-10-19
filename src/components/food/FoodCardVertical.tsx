@@ -105,9 +105,9 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
                 else if (onIncrement) onIncrement(item);
               }}
               aria-label={`Add ${title} to cart`}
-              className="w-6.5 h-6.5 sm:w-7 sm:h-7 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white flex items-center justify-center shadow-2xs active:scale-95 transition-all cursor-pointer shrink-0"
+              className="w-7 h-7 rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer shrink-0"
             >
-              <Plus className="w-3.5 h-3.5 stroke-2" />
+              <img src="/icons/mynaui_plus-circle-solid.svg" alt="Add" className="w-7 h-7" />
             </button>
           )}
         </div>
