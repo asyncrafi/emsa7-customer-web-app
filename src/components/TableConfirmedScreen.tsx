@@ -176,8 +176,6 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
           {language === 'ARABIC' ? 'متابعة' : 'Continue'}
         </button>
 
-        {/* iOS Home Indicator Bar */}
-        <div className="w-32 h-1 bg-black/80 rounded-full mx-auto mt-4" />
       </footer>
     </div>
   );

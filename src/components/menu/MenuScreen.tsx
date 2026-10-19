@@ -680,10 +680,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             </section>
           )}
 
-          {/* Bottom iOS Indicator bar */}
-          <div className="pt-6 pb-2 flex justify-center">
-            <div className="w-32 h-1 bg-zinc-900/80 rounded-full" />
-          </div>
+
         </div>
       </div>
 
