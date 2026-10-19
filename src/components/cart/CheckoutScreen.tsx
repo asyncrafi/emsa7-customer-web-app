@@ -5,6 +5,7 @@ import { QuantityControl } from '@/components/food/QuantityControl';
 import { PaymentScreen } from '@/components/cart/PaymentScreen';
 import { useLanguage } from '@/providers/LanguageContext';
 import SvgChairIcon from '@/components/ui/svg-icons/ChairSvg';
+import PromoBadgeSvg from '@/components/ui/svg-icons/PromoBadgeSvg';
 
 export interface CheckoutScreenProps {
   isOpen: boolean;
@@ -351,12 +352,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         {promoStatus === 'applied' ? (
           <div className="bg-[#EAF5F0] rounded-[10px] h-[61px] px-4 border border-[#D4EBE0] flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <img
-                src="/icons/lsicon_badge-promotion-filled.svg"
-                alt=""
-                className="w-6 h-6 object-contain"
-                style={{ filter: 'invert(27%) sepia(85%) saturate(1487%) hue-rotate(136deg) brightness(92%) contrast(98%)' }}
-              />
+              <PromoBadgeSvg className="w-6 h-6 text-[#026F4F] shrink-0" />
               <span className="font-semibold text-[15px] text-[#026F4F] tracking-wider uppercase">
                 {promoCode || 'WELCOME20'}
               </span>
@@ -376,13 +372,8 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         ) : promoStatus === 'error' ? (
           <div className="bg-[#FDF0F0] rounded-[10px] h-[61px] px-4 border border-[#FADBD8] flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <img
-                src="/icons/lsicon_badge-promotion-filled.svg"
-                alt=""
-                className="w-6 h-6 object-contain"
-                style={{ filter: 'invert(37%) sepia(76%) saturate(2314%) hue-rotate(334deg) brightness(95%) contrast(92%)' }}
-              />
-              <span className="font-semibold text-[15px] text-[#E05656] tracking-wider uppercase">
+              <PromoBadgeSvg className="w-6 h-6 text-[#D72929] shrink-0" />
+              <span className="font-semibold text-[15px] text-[#D72929] tracking-wider uppercase">
                 {promoCode || 'WELCOME20'}
               </span>
             </div>
@@ -401,7 +392,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
         ) : (
           <div className="bg-white rounded-[10px] h-[61px] px-3.5 border border-[#E9E9E9] shadow-2xs flex items-center justify-between gap-2.5">
             <div className="flex items-center gap-2.5 flex-1 min-w-0">
-              <img src="/icons/lsicon_badge-promotion-filled.svg" alt="" className="w-6 h-6 object-contain shrink-0" />
+              <PromoBadgeSvg className="w-6 h-6 text-[#989898] shrink-0" />
               <input
                 type="text"
                 value={promoCode}
