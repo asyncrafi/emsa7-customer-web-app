@@ -47,7 +47,7 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
       {/* Product Content Details */}
       <div className="flex flex-col flex-1 justify-between">
         <div>
-          <h3 className="font-semibold text-[#2D2F33] text-xs sm:text-sm leading-snug line-clamp-1 tracking-tight">
+          <h3 className="font-medium text-[#2D2F33] text-xs sm:text-[13px] leading-snug line-clamp-1 tracking-tight">
             {title}
           </h3>
           <p className="text-[10px] sm:text-[11px] text-[#8E8E93] font-normal line-clamp-1 mt-0.5 leading-relaxed">
@@ -57,7 +57,7 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
 
         {/* Price & Action Button Footer */}
         <div className="pt-2 flex items-center justify-between mt-auto">
-          <span className="font-semibold text-xs sm:text-sm tracking-tight text-[#026F4F]">
+          <span className="font-bold text-xs sm:text-sm tracking-tight text-[#026F4F]">
             {formatPrice(item.price, activeLanguage)}
           </span>
 

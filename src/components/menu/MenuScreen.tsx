@@ -3,7 +3,7 @@ import SvgFilterIcon from '@/components/ui/svg-icons/FilterSvg';
 import SvgBellsIcon from '@/components/ui/svg-icons/BellsSvg';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgEarthIcon from '@/components/ui/svg-icons/EarthSvg';
-import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
+import emsa7Logo from '@/assets/logo.png';
 import { useLanguage } from '@/providers/LanguageContext';
 import {
   Check,
@@ -345,7 +345,11 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
               className="flex items-center cursor-pointer hover:opacity-90 transition-opacity"
               onClick={onBackToTableConfirmed}
             >
-              <SvgEmsa7Icon className="h-6 w-auto" />
+              <img
+                src={emsa7Logo}
+                alt="EMSA7"
+                className="h-6 sm:h-7 w-auto object-contain"
+              />
             </div>
 
             {/* Right Header Buttons: Language Pill & My Order Pill */}
@@ -355,9 +359,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 <button
                   type="button"
                   onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-[#026F4F] text-xs font-semibold shadow-2xs hover:bg-zinc-50 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 h-8.5 rounded-full border border-zinc-200/90 bg-white text-[#026F4F] text-xs font-medium shadow-2xs hover:bg-zinc-50 transition-colors cursor-pointer"
                 >
-                  <SvgEarthIcon className="h-4 w-4 text-[#026F4F]" />
+                  <SvgEarthIcon className="h-3.5 w-3.5 text-[#026F4F]" />
                   <span>{language === 'ARABIC' ? 'AR' : 'EN'}</span>
                 </button>
 
@@ -418,13 +422,13 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   setOpenCheckoutDirectly(false);
                   openCartModal();
                 }}
-                className="relative inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-white text-xs font-semibold shadow-xs bg-[#026F4F] hover:bg-[#025a40] active:scale-95 transition-all cursor-pointer"
+                className="relative inline-flex items-center gap-1.5 px-3.5 py-1.5 h-8.5 rounded-full text-white text-xs font-medium shadow-2xs bg-[#026F4F] hover:bg-[#025a40] active:scale-95 transition-all cursor-pointer"
               >
                 <SvgCartIcon className="w-3.5 h-3.5 text-white fill-white" />
                 <span>{language === 'ARABIC' ? 'طلباتي' : 'My Order'}</span>
 
                 {totalCartCount > 0 && (
-                  <span className="w-4.5 h-4.5 rounded-full bg-white text-[#026F4F] font-semibold text-[10px] flex items-center justify-center shadow-xs">
+                  <span className="w-4 h-4 rounded-full bg-white text-[#026F4F] font-semibold text-[10px] flex items-center justify-center shadow-xs">
                     {totalCartCount}
                   </span>
                 )}
@@ -437,7 +441,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             <p className="text-xs sm:text-sm text-[#6F7883] font-normal tracking-normal">
               {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
             </p>
-            <h1 className="text-5xl sm:text-6xl font-medium tracking-tight text-[#026F4F] mt-1 mb-2">
+            <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-[#026F4F] mt-0.5 mb-2">
               {tableName.replace(/^Table\s*/i, '').replace(/^([A-Za-z])(\d)$/, '$10$2')}
             </h1>
           </section>
@@ -486,15 +490,15 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
       {/* Main White Content Sheet Container with ROUNDED TOP CORNERS matching Figma */}
       <div
-        className={`w-full bg-white rounded-t-[32px] sm:rounded-t-[36px] shadow-xs pt-4 flex-1 transition-all ${
+        className={`w-full bg-white rounded-t-[32px] sm:rounded-t-[36px] pt-4 flex-1 transition-all ${
           totalCartCount > 0 ? 'pb-24' : 'pb-10'
         }`}
       >
-        <div className="max-w-md mx-auto w-full px-5 space-y-5">
-          {/* Category Pills Bar matching Figma */}
+        <div className="max-w-md mx-auto w-full px-5 space-y-4">
+          {/* Category Pills Bar matching Figma - Clean with NO bottom shadow line */}
           <section
             ref={pillContainerRef}
-            className="sticky top-0 z-30 bg-white/95 backdrop-blur-md py-2 -mx-5 px-5 border-b border-zinc-100/80 overflow-x-auto no-scrollbar"
+            className="sticky top-0 z-30 bg-white py-1 -mx-5 px-5 overflow-x-auto no-scrollbar"
           >
             <div className="flex items-center gap-2 min-w-max">
               {CATEGORIES.map((cat) => {
