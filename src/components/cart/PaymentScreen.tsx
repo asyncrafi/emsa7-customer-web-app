@@ -265,6 +265,20 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   <span className="text-[#2D2F33] font-medium">{formatPrice(tipAmount, activeLanguage)}</span>
                 </div>
               )}
+
+              {_splitFee > 0 && (
+                <div className="flex justify-between items-center text-[#FF6B6B] font-medium">
+                  <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
+                  <span>{formatPrice(_splitFee, activeLanguage)}</span>
+                </div>
+              )}
+
+              {_discount > 0 && (
+                <div className="flex justify-between items-center text-[#026F4F] font-medium">
+                  <span>{isArabic ? 'خصم العرض' : 'Promo Discount'}</span>
+                  <span className="font-semibold">-{formatPrice(_discount, activeLanguage)}</span>
+                </div>
+              )}
             </div>
 
             {/* Dashed Separator Line matching Vector 13 */}

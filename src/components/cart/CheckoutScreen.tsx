@@ -498,10 +498,10 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
               </div>
             )}
 
-            {isSplitCheck && splitFee > 0 && (
+            {isSplitCheck && (
               <div className="flex justify-between text-[#FF6B6B] font-medium">
                 <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                <span>{formatPrice(splitFee, activeLanguage)}</span>
+                <span>{formatPrice(splitFee || 0, activeLanguage)}</span>
               </div>
             )}
 
