@@ -32,12 +32,12 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
       onClick={() => onClick && onClick(item)}
       className="group relative bg-white border border-zinc-100/90 rounded-2xl p-2.5 sm:p-3 shadow-2xs hover:shadow-xs transition-all duration-200 flex flex-col justify-between cursor-pointer select-none overflow-hidden"
     >
-      {/* Top Image Container: Centered food photo inside soft gray container */}
-      <div className="w-full aspect-[4/3] rounded-xl bg-[#F4F5F7] overflow-hidden relative flex items-center justify-center p-2 mb-2">
+      {/* Top Image Container: Centered food photo inside soft gray container matching Figma Frame 1171277079 (176x121 bg #f1f1f1) */}
+      <div className="w-full aspect-[176/121] rounded-xl bg-[#F1F1F1] overflow-hidden relative flex items-center justify-center p-2 mb-2">
         <img
           src={item.imageUrl}
           alt={title}
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300 ease-out"
+          className="w-[104px] h-[104px] object-contain group-hover:scale-105 transition-transform duration-300 ease-out"
           onError={(e) => {
             (e.target as HTMLImageElement).src = '/images/food/ramen.png';
           }}
@@ -47,17 +47,17 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
       {/* Product Content Details */}
       <div className="flex flex-col flex-1 justify-between">
         <div>
-          <h3 className="font-medium text-[#2D2F33] text-xs sm:text-[13px] leading-snug line-clamp-1 tracking-tight">
+          <h3 className="font-medium text-[#2D2F33] text-[15px] leading-[140%] line-clamp-1 tracking-tight">
             {title}
           </h3>
-          <p className="text-[10px] sm:text-[11px] text-[#8E8E93] font-normal line-clamp-1 mt-0.5 leading-relaxed">
+          <p className="text-[11px] text-[#989898] font-normal line-clamp-1 mt-0.5 leading-[140%]">
             {description}
           </p>
         </div>
 
-        {/* Price & Action Button Footer */}
+        {/* Price & Action Button Footer matching Figma (Price 19px semi-bold #026F4F, plus 30x30) */}
         <div className="pt-2 flex items-center justify-between mt-auto">
-          <span className="font-bold text-xs sm:text-sm tracking-tight text-[#026F4F]">
+          <span className="font-semibold text-[19px] leading-[140%] tracking-tight text-[#026F4F]">
             {formatPrice(item.price, activeLanguage)}
           </span>
 
@@ -96,7 +96,7 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
               </button>
             </div>
           ) : (
-            /* Single + Button when Item is not in Cart */
+            /* Single + Button when Item is not in Cart (30px x 30px) */
             <button
               type="button"
               onClick={(e) => {
@@ -105,9 +105,9 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
                 else if (onIncrement) onIncrement(item);
               }}
               aria-label={`Add ${title} to cart`}
-              className="w-7 h-7 rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer shrink-0"
+              className="w-[30px] h-[30px] rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer shrink-0"
             >
-              <img src="/icons/mynaui_plus-circle-solid.svg" alt="Add" className="w-7 h-7" />
+              <img src="/icons/mynaui_plus-circle-solid.svg" alt="Add" className="w-[30px] h-[30px]" />
             </button>
           )}
         </div>

@@ -432,20 +432,20 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             </div>
           </header>
 
-          {/* Table Seating Greeting & Large Number matching Figma */}
+          {/* Table Seating Greeting & Large Number matching Figma Frame 22 (155x116) */}
           <section className="pt-1">
-            <p className="text-xs sm:text-sm text-[#6F7883] font-normal tracking-normal">
+            <p className="text-[15px] text-[#686868] font-normal leading-[140%] tracking-normal">
               {language === 'ARABIC' ? 'أنت جالس في الطاولة' : "You're seated at table"}
             </p>
-            <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-[#026F4F] mt-0.5 mb-2">
+            <h1 className="text-[60px] font-semibold tracking-tight text-[#026F4F] leading-[140%] mt-0.5 mb-2">
               {tableName.replace(/^Table\s*/i, '').replace(/^([A-Za-z])(\d)$/, '$10$2')}
             </h1>
           </section>
 
-          {/* Integrated Search & Filter Controls Pill Bar matching Figma */}
+          {/* Integrated Search & Filter Controls Pill Bar matching Figma Frame 1171277067 (408x52) */}
           <section>
-            <div className="relative w-full bg-white rounded-full border border-zinc-200/50 shadow-2xs flex items-center p-1 pl-4 pr-1.5">
-              <img src="/icons/mdi_magnify.svg" alt="" className="h-4 w-4 shrink-0 opacity-60" />
+            <div className="relative w-full h-[52px] bg-white rounded-full border border-zinc-200/50 shadow-2xs flex items-center p-1 pl-4 pr-1.5">
+              <img src="/icons/mdi_magnify.svg" alt="" className="h-5 w-5 shrink-0 opacity-60" />
               <input
                 type="text"
                 value={searchQuery}
@@ -455,7 +455,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                     ? 'ابحث عن رامن، غيوزا، مشروبات...'
                     : 'Search ramen, gyoza, drinks...'
                 }
-                className="w-full text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 font-normal bg-transparent focus:outline-none px-2"
+                className="w-full text-[16px] text-[#2D2F33] placeholder-[#989898] font-normal bg-transparent focus:outline-none px-2 leading-[140%]"
               />
               {searchQuery && (
                 <button
@@ -467,14 +467,14 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 </button>
               )}
 
-              {/* Filter Icon Button (circular with subtle grey background matching Figma) */}
+              {/* Filter Icon Button (Ellipse 688: 43x43 bg #e9e9e9 matching Figma) */}
               <button
                 type="button"
                 onClick={openFilterModal}
                 aria-label="Filter menu"
-                className="relative w-8.5 h-8.5 rounded-full bg-[#EAECEF] hover:bg-[#dfe2e7] text-[#555C68] flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                className="relative w-[43px] h-[43px] rounded-full bg-[#E9E9E9] hover:bg-[#dfe1e5] text-[#555C68] flex items-center justify-center transition-colors cursor-pointer shrink-0"
               >
-                <img src="/icons/mage_filter.svg" alt="" className="w-4 h-4" />
+                <img src="/icons/mage_filter.svg" alt="" className="w-5 h-5" />
                 {(selectedSort || selectedTags.length > 0) && (
                   <span className="absolute top-1 right-1 rtl:right-auto rtl:left-1 w-2 h-2 bg-[#026F4F] rounded-full border border-white" />
                 )}
@@ -667,17 +667,17 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           totalCartCount > 0 ? 'bottom-20 sm:bottom-22' : 'bottom-6 sm:bottom-7'
         }`}
       >
-        {/* Floating Tooltip Label: Call a Waiter (positioned right above the bell matching Figma) */}
-        <div className="flex items-center px-3 py-1.5 rounded-[14px] bg-[#222831] text-white text-[11px] font-semibold shadow-md">
+        {/* Floating Tooltip Label: Call a Waiter (Frame 2147226382: 98x38 bg #2d2f33 font 13px medium white) */}
+        <div className="w-[98px] h-[38px] rounded-[12px] bg-[#2D2F33] text-white text-[13px] font-medium flex items-center justify-center leading-[140%] shadow-md">
           <span>{language === 'ARABIC' ? 'طلب النادل' : 'Call a Waiter'}</span>
         </div>
 
-        {/* Bell Button (Amber Accent Color matching Figma mockup) */}
+        {/* Bell Button (Ellipse 692: 50x50 bg #efac31) */}
         <button
           type="button"
           onClick={openWaiterModal}
           aria-label="Call Waiter"
-          className="relative group w-12 h-12 rounded-full bg-[#EFA42F] hover:bg-[#df9623] active:scale-95 text-white flex items-center justify-center shadow-lg transition-all cursor-pointer"
+          className="relative group w-[50px] h-[50px] rounded-full bg-[#EFAC31] hover:bg-[#df9c21] active:scale-95 text-white flex items-center justify-center shadow-lg transition-all cursor-pointer"
         >
           <SvgBellsIcon className="w-6 h-6 fill-current text-white" />
         </button>
