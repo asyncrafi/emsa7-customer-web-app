@@ -198,10 +198,11 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   return (
     <div
       dir={isArabic ? 'rtl' : 'ltr'}
-      className="fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto flex flex-col justify-between font-sans"
+      className="fixed inset-0 z-50 bg-[#F4F4F5] antialiased select-none flex flex-col h-full w-full overflow-hidden font-sans"
     >
-      {/* Main Page Container: Strictly responsive mobile 440px width matching Figma */}
-      <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-28 space-y-5 flex-1">
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto min-h-0 w-full">
+        <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-8 space-y-5">
         {/* Header Row: Back Arrow + Centered Title matching Figma (Back 42x42 circle, Title 23px semi-bold) */}
         <header className="relative flex items-center justify-center py-2">
           <button
@@ -598,11 +599,9 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-1.5 text-[12.7px] font-medium text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
                   >
-                    <div className="w-4 h-4 rounded-full bg-[#026F4F] text-white flex items-center justify-center text-xs font-bold leading-none">
-                      +
-                    </div>
+                    <img src="/icons/tabler_plus-filled.svg" alt="" className="w-[19px] h-[19px] object-contain" />
                     <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
                   </button>
                 </div>
@@ -770,14 +769,13 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             </div>
           </div>
         )}
+        </div>
       </div>
 
-
-
-      {/* Sticky Bottom Action Bar when Cart Has Items - Figma Button 841:414 */}
+      {/* Pinned Bottom Action Bar when Cart Has Items */}
       {activeTab === 'cart' && cart.length > 0 && (
-        <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#F4F4F5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3.5 px-4">
-          <div className="w-full max-w-[440px] mx-auto">
+        <div className="shrink-0 bg-[#F4F4F5]/95 backdrop-blur-md border-t border-zinc-200/60 py-3.5 px-4 pb-[calc(0.875rem+env(safe-area-inset-bottom))]">
+          <div className="w-full max-w-[409px] mx-auto">
             <button
               type="button"
               onClick={() => setShowCheckoutModal(true)}

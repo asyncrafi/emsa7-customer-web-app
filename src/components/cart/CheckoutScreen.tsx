@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, Plus, Percent, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { type CartItem, formatPrice, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { PaymentScreen } from '@/components/cart/PaymentScreen';
@@ -159,10 +159,11 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   return (
     <div
       dir={isArabic ? 'rtl' : 'ltr'}
-      className="fixed inset-0 z-50 bg-[#F4F4F5] antialiased select-none overflow-y-auto flex flex-col justify-between font-sans"
+      className="fixed inset-0 z-50 bg-[#F4F4F5] antialiased select-none flex flex-col h-full w-full overflow-hidden font-sans"
     >
-      {/* Top Page Container: Strictly responsive mobile 440px width matching Figma */}
-      <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-28 space-y-4 flex-1">
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto min-h-0 w-full">
+        <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-8 space-y-4">
         {/* Header Row: Back Arrow + Centered Title Checkout */}
         <header className="relative flex items-center justify-center py-2">
           <button
@@ -339,21 +340,24 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           <button
             type="button"
             onClick={onAddMoreItems || onClose}
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-[12.7px] font-medium text-[#026F4F] hover:text-[#025a40] transition-colors cursor-pointer"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <img src="/icons/tabler_plus-filled.svg" alt="" className="w-[19px] h-[19px] object-contain" />
             <span>{isArabic ? 'إضافة المزيد من الأصناف' : 'Add More Items'}</span>
           </button>
         </div>
 
-        {/* 4. Promo Code Card matching Figma */}
+        {/* 4. Promo Code Card matching Figma Frame 2147226326 */}
         {promoStatus === 'applied' ? (
-          <div className="bg-[#EAF5F0] rounded-[16px] p-3 border border-[#D4EBE0] flex items-center justify-between shadow-2xs">
+          <div className="bg-[#EAF5F0] rounded-[10px] h-[61px] px-4 border border-[#D4EBE0] flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-[#D4EBE0] flex items-center justify-center text-[#026F4F]">
-                <Percent className="w-3.5 h-3.5 stroke-[2.5]" />
-              </div>
-              <span className="font-semibold text-xs text-[#026F4F] tracking-wider uppercase">
+              <img
+                src="/icons/lsicon_badge-promotion-filled.svg"
+                alt=""
+                className="w-6 h-6 object-contain"
+                style={{ filter: 'invert(27%) sepia(85%) saturate(1487%) hue-rotate(136deg) brightness(92%) contrast(98%)' }}
+              />
+              <span className="font-semibold text-[15px] text-[#026F4F] tracking-wider uppercase">
                 {promoCode || 'WELCOME20'}
               </span>
             </div>
@@ -363,19 +367,22 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                 setPromoStatus('none');
                 setPromoCode('');
               }}
-              className="w-6 h-6 rounded-full bg-[#026F4F] text-white flex items-center justify-center cursor-pointer shadow-2xs hover:bg-[#025a40] transition-colors"
+              className="cursor-pointer"
               title="Remove promo code"
             >
-              <Check className="w-3.5 h-3.5 stroke-[3]" />
+              <img src="/icons/icon-park-solid_check-one.svg" alt="" className="w-6 h-6 object-contain" />
             </button>
           </div>
         ) : promoStatus === 'error' ? (
-          <div className="bg-[#FDF0F0] rounded-[16px] p-3 border border-[#FADBD8] flex items-center justify-between shadow-2xs">
+          <div className="bg-[#FDF0F0] rounded-[10px] h-[61px] px-4 border border-[#FADBD8] flex items-center justify-between shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-[#FADBD8] flex items-center justify-center text-[#E05656]">
-                <Percent className="w-3.5 h-3.5 stroke-[2.5]" />
-              </div>
-              <span className="font-semibold text-xs text-[#E05656] tracking-wider uppercase">
+              <img
+                src="/icons/lsicon_badge-promotion-filled.svg"
+                alt=""
+                className="w-6 h-6 object-contain"
+                style={{ filter: 'invert(37%) sepia(76%) saturate(2314%) hue-rotate(334deg) brightness(95%) contrast(92%)' }}
+              />
+              <span className="font-semibold text-[15px] text-[#E05656] tracking-wider uppercase">
                 {promoCode || 'WELCOME20'}
               </span>
             </div>
@@ -385,28 +392,28 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
                 setPromoStatus('none');
                 setPromoCode('');
               }}
-              className="w-6 h-6 rounded-full bg-[#E05656] text-white flex items-center justify-center cursor-pointer shadow-2xs hover:bg-[#c93f3f] transition-colors"
+              className="cursor-pointer"
               title="Clear"
             >
-              <X className="w-3.5 h-3.5 stroke-[2.5]" />
+              <img src="/icons/gridicons_cross-circle.svg" alt="" className="w-6 h-6 object-contain" />
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-[16px] p-2 pl-3 border border-[#E9E9E9] shadow-2xs flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-400 shrink-0">
-              <Percent className="w-3.5 h-3.5 stroke-[2.5]" />
+          <div className="bg-white rounded-[10px] h-[61px] px-3.5 border border-[#E9E9E9] shadow-2xs flex items-center justify-between gap-2.5">
+            <div className="flex items-center gap-2.5 flex-1 min-w-0">
+              <img src="/icons/lsicon_badge-promotion-filled.svg" alt="" className="w-6 h-6 object-contain shrink-0" />
+              <input
+                type="text"
+                value={promoCode}
+                onChange={(e) => setPromoCode(e.target.value)}
+                placeholder={isArabic ? 'أدخل رمز العرض' : 'ENTER PROMO CODE'}
+                className="flex-1 bg-transparent py-1.5 text-[15px] text-zinc-800 placeholder:text-[#989898] placeholder:font-medium font-medium uppercase outline-none"
+              />
             </div>
-            <input
-              type="text"
-              value={promoCode}
-              onChange={(e) => setPromoCode(e.target.value)}
-              placeholder={isArabic ? 'أدخل رمز العرض' : 'ENTER PROMO CODE'}
-              className="flex-1 bg-transparent px-2 py-1.5 text-xs text-zinc-800 placeholder:text-zinc-400 placeholder:font-medium font-medium uppercase outline-none"
-            />
             <button
               type="button"
               onClick={handleApplyPromo}
-              className="px-5 py-2.5 rounded-xl bg-[#026F4F] hover:bg-[#025a40] text-white text-xs font-semibold tracking-wide transition-colors cursor-pointer shrink-0 shadow-xs active:scale-95"
+              className="w-[71px] h-[42px] rounded-[7px] bg-[#026F4F] hover:bg-[#025a40] text-white text-[15px] font-medium transition-colors cursor-pointer shrink-0 shadow-xs active:scale-95 flex items-center justify-center"
             >
               {isArabic ? 'تطبيق' : 'APPLY'}
             </button>
@@ -518,10 +525,11 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
           </div>
         </div>
       </div>
+    </div>
 
-      {/* Sticky Bottom Action Bar: Continue to Payment */}
-      <div className="sticky bottom-0 left-0 right-0 z-40 bg-[#F4F4F5]/90 backdrop-blur-md border-t border-zinc-200/60 py-3.5 px-4">
-        <div className="w-full max-w-[440px] mx-auto">
+      {/* Pinned Bottom Action Bar: Continue to Payment (Always visible in viewport) */}
+      <div className="shrink-0 bg-[#F4F4F5]/95 backdrop-blur-md border-t border-zinc-200/60 py-3.5 px-4 pb-[calc(0.875rem+env(safe-area-inset-bottom))]">
+        <div className="w-full max-w-[409px] mx-auto">
           <button
             type="button"
             onClick={() => setShowPaymentModal(true)}
