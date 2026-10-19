@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, User, Phone, Mail, AlertCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, ChevronRight, User, Phone, Mail } from 'lucide-react';
 import { type CartItem, formatPrice, getCartItemTotalPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
 
@@ -42,7 +42,6 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
-  const [showErrors, setShowErrors] = useState(false);
 
   // Accordion state
   const [payOnlineOpen, setPayOnlineOpen] = useState(true);
@@ -59,20 +58,17 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const handlePayNow = () => {
-    if (!fullName.trim() || !phoneNumber.trim()) {
-      setShowErrors(true);
-      return;
-    }
+    const customer = {
+      fullName: fullName.trim() || (isArabic ? 'عميل' : 'Guest'),
+      phoneNumber: phoneNumber.trim() || '+20 100 000 0000',
+      email: email.trim(),
+    };
 
-    if (selectedMethod === 'cash') {
-      setShowCashWaitingModal(true);
-      setTimeout(() => {
-        setShowCashWaitingModal(false);
-        onPaymentSuccess({ fullName, phoneNumber, email });
-      }, 3500);
-    } else {
-      onPaymentSuccess({ fullName, phoneNumber, email });
-    }
+    setShowCashWaitingModal(true);
+    setTimeout(() => {
+      setShowCashWaitingModal(false);
+      onPaymentSuccess(customer);
+    }, 3000);
   };
 
   return (
@@ -115,13 +111,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               <div className="space-y-1.5">
                 <label className="text-[14px] font-medium text-[#686868] flex items-center gap-1">
                   <span>{isArabic ? 'الاسم الكامل' : 'Full Name'}</span>
-                  <span className="text-[#E05656]">*</span>
                 </label>
-                <div
-                  className={`w-full h-[50px] rounded-[24px] bg-[#E9E9E9] px-4 flex items-center gap-3 transition-colors ${
-                    showErrors && !fullName.trim() ? 'border border-[#E05656]' : 'border border-transparent'
-                  }`}
-                >
+                <div className="w-full h-[50px] rounded-[24px] bg-[#E9E9E9] px-4 flex items-center gap-3 border border-transparent">
                   <User className="w-4.5 h-4.5 text-[#989898] shrink-0" />
                   <input
                     type="text"
@@ -131,25 +122,14 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                     className="w-full bg-transparent text-[15px] text-[#2D2F33] placeholder:text-[#989898] font-medium outline-none"
                   />
                 </div>
-                {showErrors && !fullName.trim() && (
-                  <p className="text-[11px] text-[#E05656] flex items-center gap-1 px-2 pt-0.5">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{isArabic ? 'يرجى إدخال اسمك' : 'Please enter your full name'}</span>
-                  </p>
-                )}
               </div>
 
               {/* Phone Number */}
               <div className="space-y-1.5">
                 <label className="text-[14px] font-medium text-[#686868] flex items-center gap-1">
                   <span>{isArabic ? 'رقم الهاتف' : 'Phone Number'}</span>
-                  <span className="text-[#E05656]">*</span>
                 </label>
-                <div
-                  className={`w-full h-[50px] rounded-[24px] bg-[#E9E9E9] px-4 flex items-center gap-3 transition-colors ${
-                    showErrors && !phoneNumber.trim() ? 'border border-[#E05656]' : 'border border-transparent'
-                  }`}
-                >
+                <div className="w-full h-[50px] rounded-[24px] bg-[#E9E9E9] px-4 flex items-center gap-3 border border-transparent">
                   <Phone className="w-4.5 h-4.5 text-[#989898] shrink-0" />
                   <input
                     type="tel"
@@ -159,12 +139,6 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                     className="w-full bg-transparent text-[15px] text-[#2D2F33] placeholder:text-[#989898] font-medium outline-none"
                   />
                 </div>
-                {showErrors && !phoneNumber.trim() && (
-                  <p className="text-[11px] text-[#E05656] flex items-center gap-1 px-2 pt-0.5">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>{isArabic ? 'يرجى إدخال رقم هاتفك' : 'Please enter your phone number'}</span>
-                  </p>
-                )}
               </div>
 
               {/* Send Receipt to Email (Optional) */}
@@ -315,12 +289,9 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-[10px] bg-[#F1F1F1] flex items-center justify-center p-1.5 shrink-0 overflow-hidden">
                     <img
-                      src="/src/assets/8d330a1ecbca2cbf06d3bbe653ba94cc9d1c45ce.png"
+                      src="/images/payment/pay-online.svg"
                       alt="Pay Online"
                       className="w-full h-full object-contain"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/src/assets/logos_mastercard.svg';
-                      }}
                     />
                   </div>
                   <span className="text-[15px] font-semibold text-[#2D2F33]">
@@ -339,27 +310,67 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                   {/* Option: Credit / Debit Card */}
                   <div
                     onClick={() => setSelectedMethod('card')}
-                    className={`p-3.5 rounded-[12px] border flex items-center justify-between cursor-pointer transition-all ${
+                    className={`p-3 rounded-[12px] border flex items-center justify-between cursor-pointer transition-all ${
                       selectedMethod === 'card'
                         ? 'border-[#026F4F] bg-[#F8FAF9]'
                         : 'border-[#E9E9E9] bg-white hover:bg-zinc-50'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1.5 bg-[#F4F4F5] px-2 py-1 rounded-[6px]">
-                        <img src="/src/assets/logos_mastercard.svg" alt="Mastercard" className="h-4 w-auto object-contain" />
-                        <img src="/src/assets/meeza-seeklogo 1.svg" alt="Meeza" className="h-4 w-auto object-contain" />
-                      </div>
-                      <span className="text-[14px] font-medium text-[#2D2F33]">
+                      <img
+                        src="/images/payment/credit-debit-pay.svg"
+                        alt="Credit / Debit Card"
+                        className="w-[45px] h-[45px] object-contain shrink-0"
+                      />
+                      <span className="text-[15px] font-medium text-[#2D2F33]">
                         {isArabic ? 'بطاقة ائتمان / خصم' : 'Credit / Debit Card'}
                       </span>
                     </div>
+                    <ChevronRight className="w-5 h-5 text-[#989898] rtl:rotate-180 shrink-0" />
+                  </div>
 
-                    <div className="w-5 h-5 rounded-full border-2 border-[#989898] flex items-center justify-center">
-                      {selectedMethod === 'card' && (
-                        <div className="w-2.5 h-2.5 rounded-full bg-[#026F4F]" />
-                      )}
+                  {/* Option: Google Pay */}
+                  <div
+                    onClick={() => setSelectedMethod('google_pay')}
+                    className={`p-3 rounded-[12px] border flex items-center justify-between cursor-pointer transition-all ${
+                      selectedMethod === 'google_pay'
+                        ? 'border-[#026F4F] bg-[#F8FAF9]'
+                        : 'border-[#E9E9E9] bg-white hover:bg-zinc-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src="/images/payment/google-pay.svg"
+                        alt="Google Pay"
+                        className="w-[45px] h-[45px] object-contain shrink-0"
+                      />
+                      <span className="text-[15px] font-medium text-[#2D2F33]">
+                        Google Pay
+                      </span>
                     </div>
+                    <ChevronRight className="w-5 h-5 text-[#989898] rtl:rotate-180 shrink-0" />
+                  </div>
+
+                  {/* Option: Apple Pay */}
+                  <div
+                    onClick={() => setSelectedMethod('apple_pay')}
+                    className={`p-3 rounded-[12px] border flex items-center justify-between cursor-pointer transition-all ${
+                      selectedMethod === 'apple_pay'
+                        ? 'border-[#026F4F] bg-[#F8FAF9]'
+                        : 'border-[#E9E9E9] bg-white hover:bg-zinc-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <img
+                        src="/images/payment/apple-pay.svg"
+                        alt="Apple Pay"
+                        className="w-[45px] h-[45px] object-contain shrink-0"
+                      />
+                      <span className="text-[15px] font-medium text-[#2D2F33]">
+                        Apple Pay
+                      </span>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-[#989898] rtl:rotate-180 shrink-0" />
                   </div>
                 </div>
               )}
@@ -379,12 +390,9 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-[10px] bg-[#F1F1F1] flex items-center justify-center p-1.5 shrink-0 overflow-hidden">
                     <img
-                      src="/src/assets/aacb11b1986c4fbe89e7246d2b7b4a8fdad3cb42.png"
+                      src="/images/payment/get-check.svg"
                       alt="Get the Check"
                       className="w-full h-full object-contain"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/icons/solar_bill-list-linear.svg';
-                      }}
                     />
                   </div>
                   <span className="text-[15px] font-semibold text-[#2D2F33]">
@@ -410,15 +418,21 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#E9E9E9] flex items-center justify-center shrink-0">
-                        <span className="text-base font-bold text-[#026F4F]">💵</span>
-                      </div>
-                      <span className="text-[14px] font-medium text-[#2D2F33]">
+                      <img
+                        src="/images/payment/cash.svg"
+                        alt="Cash"
+                        className="w-[35px] h-[35px] object-contain shrink-0"
+                      />
+                      <span className="text-[15px] font-medium text-[#2D2F33]">
                         {isArabic ? 'نقداً (كاش)' : 'Cash'}
                       </span>
                     </div>
 
-                    <div className="w-5 h-5 rounded-full border-2 border-[#989898] flex items-center justify-center">
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        selectedMethod === 'cash' ? 'border-[#026F4F]' : 'border-[#989898]'
+                      }`}
+                    >
                       {selectedMethod === 'cash' && (
                         <div className="w-2.5 h-2.5 rounded-full bg-[#026F4F]" />
                       )}
@@ -435,15 +449,21 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#E9E9E9] flex items-center justify-center shrink-0">
-                        <span className="text-base font-bold text-[#026F4F]">💳</span>
-                      </div>
-                      <span className="text-[14px] font-medium text-[#2D2F33]">
-                        {isArabic ? 'بطاقة عند الاستلام' : 'Credit / Debit Card (at table)'}
+                      <img
+                        src="/images/payment/card-pay.svg"
+                        alt="Card"
+                        className="w-[35px] h-[35px] object-contain shrink-0"
+                      />
+                      <span className="text-[15px] font-medium text-[#2D2F33]">
+                        {isArabic ? 'بطاقة' : 'Card'}
                       </span>
                     </div>
 
-                    <div className="w-5 h-5 rounded-full border-2 border-[#989898] flex items-center justify-center">
+                    <div
+                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
+                        selectedMethod === 'pos_card' ? 'border-[#026F4F]' : 'border-[#989898]'
+                      }`}
+                    >
                       {selectedMethod === 'pos_card' && (
                         <div className="w-2.5 h-2.5 rounded-full bg-[#026F4F]" />
                       )}
@@ -477,18 +497,22 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
       {/* Cash payment Confirmation from manager modal (Figma Frame 202:65) */}
       {showCashWaitingModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-[24px] p-6 max-w-[340px] w-full text-center space-y-4 shadow-2xl animate-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-[20px] p-7 max-w-[360px] w-full text-center space-y-4 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="relative w-14 h-14 mx-auto flex items-center justify-center">
-              <div className="w-14 h-14 rounded-full border-4 border-[#D9D9D9] border-t-[#026F4F] animate-spin" />
+              <img
+                src="/icons/spinner-waiter.svg"
+                alt="Loading"
+                className="w-14 h-14 animate-spin"
+              />
             </div>
 
             <div className="space-y-1.5">
-              <h3 className="text-[18px] font-semibold text-[#2D2F33] leading-[140%]">
+              <h3 className="text-[20px] font-semibold text-[#2D2F33] leading-[140%]">
                 {isArabic ? 'في انتظار التأكيد' : 'Waiting for Confirmation'}
               </h3>
-              <p className="text-[13px] text-[#989898] leading-[140%]">
+              <p className="text-[14px] text-[#989898] leading-[140%] max-w-[280px] mx-auto">
                 {isArabic
-                  ? 'يرجى الانتظار حتى يؤكد الموظف الدفع نقداً.'
+                  ? 'يرجى الانتظار حتى يؤكد الموظف الدفع.'
                   : 'Please wait while staff confirms your cash payment.'}
               </p>
             </div>
