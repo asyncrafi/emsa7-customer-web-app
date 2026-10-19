@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, ChevronRight, Clock, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Plus } from 'lucide-react';
 import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
@@ -9,7 +9,6 @@ import { EInvoiceModal } from '@/components/cart/EInvoiceModal';
 import { FoodDetailModal } from '@/components/food/FoodDetailModal';
 import { useLanguage } from '@/providers/LanguageContext';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
-import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 import SvgPlacedIcon from '@/components/ui/svg-icons/PlacedSvg';
 import { useWaiterTooltip } from '@/hooks/useWaiterTooltip';
 
@@ -224,7 +223,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             onClick={() => setActiveTab('ongoing')}
             className={`flex-1 h-[42px] rounded-[23px] text-[14px] leading-[140%] transition-all cursor-pointer flex items-center justify-center text-center ${
               activeTab === 'ongoing'
-                ? 'bg-white text-[#2D2F33] shadow-xs font-normal'
+                ? 'bg-white text-[#026F4F] shadow-xs font-medium'
                 : 'text-[#989898] hover:text-[#2D2F33] font-normal'
             }`}
           >
@@ -236,7 +235,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             onClick={() => setActiveTab('cart')}
             className={`flex-1 h-[42px] rounded-[23px] text-[14px] leading-[140%] transition-all cursor-pointer flex items-center justify-center text-center ${
               activeTab === 'cart'
-                ? 'bg-white text-[#2D2F33] shadow-xs font-normal'
+                ? 'bg-white text-[#026F4F] shadow-xs font-medium'
                 : 'text-[#989898] hover:text-[#2D2F33] font-normal'
             }`}
           >
@@ -248,7 +247,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             onClick={() => setActiveTab('history')}
             className={`flex-1 h-[42px] rounded-[23px] text-[14px] leading-[140%] transition-all cursor-pointer flex items-center justify-center text-center ${
               activeTab === 'history'
-                ? 'bg-white text-[#2D2F33] shadow-xs font-normal'
+                ? 'bg-white text-[#026F4F] shadow-xs font-medium'
                 : 'text-[#989898] hover:text-[#2D2F33] font-normal'
             }`}
           >
@@ -427,20 +426,20 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
               </button>
             </div>
 
-            {/* Footer Branding Line: POWERED BY EMSA7 (Figma-Exact) */}
+            {/* Footer Branding Line: POWERED BY EMSA7 (Figma-Exact Monochrome) */}
             <div className="pt-10 pb-4 text-center select-none flex justify-center items-center">
               <a
                 href="https://emsa7.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 dir="ltr"
-                className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity no-underline"
+                className="inline-flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity no-underline"
               >
                 <span className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
                   POWERED BY
                 </span>
                 <div className="inline-flex items-center justify-center my-auto shrink-0">
-                  <SvgEmsa7Icon className="h-4.5 sm:h-5 w-auto" />
+                  <img src="/emsa7-logo-grey.png" alt="EMSA7" className="h-4 w-auto object-contain" />
                 </div>
               </a>
             </div>
@@ -634,33 +633,40 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           </div>
         )}
 
-        {/* TAB 3: ORDER HISTORY (FIGMA SCREENSHOT 3 EXACT LAYOUT) */}
+        {/* TAB 3: ORDER HISTORY (FIGMA NODE 112:1243 EXACT LAYOUT) */}
         {activeTab === 'history' && (
           <div className="space-y-4 animate-in fade-in duration-200 relative pb-16">
             {historyOrders.map((ord) => (
-              <div key={ord.id} className="bg-white rounded-[16px] p-4 sm:p-5 shadow-2xs border border-[#F4F4F5] space-y-4">
+              <div
+                key={ord.id}
+                className="bg-white rounded-[13px] p-4.5 sm:p-5 shadow-2xs border border-[#F1F1F1] space-y-4"
+              >
                 {/* Header Row: #A102 and Price */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="font-semibold text-base text-[#2D2F33]">{ord.id}</h3>
-                    <p className="text-xs text-zinc-400 font-normal mt-0.5">{ord.date}</p>
+                    <h2 className="text-[23px] font-semibold text-[#2D2F33] tracking-tight leading-[140%]">
+                      {ord.id}
+                    </h2>
+                    <p className="text-[13px] text-[#989898] font-normal mt-0.5 leading-[140%]">
+                      {ord.date}
+                    </p>
                     {(ord.tipAmount ?? 0) > 0 && (
-                      <p className="text-[10px] sm:text-xs text-[#026F4F] font-medium mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
+                      <p className="text-[11px] text-[#026F4F] font-medium mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
                         {isArabic ? 'بما في ذلك إكرامية:' : 'Includes Tip:'} {formatPrice(ord.tipAmount || 0, activeLanguage)}
                       </p>
                     )}
                   </div>
-                  <span className="font-semibold text-base text-[#026F4F]">
+                  <span className="text-[22px] font-semibold text-[#026F4F] leading-[140%]">
                     {formatPrice(ord.total, activeLanguage)}
                   </span>
                 </div>
 
-                {/* Thumbnails Row with Quantity Badges & Fallback Images */}
-                <div className="flex items-center gap-3 sm:gap-4 py-1">
+                {/* Thumbnails Row with Prominent White Circular Badges matching Figma Frame 1171277079 (59x64 box, rounded-[5px], x2/x1 badge) */}
+                <div className="flex items-center gap-3 pt-1 pb-1">
                   {ord.items.map((it, idx) => (
                     <div
                       key={idx}
-                      className="relative w-[59px] h-[64px] rounded-[5px] bg-[#F1F1F1] p-1 flex items-center justify-center shrink-0"
+                      className="relative w-[59px] h-[64px] rounded-[5px] bg-[#F1F1F1] shrink-0 p-1 flex items-center justify-center"
                     >
                       <img
                         src={it.image || '/images/food/ramen.png'}
@@ -670,42 +676,40 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                           (e.target as HTMLImageElement).src = '/images/food/ramen.png';
                         }}
                       />
-                      <span className="absolute -top-2 -right-2 text-[10px] sm:text-xs font-semibold px-2 py-0.5 bg-white shadow-xs border border-zinc-200 rounded-full text-zinc-800 z-10">
+                      {/* White Badge matching Figma */}
+                      <div className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
                         x{it.qty}
-                      </span>
+                      </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Action Button: Full-Width Reorder > matching Figma */}
-                <div className="pt-1">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (onReorder && ord.cartItems && ord.cartItems.length > 0) {
-                        onReorder(ord.cartItems);
+                {/* Long BTN: Reorder > matching Figma Frame 112:1243 (372x55 radius 38px bg #E9E9E9) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onReorder && ord.cartItems && ord.cartItems.length > 0) {
+                      onReorder(ord.cartItems);
+                    } else {
+                      const itemsToReorder: CartItem[] = ord.items.map((it) => {
+                        const matched =
+                          MOCK_MENU_ITEMS.find((m) => m.name.toLowerCase() === it.name.toLowerCase()) ||
+                          MOCK_MENU_ITEMS[0];
+                        return { item: matched, quantity: it.qty };
+                      });
+                      if (onReorder) {
+                        onReorder(itemsToReorder);
                       } else {
-                        // Fallback: build cart items from order.items
-                        const itemsToReorder: CartItem[] = ord.items.map((it) => {
-                          const matched =
-                            MOCK_MENU_ITEMS.find((m) => m.name.toLowerCase() === it.name.toLowerCase()) ||
-                            MOCK_MENU_ITEMS[0];
-                          return { item: matched, quantity: it.qty };
-                        });
-                        if (onReorder) {
-                          onReorder(itemsToReorder);
-                        } else {
-                          itemsToReorder.forEach((ci) => onAddToCart?.(ci.item));
-                        }
+                        itemsToReorder.forEach((ci) => onAddToCart?.(ci.item));
                       }
-                      setActiveTab('cart');
-                    }}
-                    className="w-full py-3.5 px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200 text-zinc-800 font-medium text-xs sm:text-sm md:text-base tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                  >
-                    <span>{isArabic ? 'إعادة الطلب' : 'Reorder'}</span>
-                    <ChevronRight className="w-4 h-4 text-zinc-500 rtl:rotate-180 shrink-0" />
-                  </button>
-                </div>
+                    }
+                    setActiveTab('cart');
+                  }}
+                  className="w-full h-[55px] rounded-[38px] bg-[#E9E9E9] hover:bg-[#dedede] text-black font-medium text-[16px] leading-[140%] flex items-center justify-center gap-2 transition-colors cursor-pointer mt-3"
+                >
+                  <span>{isArabic ? 'إعادة الطلب' : 'Reorder'}</span>
+                  <img src="/icons/weui_arrow-outlined.svg" alt="" className="w-2.5 h-4 object-contain rtl:rotate-180" />
+                </button>
               </div>
             ))}
 
@@ -737,20 +741,20 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
               </button>
             </div>
 
-            {/* Footer Branding Line: POWERED BY EMSA7 */}
+            {/* Footer Branding Line: POWERED BY EMSA7 (Figma-Exact Monochrome) */}
             <div className="pt-10 pb-4 text-center select-none flex justify-center items-center">
               <a
                 href="https://emsa7.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 dir="ltr"
-                className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity no-underline"
+                className="inline-flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity no-underline"
               >
                 <span className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
                   POWERED BY
                 </span>
                 <div className="inline-flex items-center justify-center my-auto shrink-0">
-                  <SvgEmsa7Icon className="h-4.5 sm:h-5 w-auto" />
+                  <img src="/emsa7-logo-grey.png" alt="EMSA7" className="h-4 w-auto object-contain" />
                 </div>
               </a>
             </div>
