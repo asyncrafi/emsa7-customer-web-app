@@ -93,15 +93,15 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
         {/* Top Center Drag Handle Pill */}
         <div className="w-12 h-1 bg-zinc-300/80 rounded-full mx-auto mb-4" />
 
-        {/* Header Title (Figma Frame 2147226289: 30px semi-bold #2D2F33) */}
-        <div className="relative mb-2">
-          <h2 className="text-[26px] sm:text-[30px] font-semibold text-[#2D2F33] leading-[140%] tracking-tight">
+        {/* Header Title (Figma Frame 2147226289: 30px semi-bold #2D2F33 centered) */}
+        <div className="text-center w-full my-3">
+          <h2 className="text-[26px] sm:text-[30px] font-semibold text-[#2D2F33] leading-[140%] tracking-tight text-center">
             {isArabic ? 'الفرز والتصفية' : 'Sort & Filter'}
           </h2>
         </div>
 
-        {/* Subtle Horizontal Divider */}
-        <div className="border-b border-zinc-100 my-2.5" />
+        {/* Subtle Horizontal Divider matching Figma Vector 3 (415.5px #B9B9B9) */}
+        <div className="border-b border-[#B9B9B9]/60 -mx-5 sm:-mx-6 mb-4" />
 
         {/* Section 1: Sort By */}
         <div className="space-y-1 my-3">
