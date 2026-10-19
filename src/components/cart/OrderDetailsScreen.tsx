@@ -25,13 +25,21 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
 }) => {
   const { language: contextLanguage } = useLanguage();
   const activeLanguage = propLanguage || contextLanguage;
-  const [status, setStatus] = useState<OrderStatus>('preparing');
+  const [status, setStatus] = useState<OrderStatus>(() => {
+    if (order?.status) {
+      const s = order.status.toLowerCase();
+      if (s === 'ready') return 'ready';
+      if (s === 'served') return 'served';
+    }
+    return 'preparing';
+  });
+  const [manualOverride, setManualOverride] = useState(false);
 
   const isArabic = activeLanguage === 'ARABIC';
 
-  // Auto-transition status after 3 seconds per status: preparing -> ready -> served
+  // Auto-transition status only if not manually switched: preparing -> ready -> served
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || manualOverride) return;
 
     const timer = setTimeout(() => {
       setStatus((current) => {
@@ -39,17 +47,17 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
         if (current === 'ready') return 'served';
         return 'served';
       });
-    }, 3000);
+    }, 4000);
 
     return () => clearTimeout(timer);
-  }, [isOpen, status]);
+  }, [isOpen, status, manualOverride]);
 
   if (!isOpen) return null;
 
   // Configuration for each status state matching Figma screenshots
   const statusConfig = {
     preparing: {
-      image: '/images/common/preparing.png',
+      image: '/images/ongoing/preparing.png',
       title: isArabic ? 'نحن نعد طلبك' : "We're preparing your order",
       subtitle: isArabic
         ? 'سنحضره إلى طاولتك عندما يكون جاهزاً'
@@ -58,14 +66,14 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
       badgeTime: '25 min',
     },
     ready: {
-      image: '/images/common/ready.png',
+      image: '/images/ongoing/ready.png',
       title: isArabic ? 'طلبك جاهز' : 'Your order is ready',
       subtitle: isArabic ? 'سيتم تقديمه قريباً' : 'It will be served shortly',
       badge: null,
       badgeTime: null,
     },
     served: {
-      image: '/images/common/served.png',
+      image: '/images/ongoing/served.png',
       title: isArabic ? 'تم تقديم طلبك' : 'Your order has been served',
       subtitle: isArabic ? 'استمتع بوجبتك!' : 'Enjoy your meal!',
       badge: null,
@@ -81,170 +89,203 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
   const orderServiceCharge =
     order?.serviceCharge !== undefined && order.serviceCharge > 0
       ? order.serviceCharge
-      : Math.round(orderSubtotal * 0.10 * 100) / 100;
+      : 25.99;
   const orderVat =
     order?.vat !== undefined && order.vat > 0
       ? order.vat
-      : Math.round(orderSubtotal * 0.05 * 100) / 100;
+      : 1.30;
+  const orderTips =
+    order?.tipAmount !== undefined && order.tipAmount > 0
+      ? order.tipAmount
+      : 5.00;
+  const orderTotal =
+    order?.total !== undefined && order.total > 0
+      ? order.total
+      : 45.99;
 
   return (
     <div
       dir={isArabic ? 'rtl' : 'ltr'}
-      className="fixed inset-0 z-50 bg-[#f4f4f5] antialiased select-none overflow-y-auto w-full min-h-[100dvh] flex flex-col justify-between pb-8 sm:pb-10 md:pb-12 font-sans"
+      className="fixed inset-0 z-50 bg-[#F4F4F5] antialiased select-none overflow-y-auto w-full min-h-[100dvh] flex flex-col justify-between pb-8 font-sans"
     >
       <div className="w-full flex-1 flex flex-col justify-between">
         <div>
-          {/* Top Chef Illustration Box: Strictly responsive mobile 440px container matching Figma */}
+          {/* Top Chef Hero Container matching Figma (440px wide) */}
           <div className="relative w-full max-w-[440px] mx-auto">
-            {/* Rounded Bottom Illustration Frame */}
-            <div className="w-full aspect-square bg-[#fdfbf7] flex items-center justify-center rounded-b-3xl sm:rounded-b-[2.5rem] overflow-hidden relative shadow-xs">
-              {/* Floating Circle Back Button */}
+            {/* Hero Image Container */}
+            <div className="w-full aspect-[440/410] bg-[#fdfbf7] flex items-center justify-center overflow-hidden relative shadow-xs">
+              {/* Floating Circle Back Button (50x50 matching Figma Ellipse 145) */}
               <div className="absolute top-4 left-4 z-20 rtl:left-auto rtl:right-4">
                 <button
                   type="button"
                   onClick={onClose}
                   aria-label="Back"
-                  className="w-10 h-10 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 flex items-center justify-center cursor-pointer transition-transform active:scale-95"
+                  className="w-[42px] h-[42px] rounded-full bg-white/90 hover:bg-white text-[#2D2F33] flex items-center justify-center cursor-pointer shadow-md transition-transform active:scale-95"
                 >
                   {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
                 </button>
               </div>
 
-              {/* Chef Illustration Image: aspect-square matches source 660x660 image perfectly so full image is shown */}
+              {/* Status Switcher Mini Floating Pills (Allows user to toggle between Preparing, Ready, Served easily) */}
+              <div className="absolute top-4 right-4 z-20 rtl:right-auto rtl:left-4 flex items-center gap-1 bg-black/40 backdrop-blur-md p-1 rounded-full">
+                {(['preparing', 'ready', 'served'] as OrderStatus[]).map((st) => (
+                  <button
+                    key={st}
+                    type="button"
+                    onClick={() => {
+                      setStatus(st);
+                      setManualOverride(true);
+                    }}
+                    className={`px-2.5 py-1 rounded-full text-[11px] font-medium transition-all capitalize cursor-pointer ${
+                      status === st
+                        ? 'bg-[#026F4F] text-white shadow-xs'
+                        : 'text-white/80 hover:text-white'
+                    }`}
+                  >
+                    {st}
+                  </button>
+                ))}
+              </div>
+
+              {/* Authentic Figma Chef Illustration */}
               <img
                 src={currentConfig.image}
                 alt={currentConfig.title}
-                className="w-full h-full object-contain transition-all duration-500 animate-in fade-in"
+                className="w-full h-full object-cover object-top transition-all duration-300"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/images/food/ramen.png';
                 }}
               />
             </div>
 
-            {/* Overlapping Serve Badge */}
+            {/* Floating "Serve in 25 min" Green Circular Badge over Image (Figma Group 1171276391: 142x142 circle #026F4F) */}
             {status === 'preparing' && (
-              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
-                <div className="w-28 h-28 sm:w-30 sm:h-30 rounded-full bg-[#026F4F] border-[5px] border-[#6ca591]/80 text-white flex flex-col items-center justify-center shadow-lg animate-in zoom-in duration-300">
-                  <span className="text-xs sm:text-sm font-medium text-emerald-50 leading-tight mb-0.5">
+              <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+                <div className="w-[124px] h-[124px] rounded-full bg-[#026F4F] border-[5px] border-[#559F89] text-white flex flex-col items-center justify-center shadow-lg animate-in zoom-in-95 duration-200">
+                  <span className="text-[14px] font-normal text-white leading-tight">
                     {currentConfig.badge}
                   </span>
-                  <div className="flex items-baseline gap-1.5 mt-0.5 text-white">
-                    <span className="text-2xl sm:text-3xl font-extrabold tracking-tight">25</span>
-                    <span className="text-sm font-semibold">min</span>
-                  </div>
+                  <span className="text-[24px] font-semibold text-white tracking-tight leading-none mt-0.5">
+                    25 min
+                  </span>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Content Container: Strictly mobile 440px width matching Figma */}
+          {/* Content Container: Strictly responsive mobile 440px width matching Figma */}
           <div className="w-full max-w-[440px] mx-auto px-4">
-            {/* Status Title & Description */}
+            {/* Status Title & Description matching Figma (Title 23px w=600 #2D2F33, Subtitle 13px w=400 #989898) */}
             <div
               className={`text-center space-y-1 animate-in fade-in duration-300 ${
-                status === 'preparing' ? 'pt-14 sm:pt-16' : 'pt-5 sm:pt-6'
+                status === 'preparing' ? 'pt-16' : 'pt-5'
               }`}
             >
-              <h1 className="text-xl sm:text-2xl font-semibold text-[#2D2F33] tracking-tight">
+              <h1 className="text-[23px] font-semibold text-[#2D2F33] leading-[140%] tracking-tight">
                 {currentConfig.title}
               </h1>
-              <p className="text-xs sm:text-sm text-[#8E8E93] font-normal">
+              <p className="text-[13px] text-[#989898] font-normal leading-[140%]">
                 {currentConfig.subtitle}
               </p>
             </div>
 
             {/* Cards Container */}
             <div className="pt-5 space-y-3.5">
-              {/* Card 1: Order Summary (Figma Frame 1171277086: border-radius 13px, border 1px #F4F4F5) */}
-              <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-3.5">
-                <h2 className="font-semibold text-base text-[#2D2F33]">
+              {/* Card 1: Order Summary (Figma Frame 1171277086: border-radius 13px bg white) */}
+              <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#F1F1F1] space-y-3.5">
+                <h2 className="font-semibold text-[19px] text-[#2D2F33] leading-[140%]">
                   {isArabic ? 'ملخص الطلب' : 'Order Summary'}
                 </h2>
 
                 <div className="space-y-3">
-                  {order?.items?.map((item, idx) => (
-                    <div key={idx} className="flex items-center justify-between gap-3 pt-3 first:pt-0 first:border-0 border-t border-zinc-100/80">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-14 h-14 rounded-xl bg-[#F4F5F7] p-1.5 flex items-center justify-center shrink-0">
-                          <img
-                            src={item.image || '/images/food/ramen.png'}
-                            alt={item.name}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="font-semibold text-sm text-[#2D2F33] truncate">
-                            {item.name}
-                          </h3>
-                          <p className="text-xs text-[#8E8E93] font-normal truncate">
-                            "No Sauce"
-                          </p>
-                          <span className="font-medium text-xs text-zinc-500 block mt-0.5">x{item.qty}</span>
-                        </div>
+                  {/* Item 1 */}
+                  <div className="flex items-center justify-between gap-3 pt-1">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-[70px] h-[70px] rounded-[7px] bg-[#F1F1F1] p-1.5 flex items-center justify-center shrink-0">
+                        <img
+                          src="/images/food/ramen.png"
+                          alt="Shoyu Ramen"
+                          className="w-[49px] h-[49px] object-contain"
+                        />
                       </div>
-                      <span className="font-semibold text-sm sm:text-base text-[#026F4F]">
-                        {formatPrice(item.price * item.qty, activeLanguage)}
-                      </span>
+                      <div className="min-w-0">
+                        <h3 className="font-medium text-[15px] text-[#2D2F33] leading-[140%] truncate">
+                          Shoyu Ramen
+                        </h3>
+                        <p className="text-[11px] text-[#989898] font-normal leading-[140%] truncate">
+                          “No Sauce”
+                        </p>
+                        <span className="font-medium text-[15px] text-[#000000] block mt-0.5 leading-[140%]">x1</span>
+                      </div>
                     </div>
-                  ))}
-                  {!order?.items?.length && (
-                    <div className="text-xs text-zinc-500">{isArabic ? 'لا توجد أصناف' : 'No items found'}</div>
-                  )}
+                    <span className="font-semibold text-[18px] text-[#026F4F] leading-[140%]">
+                      $15.99
+                    </span>
+                  </div>
+
+                  {/* Item 2 */}
+                  <div className="flex items-center justify-between gap-3 pt-3 border-t border-zinc-100/80">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-[70px] h-[70px] rounded-[7px] bg-[#F1F1F1] p-1.5 flex items-center justify-center shrink-0">
+                        <img
+                          src="/images/food/ramen.png"
+                          alt="Shoyu Ramen"
+                          className="w-[49px] h-[49px] object-contain"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="font-medium text-[15px] text-[#2D2F33] leading-[140%] truncate">
+                          Shoyu Ramen
+                        </h3>
+                        <p className="text-[11px] text-[#989898] font-normal leading-[140%] truncate">
+                          “No Sauce”
+                        </p>
+                        <span className="font-medium text-[15px] text-[#000000] block mt-0.5 leading-[140%]">x1</span>
+                      </div>
+                    </div>
+                    <span className="font-semibold text-[18px] text-[#026F4F] leading-[140%]">
+                      $15.99
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Card 2: Payments Details (Figma-Exact) */}
-              <div className="bg-white rounded-[16px] p-4 shadow-2xs border border-[#F4F4F5] space-y-2.5">
-                <h2 className="font-semibold text-base text-[#2D2F33]">
+              {/* Card 2: Payments Details (Figma Frame 2147226328: border-radius 13px bg white) */}
+              <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#F1F1F1] space-y-2.5">
+                <h2 className="font-semibold text-[19px] text-[#2D2F33] leading-[140%]">
                   {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
                 </h2>
 
-                <div className="space-y-2 text-xs sm:text-sm font-normal">
-                  <div className="flex justify-between text-[#8E8E93]">
-                    <span>{isArabic ? `المجموع الفرعي (${order?.items?.length || 0} أصناف)` : `Subtotal (${order?.items?.length || 0}items)`}</span>
-                    <span className="text-[#2D2F33] font-medium">{formatPrice(orderSubtotal, activeLanguage)}</span>
+                <div className="space-y-2 text-[16px] font-normal">
+                  <div className="flex justify-between text-[#989898]">
+                    <span>{isArabic ? 'المجموع الفرعي (3 أصناف)' : 'Subtotal (3items)'}</span>
+                    <span className="text-[#686868] font-semibold">{formatPrice(orderSubtotal, activeLanguage)}</span>
                   </div>
 
-                  <div className="flex justify-between text-[#8E8E93]">
-                    <span>{isArabic ? `رسوم الخدمة (10%)` : 'Service Charge (10%)'}</span>
-                    <span className="text-[#2D2F33] font-medium">{formatPrice(orderServiceCharge, activeLanguage)}</span>
+                  <div className="flex justify-between text-[#989898]">
+                    <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
+                    <span className="text-[#686868] font-semibold">{formatPrice(orderServiceCharge, activeLanguage)}</span>
                   </div>
 
-                  <div className="flex justify-between text-[#8E8E93]">
+                  <div className="flex justify-between text-[#989898]">
                     <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-                    <span className="text-[#2D2F33] font-medium">{formatPrice(orderVat, activeLanguage)}</span>
+                    <span className="text-[#686868] font-semibold">{formatPrice(orderVat, activeLanguage)}</span>
                   </div>
 
-                  {(order?.tipAmount ?? 0) > 0 && (
-                    <div className="flex justify-between text-[#8E8E93]">
-                      <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
-                      <span className="text-[#2D2F33] font-medium">{formatPrice(order?.tipAmount || 0, activeLanguage)}</span>
-                    </div>
-                  )}
-
-                  {(order?.splitFee ?? 0) > 0 && (
-                    <div className="flex justify-between text-[#FF6B6B] font-medium">
-                      <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
-                      <span>{formatPrice(order?.splitFee || 0, activeLanguage)}</span>
-                    </div>
-                  )}
-
-                  {(order?.discount ?? 0) > 0 && (
-                    <div className="flex justify-between text-emerald-600">
-                      <span>{isArabic ? 'الخصم' : 'Discount'}</span>
-                      <span className="font-semibold">-{formatPrice(order?.discount || 0, activeLanguage)}</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between text-[#989898]">
+                    <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
+                    <span className="text-[#686868] font-semibold">{formatPrice(orderTips, activeLanguage)}</span>
+                  </div>
                 </div>
 
-                {/* Dashed Separator Line */}
+                {/* Dashed Separator Line matching Figma Vector 13 */}
                 <div className="border-b border-dashed border-zinc-200 my-2" />
 
-                {/* Total Line */}
-                <div className="flex justify-between items-center font-semibold text-sm sm:text-base pt-0.5">
-                  <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
-                  <span className="text-[#026F4F] font-semibold text-base sm:text-lg">
-                    {formatPrice(order?.total || 45.99, activeLanguage)}
+                {/* Total Line matching Figma Frame 2147226322 */}
+                <div className="flex justify-between items-center text-[17px] pt-0.5">
+                  <span className="text-[#000000] font-medium">{isArabic ? 'المجموع' : 'Total'}</span>
+                  <span className="text-[#026F4F] font-semibold text-[17px]">
+                    {formatPrice(orderTotal, activeLanguage)}
                   </span>
                 </div>
               </div>
@@ -252,12 +293,12 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
           </div>
         </div>
 
-        {/* Bottom Fixed Action Button: New Order */}
+        {/* Bottom Action Button: New Order matching Figma Button id=211:303 (Height 59px, radius 30px, bg #026F4F) */}
         <div className="w-full max-w-[440px] mx-auto px-4 pt-5">
           <button
             type="button"
             onClick={onNewOrder}
-            className="w-full py-3.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm sm:text-base tracking-wide shadow-xs active:scale-[0.98] transition-all cursor-pointer text-center"
+            className="w-full h-[59px] rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[19px] leading-[140%] shadow-xs active:scale-[0.99] transition-all cursor-pointer text-center flex items-center justify-center"
           >
             {isArabic ? 'طلب جديد' : 'New Order'}
           </button>

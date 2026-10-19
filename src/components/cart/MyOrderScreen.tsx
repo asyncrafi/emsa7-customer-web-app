@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, ChevronRight, Clock, Plus, Bell } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronRight, Clock, Plus } from 'lucide-react';
 import { type CartItem, formatPrice, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
@@ -11,8 +11,6 @@ import { useLanguage } from '@/providers/LanguageContext';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 import SvgPlacedIcon from '@/components/ui/svg-icons/PlacedSvg';
-import SvgPrepIcon from '@/components/ui/svg-icons/PrepSvg';
-import SvgServedIcon from '@/components/ui/svg-icons/ServedSvg';
 
 export interface StoredOrder {
   id: string;
@@ -201,31 +199,31 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
     >
       {/* Main Page Container: Strictly responsive mobile 440px width matching Figma */}
       <div className="w-full max-w-[440px] mx-auto px-4 pt-4 pb-28 space-y-5 flex-1">
-        {/* Header Row: Back Arrow + Centered Title */}
+        {/* Header Row: Back Arrow + Centered Title matching Figma (Back 42x42 circle, Title 23px semi-bold) */}
         <header className="relative flex items-center justify-center py-2">
           <button
             type="button"
             onClick={onClose}
             aria-label="Back"
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-zinc-800 flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-0"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-[42px] h-[42px] rounded-full bg-[#EEEEEE] hover:bg-zinc-200 text-[#2D2F33] flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:left-auto rtl:right-0 shadow-xs"
           >
             {isArabic ? <ArrowRight className="w-5 h-5" /> : <ArrowLeft className="w-5 h-5" />}
           </button>
 
-          <h1 className="text-xl font-semibold text-[#2D2F33] tracking-tight">
+          <h1 className="text-[23px] font-semibold text-[#2D2F33] tracking-tight leading-[140%]">
             {isArabic ? 'طلباتي' : 'My Order'}
           </h1>
         </header>
 
-        {/* 3-Segment Tab Bar (Ongoing, Cart, History) */}
-        <div className="bg-[#e2e4e8] p-1 rounded-full flex items-center shadow-2xs">
+        {/* 3-Segment Tab Bar matching Figma Frame 2147226313 (408x52 radius 37px bg #EFEFEF) */}
+        <div className="bg-[#EFEFEF] p-1.5 rounded-[37px] flex items-center shadow-2xs h-[52px]">
           <button
             type="button"
             onClick={() => setActiveTab('ongoing')}
-            className={`flex-1 py-2 rounded-full text-xs sm:text-sm tracking-wide transition-all cursor-pointer text-center ${
+            className={`flex-1 h-[42px] rounded-[23px] text-[14px] leading-[140%] transition-all cursor-pointer flex items-center justify-center text-center ${
               activeTab === 'ongoing'
-                ? 'bg-white text-zinc-800 shadow-xs font-semibold'
-                : 'text-zinc-500 hover:text-zinc-700 font-normal'
+                ? 'bg-white text-[#2D2F33] shadow-xs font-normal'
+                : 'text-[#989898] hover:text-[#2D2F33] font-normal'
             }`}
           >
             {isArabic ? 'الجاري' : 'Ongoing'}
@@ -234,10 +232,10 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('cart')}
-            className={`flex-1 py-2 rounded-full text-xs sm:text-sm tracking-wide transition-all cursor-pointer text-center ${
+            className={`flex-1 h-[42px] rounded-[23px] text-[14px] leading-[140%] transition-all cursor-pointer flex items-center justify-center text-center ${
               activeTab === 'cart'
-                ? 'bg-white text-[#026F4F] shadow-xs font-semibold'
-                : 'text-zinc-500 hover:text-zinc-700 font-normal'
+                ? 'bg-white text-[#2D2F33] shadow-xs font-normal'
+                : 'text-[#989898] hover:text-[#2D2F33] font-normal'
             }`}
           >
             <span>{isArabic ? 'السلة' : 'Cart'}</span>
@@ -246,10 +244,10 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('history')}
-            className={`flex-1 py-2 rounded-full text-xs sm:text-sm tracking-wide transition-all cursor-pointer text-center ${
+            className={`flex-1 h-[42px] rounded-[23px] text-[14px] leading-[140%] transition-all cursor-pointer flex items-center justify-center text-center ${
               activeTab === 'history'
-                ? 'bg-white text-[#026F4F] shadow-xs font-semibold'
-                : 'text-zinc-500 hover:text-zinc-700 font-normal'
+                ? 'bg-white text-[#2D2F33] shadow-xs font-normal'
+                : 'text-[#989898] hover:text-[#2D2F33] font-normal'
             }`}
           >
             {isArabic ? 'الطلبات السابقة' : 'History'}
@@ -260,113 +258,113 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         {activeTab === 'ongoing' && (
           <div className="space-y-4 animate-in fade-in duration-200">
             {ongoingOrder ? (
-              /* Active Order Card */
-              <div className="bg-white rounded-[16px] p-4 sm:p-5 shadow-2xs border border-[#F4F4F5] space-y-4">
-                {/* Order Card Header */}
+              /* Active Order Card matching Figma Frame 1171277102 (408x280 radius 13px bg white) */
+              <div className="bg-white rounded-[13px] p-4.5 sm:p-5 shadow-2xs border border-[#F1F1F1] space-y-4">
+                {/* Order Card Header: #A102 (23px w=600 #2D2F33), Today 7:42 PM (14px #989898), $15.99 (22px w=600 #026F4F) */}
                 <div className="flex items-start justify-between">
                   <div>
-                    <h2 className="text-lg sm:text-xl font-semibold text-[#2D2F33] tracking-tight">
+                    <h2 className="text-[23px] font-semibold text-[#2D2F33] tracking-tight leading-[140%]">
                       {ongoingOrder.id}
                     </h2>
-                    <p className="text-xs text-zinc-400 font-normal mt-0.5">
+                    <p className="text-[14px] text-[#989898] font-normal mt-0.5 leading-[140%]">
                       {ongoingOrder.date}
                     </p>
                     {(ongoingOrder.tipAmount ?? 0) > 0 && (
-                      <p className="text-[10px] sm:text-xs text-[#026F4F] font-medium mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
+                      <p className="text-[11px] text-[#026F4F] font-medium mt-1 bg-emerald-50 inline-block px-2 py-0.5 rounded-full border border-[#026F4F]/20">
                         {isArabic ? 'بما في ذلك إكرامية:' : 'Includes Tip:'} {formatPrice(ongoingOrder.tipAmount || 0, activeLanguage)}
                       </p>
                     )}
                   </div>
-                  <span className="text-lg sm:text-xl font-semibold text-[#026F4F]">
+                  <span className="text-[22px] font-semibold text-[#026F4F] leading-[140%]">
                     {formatPrice(ongoingOrder.total, activeLanguage)}
                   </span>
                 </div>
 
-                {/* Items Thumbnails Row with Prominent White Circular Badges (Figma-Exact) */}
-                <div className="flex items-center gap-4 sm:gap-6 pt-1 pb-2 overflow-x-auto no-scrollbar">
+                {/* Items Thumbnails Row with Prominent White Circular Badges matching Figma Frame 2147226311 (63x63 box, x2/x1 badge) */}
+                <div className="flex items-center gap-3 pt-1 pb-1">
                   {ongoingOrder.items.map((it, idx) => (
                     <div
                       key={idx}
-                      className="relative w-16 h-16 rounded-xl bg-[#f4f4f5] shrink-0 shadow-2xs p-1.5 flex items-center justify-center"
+                      className="relative w-[63px] h-[63px] rounded-xl bg-[#F1F1F1] shrink-0 p-1 flex items-center justify-center"
                     >
                       <img
                         src={it.image || '/images/food/ramen.png'}
                         alt={it.name}
-                        className="w-full h-full object-contain rounded-xl"
+                        className="w-[45px] h-[45px] object-contain"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = '/images/food/ramen.png';
                         }}
                       />
-                      {/* White Circular Badge matching Figma */}
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-white shadow-xs border border-zinc-100 flex items-center justify-center font-semibold text-[11px] text-[#2D2F33] z-10">
+                      {/* White Badge matching Figma */}
+                      <div className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
                         x{it.qty}
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Order Progress Stepper Bar (Figma-Exact Proportion) */}
+                {/* Order Progress Stepper Bar (Figma Group 1171276316) */}
                 <div className="pt-2">
-                  <div className="flex items-center justify-between relative px-1 sm:px-2">
+                  <div className="flex items-center justify-between relative px-1">
                     {/* Stepper Status 1: Placed */}
                     <div className="flex flex-col items-center gap-1.5 z-10">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-[#026F4F] bg-white text-[#026F4F] flex items-center justify-center shadow-2xs">
+                      <div className="w-10 h-10 rounded-full border-2 border-[#026F4F] bg-white text-[#026F4F] flex items-center justify-center shadow-2xs">
                         <SvgPlacedIcon className="w-5 h-5 text-[#026F4F]" />
                       </div>
-                      <span className="text-[11px] sm:text-xs font-semibold text-[#026F4F]">
+                      <span className="text-[12px] font-normal text-[#026F4F] leading-[140%]">
                         {isArabic ? 'تم الطلب' : 'Placed'}
                       </span>
                     </div>
 
-                    {/* Connecting Line 1 */}
-                    <div className="flex-1 h-0.5 border-b-2 border-dashed border-[#026F4F] -mt-5 mx-1" />
+                    {/* Connecting Line 1: Green Dashes */}
+                    <div className="flex-1 border-b-2 border-dashed border-[#026F4F] -mt-5 mx-1" />
 
                     {/* Stepper Status 2: Preparing */}
                     <div className="flex flex-col items-center gap-1.5 z-10">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-[#026F4F] bg-white text-[#026F4F] flex items-center justify-center shadow-2xs">
-                        <SvgPrepIcon className="w-5 h-5 text-[#026F4F]" />
+                      <div className="w-10 h-10 rounded-full border-2 border-[#026F4F] bg-white flex items-center justify-center shadow-2xs">
+                        <img src="/icons/ph_cooking-pot-fill.svg" alt="" className="w-5 h-5" />
                       </div>
-                      <span className="text-[11px] sm:text-xs font-semibold text-[#026F4F]">
+                      <span className="text-[12px] font-normal text-[#026F4F] leading-[140%]">
                         {isArabic ? 'جاري التحضير' : 'Preparing'}
                       </span>
                     </div>
 
-                    {/* Connecting Line 2 */}
-                    <div className="flex-1 h-0.5 border-b-2 border-dashed border-zinc-200 -mt-5 mx-1" />
+                    {/* Connecting Line 2: Gray Dashes */}
+                    <div className="flex-1 border-b-2 border-dashed border-[#B8B8B8] -mt-5 mx-1" />
 
                     {/* Stepper Status 3: Ready */}
                     <div className="flex flex-col items-center gap-1.5 z-10">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-zinc-200 bg-white text-zinc-300 flex items-center justify-center">
-                        <Clock className="w-4 h-4 text-zinc-300" />
+                      <div className="w-10 h-10 rounded-full border-2 border-[#B8B8B8] bg-white flex items-center justify-center">
+                        <Clock className="w-4 h-4 text-[#B8B8B8]" />
                       </div>
-                      <span className="text-[11px] sm:text-xs font-medium text-zinc-400">
+                      <span className="text-[12px] font-normal text-[#B8B8B8] leading-[140%]">
                         {isArabic ? 'جاهز' : 'Ready'}
                       </span>
                     </div>
 
-                    {/* Connecting Line 3 */}
-                    <div className="flex-1 h-0.5 border-b-2 border-dashed border-zinc-200 -mt-5 mx-1" />
+                    {/* Connecting Line 3: Gray Dashes */}
+                    <div className="flex-1 border-b-2 border-dashed border-[#B8B8B8] -mt-5 mx-1" />
 
                     {/* Stepper Status 4: Served */}
                     <div className="flex flex-col items-center gap-1.5 z-10">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-zinc-200 bg-white text-zinc-300 flex items-center justify-center">
-                        <SvgServedIcon className="w-4.5 h-4.5 text-zinc-300" />
+                      <div className="w-10 h-10 rounded-full border-2 border-[#B8B8B8] bg-white flex items-center justify-center">
+                        <img src="/icons/emojione-monotone_fork-and-knife-with-plate.svg" alt="" className="w-5 h-5 opacity-70" />
                       </div>
-                      <span className="text-[11px] sm:text-xs font-medium text-zinc-400">
+                      <span className="text-[12px] font-normal text-[#B8B8B8] leading-[140%]">
                         {isArabic ? 'تم التقديم' : 'Served'}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* View Details Button inside Order Card */}
+                {/* Long BTN: View Details > matching Figma Frame 107:128 (372x55 radius 38px bg #E9E9E9) */}
                 <button
                   type="button"
                   onClick={() => setShowOrderDetailsModal(true)}
-                  className="w-full py-3 px-4 rounded-full bg-[#eef0f2] hover:bg-zinc-200/80 text-zinc-700 font-medium text-sm tracking-wide flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="w-full h-[55px] rounded-[38px] bg-[#E9E9E9] hover:bg-[#dedede] text-black font-medium text-[16px] leading-[140%] flex items-center justify-center gap-2 transition-colors cursor-pointer mt-4"
                 >
                   <span>{isArabic ? 'عرض التفاصيل' : 'View Details'}</span>
-                  <ChevronRight className="w-4 h-4 text-zinc-500 rtl:rotate-180" />
+                  <img src="/icons/weui_arrow-outlined.svg" alt="" className="w-2.5 h-4 object-contain rtl:rotate-180" />
                 </button>
               </div>
             ) : (
@@ -398,6 +396,39 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 </div>
               </div>
             )}
+
+            {/* Floating Call a Waiter Action Button with Tooltip (Figma-Exact Frame 99:27) */}
+            <div className="fixed bottom-6 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[150px] rtl:sm:translate-x-[-150px] z-40 flex flex-col items-end gap-1.5 animate-in fade-in duration-300">
+              <div className="bg-[#2D2F33] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-md relative after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#2D2F33]">
+                {isArabic ? 'استدعاء النادل' : 'Call a Waiter'}
+              </div>
+              <button
+                type="button"
+                onClick={onCallWaiter}
+                className="w-[50px] h-[50px] rounded-full bg-[#F6A743] hover:bg-[#e09230] text-white flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
+                aria-label="Call a Waiter"
+              >
+                <img src="/icons/solar_bell-bold.svg" alt="" className="w-6 h-6 object-contain" />
+              </button>
+            </div>
+
+            {/* Footer Branding Line: POWERED BY EMSA7 (Figma-Exact) */}
+            <div className="pt-10 pb-4 text-center select-none flex justify-center items-center">
+              <a
+                href="https://emsa7.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                dir="ltr"
+                className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity no-underline"
+              >
+                <span className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
+                  POWERED BY
+                </span>
+                <div className="inline-flex items-center justify-center my-auto shrink-0">
+                  <SvgEmsa7Icon className="h-4.5 sm:h-5 w-auto" />
+                </div>
+              </a>
+            </div>
           </div>
         )}
 
@@ -665,21 +696,21 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
 
             {/* Floating Call a Waiter Action Button with Tooltip (Figma-Exact) */}
             <div className="fixed bottom-6 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[150px] rtl:sm:translate-x-[-150px] z-40 flex flex-col items-end gap-1.5 animate-in fade-in duration-300">
-              <div className="bg-[#1e1e1e] text-white text-[11px] font-semibold px-3 py-1 rounded-full shadow-md relative after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#1e1e1e]">
+              <div className="bg-[#2D2F33] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-md relative after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#2D2F33]">
                 {isArabic ? 'استدعاء النادل' : 'Call a Waiter'}
               </div>
               <button
                 type="button"
                 onClick={onCallWaiter}
-                className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#f59e0b] hover:bg-[#d97706] text-white flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
+                className="w-[50px] h-[50px] rounded-full bg-[#F6A743] hover:bg-[#e09230] text-white flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
                 aria-label="Call a Waiter"
               >
-                <Bell className="w-6 h-6 stroke-[2.2] fill-white" />
+                <img src="/icons/solar_bell-bold.svg" alt="" className="w-6 h-6 object-contain" />
               </button>
             </div>
 
             {/* Footer Branding Line: POWERED BY EMSA7 */}
-            <div className="pt-6 pb-2 text-center select-none flex justify-center items-center">
+            <div className="pt-10 pb-4 text-center select-none flex justify-center items-center">
               <a
                 href="https://emsa7.com"
                 target="_blank"
@@ -687,11 +718,11 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 dir="ltr"
                 className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity no-underline"
               >
-                <span className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
+                <span className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
                   POWERED BY
                 </span>
                 <div className="inline-flex items-center justify-center my-auto shrink-0">
-                  <SvgEmsa7Icon className="h-4.5 sm:h-5 md:h-6 w-auto" />
+                  <SvgEmsa7Icon className="h-4.5 sm:h-5 w-auto" />
                 </div>
               </a>
             </div>
@@ -718,24 +749,6 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           </div>
         </div>
       )}
-
-      {/* Footer Branding Line: POWERED BY EMSA7 */}
-      <footer className="w-full text-center py-3 sm:py-4 bg-[#f4f4f5] border-t border-zinc-200/50 select-none flex justify-center items-center">
-        <a
-          href="https://emsa7.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          dir="ltr"
-          className="inline-flex items-center justify-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-        >
-          <span className="text-[11px] sm:text-xs md:text-sm font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
-            POWERED BY
-          </span>
-          <div className="inline-flex items-center justify-center my-auto shrink-0">
-            <SvgEmsa7Icon className="h-4.5 sm:h-5 md:h-6 w-auto" />
-          </div>
-        </a>
-      </footer>
 
       {/* Order Details Screen Popup */}
       <OrderDetailsScreen
