@@ -54,18 +54,18 @@ export const FoodCardHorizontal: React.FC<FoodCardHorizontalProps> = ({
           </p>
         </div>
 
-        {/* Bottom Row: Price & Quantity Controls matching Figma (Price 18px semi-bold #026F4F, plus 30x30) */}
-        <div className="pt-2 flex items-center justify-between mt-auto">
-          <span className="font-semibold text-[18px] leading-[140%] tracking-tight text-[#026F4F]">
+        {/* Bottom Row: Price & Quantity Controls matching Figma (Price semi-bold #026F4F) */}
+        <div className="pt-2 flex items-center justify-between mt-auto gap-1">
+          <span className="font-semibold text-[16px] sm:text-[18px] leading-[140%] tracking-tight text-[#026F4F] shrink-0">
             {formatPrice(item.price, activeLanguage)}
           </span>
 
           {quantity > 0 ? (
-            /* Stepper (Figma Frame 1171277090: 85x30) */
+            /* Stepper with compact spacing matching Figma */
             <div
               dir="ltr"
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-2 h-[30px] shrink-0"
+              className="flex items-center gap-1.5 h-[28px] shrink-0"
             >
               <button
                 type="button"
@@ -74,11 +74,11 @@ export const FoodCardHorizontal: React.FC<FoodCardHorizontalProps> = ({
                   onDecrement?.(item);
                 }}
                 aria-label={`Decrease ${title} quantity`}
-                className="w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer active:scale-95 transition-transform shrink-0"
+                className="w-[24px] h-[24px] rounded-full flex items-center justify-center cursor-pointer active:scale-95 transition-transform shrink-0"
               >
-                <img src="/icons/lsicon_minus-filled.svg" alt="Decrease" className="w-[30px] h-[30px]" />
+                <img src="/icons/lsicon_minus-filled.svg" alt="Decrease" className="w-[24px] h-[24px]" />
               </button>
-              <span className="font-semibold text-[18px] text-[#2D2F33] min-w-[16px] text-center leading-[140%] select-none">
+              <span className="font-semibold text-[15px] text-[#2D2F33] min-w-[14px] text-center leading-none select-none">
                 {quantity}
               </span>
               <button
@@ -89,13 +89,13 @@ export const FoodCardHorizontal: React.FC<FoodCardHorizontalProps> = ({
                   else if (onAdd) onAdd(item);
                 }}
                 aria-label={`Increase ${title} quantity`}
-                className="w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer active:scale-95 transition-transform shrink-0"
+                className="w-[24px] h-[24px] rounded-full flex items-center justify-center cursor-pointer active:scale-95 transition-transform shrink-0"
               >
-                <img src="/icons/mynaui_plus-circle-solid.svg" alt="Increase" className="w-[30px] h-[30px]" />
+                <img src="/icons/mynaui_plus-circle-solid.svg" alt="Increase" className="w-[24px] h-[24px]" />
               </button>
             </div>
           ) : (
-            /* Single + Button when Item is not in Cart (30px x 30px) */
+            /* Single + Button when Item is not in Cart */
             <button
               type="button"
               onClick={(e) => {
@@ -104,9 +104,9 @@ export const FoodCardHorizontal: React.FC<FoodCardHorizontalProps> = ({
                 else if (onIncrement) onIncrement(item);
               }}
               aria-label={`Add ${title} to cart`}
-              className="w-[30px] h-[30px] rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer shrink-0"
+              className="w-[28px] h-[28px] rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer shrink-0"
             >
-              <img src="/icons/mynaui_plus-circle-solid.svg" alt="Add" className="w-[30px] h-[30px]" />
+              <img src="/icons/mynaui_plus-circle-solid.svg" alt="Add" className="w-[28px] h-[28px]" />
             </button>
           )}
         </div>

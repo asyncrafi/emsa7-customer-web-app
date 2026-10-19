@@ -112,8 +112,8 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
   const vat = Math.round(subtotal * 0.05 * 100) / 100;
 
   let tipAmount = 0;
-  if (selectedTip === '10') tipAmount = Math.round(subtotal * 0.10 * 100) / 100;
-  else if (selectedTip === '15') tipAmount = Math.round(subtotal * 0.15 * 100) / 100;
+  if (selectedTip === '10') tipAmount = 10;
+  else if (selectedTip === '15') tipAmount = 15;
   else if (selectedTip === 'custom') tipAmount = parseFloat(customTipAmount) || 0;
 
   const splitFee = 0;
@@ -419,16 +419,16 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
 
           <div className="grid grid-cols-4 gap-2">
             {[
-              { id: '0', label: '0%' },
-              { id: '10', label: '10%' },
-              { id: '15', label: '15%' },
+              { id: '0', label: isArabic ? '0 ج.م' : '0 EGP' },
+              { id: '10', label: isArabic ? '10 ج.م' : '10 EGP' },
+              { id: '15', label: isArabic ? '15 ج.م' : '15 EGP' },
               { id: 'custom', label: isArabic ? 'مخصص' : 'Custom' },
             ].map((tip) => (
               <button
                 key={tip.id}
                 type="button"
                 onClick={() => setSelectedTip(tip.id as any)}
-                className={`py-2.5 px-2 rounded-full text-[13px] border transition-all cursor-pointer text-center ${
+                className={`py-2.5 px-1 sm:px-2 rounded-full text-[13px] border transition-all cursor-pointer text-center ${
                   selectedTip === tip.id
                     ? 'bg-[#026F4F] border-[#026F4F] text-white font-semibold shadow-xs'
                     : 'bg-white border-[#E5E5EA] text-[#2D2F33] font-medium hover:bg-zinc-50'
@@ -444,7 +444,7 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
               type="number"
               value={customTipAmount}
               onChange={(e) => setCustomTipAmount(e.target.value)}
-              placeholder={isArabic ? 'مبلغ الإكرامية' : 'Enter tip amount ($)'}
+              placeholder={isArabic ? 'مبلغ الإكرامية (ج.م)' : 'Enter tip amount (EGP)'}
               className="w-full bg-[#f4f4f5] border border-zinc-200/80 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 font-medium focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all mt-2"
             />
           )}
@@ -454,8 +454,8 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             <span className="text-[#FF4D4F] font-semibold">*</span>
             <span>
               {isArabic
-                ? 'أعلى إكرامية اليوم كانت $10.00'
-                : 'Highest tip today was $10.00'}
+                ? 'أعلى إكرامية اليوم كانت 10.00 ج.م'
+                : 'Highest tip today was 10.00 EGP'}
             </span>
           </div>
         </div>
