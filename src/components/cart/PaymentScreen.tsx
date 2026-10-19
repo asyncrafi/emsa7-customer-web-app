@@ -78,7 +78,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   return (
     <div
       dir={isArabic ? 'rtl' : 'ltr'}
-      className="fixed inset-0 z-50 bg-[#F4F4F5] antialiased select-none flex flex-col font-sans h-full w-full overflow-hidden"
+      className="fixed inset-0 z-50 bg-[#F4F4F5] antialiased select-none flex flex-col font-sans h-[100dvh] w-full overflow-hidden"
     >
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto min-h-0 w-full">
