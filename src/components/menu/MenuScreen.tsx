@@ -22,6 +22,7 @@ import { MyOrderScreen } from '@/components/cart/MyOrderScreen';
 import { FloatingCartBar } from '@/components/cart/FloatingCartBar';
 import { SortFilterModal, type SortOption } from './SortFilterModal';
 import { useUrlModalState } from '@/hooks/useUrlModalState';
+import { useWaiterTooltip } from '@/hooks/useWaiterTooltip';
 
 interface MenuScreenProps {
   tableName?: string;
@@ -74,6 +75,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   // Modals state
   const [cart, setCart] = useState<CartItem[]>([]);
   const [openCheckoutDirectly, setOpenCheckoutDirectly] = useState(false);
+  const waiterTooltip = useWaiterTooltip();
 
   // Sort & Filter State
   const [selectedSort, setSelectedSort] = useState<SortOption>(null);
@@ -687,19 +689,30 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
       {/* Floating Waiter Call Button & Tooltip matching Figma */}
       <div
+        onMouseEnter={waiterTooltip.onMouseEnter}
+        onMouseLeave={waiterTooltip.onMouseLeave}
         className={`fixed end-4 sm:end-6 z-40 flex flex-col items-end gap-1.5 transition-all duration-300 ${
           totalCartCount > 0 ? 'bottom-20 sm:bottom-22' : 'bottom-6 sm:bottom-7'
         }`}
       >
         {/* Floating Tooltip Label: Call a Waiter (Frame 2147226382: 98x38 bg #2d2f33 font 13px medium white) */}
-        <div className="w-[98px] h-[38px] rounded-[12px] bg-[#2D2F33] text-white text-[13px] font-medium flex items-center justify-center leading-[140%] shadow-md">
+        <div
+          className={`w-[98px] h-[38px] rounded-[12px] bg-[#2D2F33] text-white text-[13px] font-medium flex items-center justify-center leading-[140%] shadow-md select-none transition-all duration-500 origin-bottom ${
+            waiterTooltip.show
+              ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
+              : 'opacity-0 scale-90 translate-y-2 pointer-events-none'
+          }`}
+        >
           <span>{language === 'ARABIC' ? 'طلب النادل' : 'Call a Waiter'}</span>
         </div>
 
         {/* Bell Button (Ellipse 692: 50x50 bg #efac31) */}
         <button
           type="button"
-          onClick={openWaiterModal}
+          onClick={() => {
+            waiterTooltip.dismiss();
+            openWaiterModal();
+          }}
           aria-label="Call Waiter"
           className="relative group w-[50px] h-[50px] rounded-full bg-[#EFAC31] hover:bg-[#df9c21] active:scale-95 text-white flex items-center justify-center shadow-lg transition-all cursor-pointer"
         >

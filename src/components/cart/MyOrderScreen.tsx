@@ -11,6 +11,7 @@ import { useLanguage } from '@/providers/LanguageContext';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
 import SvgPlacedIcon from '@/components/ui/svg-icons/PlacedSvg';
+import { useWaiterTooltip } from '@/hooks/useWaiterTooltip';
 
 export interface StoredOrder {
   id: string;
@@ -81,6 +82,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   const [editingCartIndex, setEditingCartIndex] = useState<number | null>(null);
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const waiterTooltip = useWaiterTooltip();
 
   React.useEffect(() => {
     if (isOpen) {
@@ -398,13 +400,26 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             )}
 
             {/* Floating Call a Waiter Action Button with Tooltip (Figma-Exact Frame 99:27) */}
-            <div className="fixed bottom-6 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[150px] rtl:sm:translate-x-[-150px] z-40 flex flex-col items-end gap-1.5 animate-in fade-in duration-300">
-              <div className="bg-[#2D2F33] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-md relative after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#2D2F33]">
+            <div
+              onMouseEnter={waiterTooltip.onMouseEnter}
+              onMouseLeave={waiterTooltip.onMouseLeave}
+              className="fixed bottom-6 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[150px] rtl:sm:translate-x-[-150px] z-40 flex flex-col items-end gap-1.5 animate-in fade-in duration-300"
+            >
+              <div
+                className={`bg-[#2D2F33] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-md relative transition-all duration-500 origin-bottom after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#2D2F33] select-none ${
+                  waiterTooltip.show
+                    ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
+                    : 'opacity-0 scale-90 translate-y-1 pointer-events-none'
+                }`}
+              >
                 {isArabic ? 'استدعاء النادل' : 'Call a Waiter'}
               </div>
               <button
                 type="button"
-                onClick={onCallWaiter}
+                onClick={() => {
+                  waiterTooltip.dismiss();
+                  onCallWaiter?.();
+                }}
                 className="w-[50px] h-[50px] rounded-full bg-[#F6A743] hover:bg-[#e09230] text-white flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
                 aria-label="Call a Waiter"
               >
@@ -695,13 +710,26 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             ))}
 
             {/* Floating Call a Waiter Action Button with Tooltip (Figma-Exact) */}
-            <div className="fixed bottom-6 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[150px] rtl:sm:translate-x-[-150px] z-40 flex flex-col items-end gap-1.5 animate-in fade-in duration-300">
-              <div className="bg-[#2D2F33] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-md relative after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#2D2F33]">
+            <div
+              onMouseEnter={waiterTooltip.onMouseEnter}
+              onMouseLeave={waiterTooltip.onMouseLeave}
+              className="fixed bottom-6 right-4 sm:right-auto sm:left-1/2 sm:translate-x-[150px] rtl:sm:translate-x-[-150px] z-40 flex flex-col items-end gap-1.5 animate-in fade-in duration-300"
+            >
+              <div
+                className={`bg-[#2D2F33] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-md relative transition-all duration-500 origin-bottom after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#2D2F33] select-none ${
+                  waiterTooltip.show
+                    ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
+                    : 'opacity-0 scale-90 translate-y-1 pointer-events-none'
+                }`}
+              >
                 {isArabic ? 'استدعاء النادل' : 'Call a Waiter'}
               </div>
               <button
                 type="button"
-                onClick={onCallWaiter}
+                onClick={() => {
+                  waiterTooltip.dismiss();
+                  onCallWaiter?.();
+                }}
                 className="w-[50px] h-[50px] rounded-full bg-[#F6A743] hover:bg-[#e09230] text-white flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
                 aria-label="Call a Waiter"
               >
