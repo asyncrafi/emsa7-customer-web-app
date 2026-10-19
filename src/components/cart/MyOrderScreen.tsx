@@ -301,8 +301,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                         }}
                       />
                       {/* White Badge matching Figma */}
-                      <div className="absolute -top-1.5 -right-1.5 rtl:-right-auto rtl:-left-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
-                        {isArabic ? `${it.qty}x` : `x${it.qty}`}
+                      <div className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
+                        x{it.qty}
                       </div>
                     </div>
                   ))}
@@ -687,8 +687,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                         }}
                       />
                       {/* White Badge matching Figma */}
-                      <div className="absolute -top-1.5 -right-1.5 rtl:-right-auto rtl:-left-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
-                        {isArabic ? `${it.qty}x` : `x${it.qty}`}
+                      <div className="absolute -top-1.5 -right-1.5 min-w-[20px] h-[20px] px-1.5 rounded-full bg-white shadow-xs border border-[#E5E7EB] flex items-center justify-center font-normal text-[11px] text-[#2D2F33] z-10">
+                        x{it.qty}
                       </div>
                     </div>
                   ))}
