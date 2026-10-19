@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
+import emsa7Logo from '@/assets/logo.png';
 import { useDynamicTheme } from '@/providers/DynamicThemeProvider';
 import { useLanguage } from '@/providers/LanguageContext';
 import { Languages, ChevronDown, Check } from 'lucide-react';
@@ -28,12 +28,12 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
           <button
             type="button"
             onClick={() => setLangDropdownOpen(!langDropdownOpen)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-zinc-200/90 bg-white text-[#026F4F] text-[11px] sm:text-xs font-semibold tracking-wider shadow-2xs hover:border-zinc-300 transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-zinc-300 bg-white text-[#026F4F] text-xs sm:text-[13px] font-normal tracking-wide shadow-2xs hover:border-zinc-400 transition-colors cursor-pointer"
           >
-            <Languages className="h-3.5 w-3.5 text-[#026F4F]" />
-            <span>{language === 'ARABIC' ? 'العربية' : 'ENGLISH'}</span>
+            <Languages className="h-4 w-4 text-[#026F4F]" />
+            <span className="font-normal">{language === 'ARABIC' ? 'العربية' : 'ENGLISH'}</span>
             <ChevronDown
-              className={`h-3 w-3 text-[#026F4F] transition-transform duration-200 ${
+              className={`h-3.5 w-3.5 text-zinc-600 transition-transform duration-200 ${
                 langDropdownOpen ? 'rotate-180' : ''
               }`}
             />
@@ -94,7 +94,11 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
       <main className="w-full max-w-[360px] sm:max-w-[408px] flex flex-col items-center justify-center my-auto text-center py-4">
         {/* Main EMSA7 Logo matching Figma */}
         <div className="flex justify-center items-center mb-7 sm:mb-8">
-          <SvgEmsa7Icon className="h-12 sm:h-14 w-auto" />
+          <img
+            src={emsa7Logo}
+            alt="EMSA7"
+            className="h-16 sm:h-20 max-w-[220px] sm:max-w-[250px] w-auto object-contain"
+          />
         </div>
 
         {/* Green Table Ticket Card Component - Precision Alignment matching Figma */}
@@ -114,11 +118,11 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
           <div
             className={`absolute inset-y-0 flex items-center z-10 ${
               language === 'ARABIC'
-                ? 'right-[20%] sm:right-[21%] justify-end'
-                : 'left-[20%] sm:left-[21%] justify-start'
+                ? 'right-[20%] sm:right-[22%] justify-end'
+                : 'left-[20%] sm:left-[22%] justify-start'
             }`}
           >
-            <span className="text-[20px] sm:text-2xl font-semibold text-white tracking-tight drop-shadow-xs">
+            <span className="text-[22px] sm:text-[26px] font-bold text-white tracking-tight drop-shadow-xs">
               {displayTableName}
             </span>
           </div>
@@ -146,23 +150,30 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
             dir="ltr"
             className="inline-flex items-center justify-center gap-1.5 leading-none cursor-pointer hover:opacity-80 transition-opacity no-underline"
           >
-            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.1em] uppercase text-[#989898] inline-flex items-center">
+            <span className="text-[11px] sm:text-xs font-semibold tracking-[0.12em] uppercase text-[#989898] inline-flex items-center">
               POWERED BY
             </span>
             <div className="inline-flex items-center justify-center my-auto shrink-0">
-              <SvgEmsa7Icon className="h-3.5 w-auto bg-[#989898]" />
+              <img
+                src="/emsa7-logo-grey.png"
+                alt="EMSA7"
+                className="h-4 w-auto object-contain"
+              />
             </div>
           </a>
         </div>
 
-        {/* Full-width Rounded Continue Button */}
+        {/* Full-width Rounded Continue Button with Help (?) circle matching Figma */}
         <button
           type="button"
           onClick={onContinue}
-          className="w-full h-[52px] sm:h-14 rounded-full text-white font-semibold text-base sm:text-[17px] tracking-wide shadow-md shadow-[#026F4F]/15 transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center"
+          className="relative w-full h-[52px] sm:h-14 rounded-full text-white font-semibold text-base sm:text-[17px] tracking-wide shadow-md shadow-[#026F4F]/15 transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center"
           style={{ backgroundColor: themeConfig.primaryColor || '#026F4F' }}
         >
-          {language === 'ARABIC' ? 'متابعة' : 'Continue'}
+          <span>{language === 'ARABIC' ? 'متابعة' : 'Continue'}</span>
+          <div className="absolute right-2 sm:right-2.5 rtl:right-auto rtl:left-2 sm:rtl:left-2.5 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-[#026F4F] flex items-center justify-center font-bold text-sm sm:text-base shadow-xs select-none">
+            ?
+          </div>
         </button>
 
         {/* iOS Home Indicator Bar */}

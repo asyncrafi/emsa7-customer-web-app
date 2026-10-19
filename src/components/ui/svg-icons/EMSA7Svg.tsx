@@ -10,9 +10,9 @@ const SvgEmsa7Icon: React.FC<SvgEmsa7IconProps> = ({ className = '', style, ...p
     <div
       className={`inline-block shrink-0 ${hasBg ? '' : 'bg-[#026F4F]'} ${className}`}
       style={{
-        aspectRatio: '58/17',
-        maskImage: 'url(/emsa7-logo.svg)',
-        WebkitMaskImage: 'url(/emsa7-logo.svg)',
+        aspectRatio: '790/226',
+        maskImage: 'url(/emsa7-logo-clean.png)',
+        WebkitMaskImage: 'url(/emsa7-logo-clean.png)',
         maskRepeat: 'no-repeat',
         WebkitMaskRepeat: 'no-repeat',
         maskSize: 'contain',
