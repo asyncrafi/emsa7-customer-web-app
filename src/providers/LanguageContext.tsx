@@ -13,6 +13,10 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlLang = urlParams.get('lang');
+      if (urlLang === 'ar' || urlLang === 'ARABIC') return 'ARABIC';
+      if (urlLang === 'en' || urlLang === 'ENGLISH') return 'ENGLISH';
       const saved = localStorage.getItem('emsa7_language');
       return saved === 'ARABIC' ? 'ARABIC' : 'ENGLISH';
     } catch {
