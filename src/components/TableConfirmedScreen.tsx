@@ -163,17 +163,14 @@ export const TableConfirmedScreen: React.FC<TableConfirmedScreenProps> = ({
           </a>
         </div>
 
-        {/* Full-width Rounded Continue Button with Help (?) circle matching Figma */}
+        {/* Full-width Rounded Continue Button matching Figma */}
         <button
           type="button"
           onClick={onContinue}
-          className="relative w-full h-[52px] sm:h-14 rounded-full text-white font-semibold text-base sm:text-[17px] tracking-wide shadow-md shadow-[#026F4F]/15 transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center"
+          className="w-full h-14 sm:h-[58px] rounded-full text-white font-semibold text-base sm:text-[17px] tracking-wide shadow-md shadow-[#026F4F]/15 transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center"
           style={{ backgroundColor: themeConfig.primaryColor || '#026F4F' }}
         >
-          <span>{language === 'ARABIC' ? 'متابعة' : 'Continue'}</span>
-          <div className="absolute right-2 sm:right-2.5 rtl:right-auto rtl:left-2 sm:rtl:left-2.5 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white text-[#026F4F] flex items-center justify-center font-bold text-sm sm:text-base shadow-xs select-none">
-            ?
-          </div>
+          {language === 'ARABIC' ? 'متابعة' : 'Continue'}
         </button>
 
         {/* iOS Home Indicator Bar */}
