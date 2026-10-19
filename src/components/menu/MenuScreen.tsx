@@ -447,7 +447,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
           {/* Integrated Search & Filter Controls Pill Bar matching Figma Frame 1171277067 (408x52, radius 27px, border #B1D2C8) */}
           <section>
-            <div className="relative w-full h-[52px] bg-white rounded-[27px] border border-[#B1D2C8] flex items-center p-1 pl-4 pr-1.5">
+            <div className="relative w-full h-[52px] bg-white rounded-[27px] border border-[#B1D2C8] flex items-center p-1 ps-4 pe-1.5">
               <img src="/icons/mdi_magnify.svg" alt="" className="h-5 w-5 shrink-0 opacity-60" />
               <input
                 type="text"
@@ -489,7 +489,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
 
       {/* Main White Content Sheet Container with ROUNDED TOP CORNERS matching Figma */}
       <div
-        className={`w-full bg-white rounded-t-[32px] sm:rounded-t-[36px] pt-4 flex-1 transition-all ${
+        className={`w-full bg-white rounded-t-[32px] sm:rounded-t-[36px] pt-4 flex-1 transition-all overflow-clip ${
           totalCartCount > 0 ? 'pb-24' : 'pb-10'
         }`}
       >
@@ -499,7 +499,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             ref={pillContainerRef}
             className="sticky top-0 z-30 bg-white py-1 -mx-5 px-5 overflow-x-auto no-scrollbar"
           >
-            <div className="flex items-center gap-[6px] min-w-max">
+            <div className="flex items-center gap-[6px] min-w-max pe-5 rtl:ps-5">
               {CATEGORIES.map((cat) => {
                 const isActive = selectedCategory === cat.id;
                 const catName = language === 'ARABIC' ? cat.nameAr : cat.name;
@@ -658,7 +658,10 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             /* Filtered Category Section matching Figma Frame 42:527 (e.g. Ramen (3)) */
             <section className="space-y-3 pt-1">
               <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%] capitalize">
-                {CATEGORIES.find((c) => c.id === selectedCategory)?.name || selectedCategory} ({categoryFilteredItems.length})
+                {language === 'ARABIC'
+                  ? CATEGORIES.find((c) => c.id === selectedCategory)?.nameAr || selectedCategory
+                  : CATEGORIES.find((c) => c.id === selectedCategory)?.name || selectedCategory}{' '}
+                ({categoryFilteredItems.length})
               </h2>
 
               <div className="flex flex-col gap-3">
