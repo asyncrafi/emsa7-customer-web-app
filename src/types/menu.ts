@@ -60,7 +60,7 @@ export const getCartSubtotal = (cart: CartItem[]): number => {
   return cart.reduce((sum, ci) => sum + getCartItemTotalPrice(ci), 0);
 };
 
-export type CategoryId = "all" | "popular" | "ramen" | "sides" | "drinks" | "desserts";
+export type CategoryId = "all" | "popular" | "ramen" | "sides" | "drinks" | "desserts" | "rice" | "combos";
 
 export interface Category {
   id: CategoryId;
@@ -76,6 +76,9 @@ export const CATEGORIES: Category[] = [
   { id: "ramen", name: "Ramen", nameAr: "رامن", emoji: "🍜", image: "/images/food/cat_ramen.png" },
   { id: "sides", name: "Sides", nameAr: "المقبلات", emoji: "🥟", image: "/images/food/cat_sides.png" },
   { id: "drinks", name: "Drinks", nameAr: "المشروبات", emoji: "🍹", image: "/images/food/cat_drinks.png" },
+  { id: "desserts", name: "Desserts", nameAr: "الحلويات", emoji: "🍧", image: "/images/food/cat_desserts.png" },
+  { id: "rice", name: "Rice Bowls", nameAr: "أطباق الأرز", emoji: "🍚", image: "/images/food/cat_rice.png" },
+  { id: "combos", name: "Combos", nameAr: "كومبو", emoji: "🍱", image: "/images/food/cat_combos.png" },
 ];
 
 export const MOCK_MENU_ITEMS: MenuItem[] = [
@@ -280,6 +283,69 @@ export const MOCK_MENU_ITEMS: MenuItem[] = [
     imageUrl: "/images/food/iced-tea.png",
     isPopular: false,
     tags: ["sweet", "sharing"],
+  },
+  {
+    id: "dessert-1",
+    name: "Artisan Mochi Set",
+    nameAr: "تشكيلة موتشي فاخرة",
+    description: "Assorted traditional Japanese mochi with matcha, strawberry and sweet red bean fillings.",
+    descriptionAr: "تشكيلة موتشي يابانية تقليدية بنكهات الماتشا والفراولة ومعجون الفاصوليا الحلوة.",
+    price: 9.5,
+    category: "desserts",
+    imageUrl: "/images/food/dessert.png",
+    isPopular: true,
+    tags: ["sweet", "sharing"],
+    optionGroups: [
+      {
+        id: "mochi-flavor",
+        title: "Primary Flavor",
+        titleAr: "النكهة الأساسية",
+        required: true,
+        type: "single",
+        options: [
+          { id: "matcha", name: "Uji Matcha", nameAr: "أوجي ماتشا", price: 0 },
+          { id: "strawberry", name: "Fresh Strawberry", nameAr: "فراولة طازجة", price: 0 },
+          { id: "black-sesame", name: "Black Sesame", nameAr: "سمسم أسود", price: 0 },
+        ],
+      },
+    ],
+  },
+  {
+    id: "rice-1",
+    name: "Chicken Katsu Don",
+    nameAr: "كاتسو دون دجاج",
+    description: "Crispy panko chicken cutlet simmered with sweet onions and egg over steaming Japanese rice.",
+    descriptionAr: "شريحة دجاج بانكو مقرمشة مطهوة مع البصل الحلو والبيض فوق أرز ياباني ساخن.",
+    price: 16.5,
+    category: "rice",
+    imageUrl: "/images/food/rice-bowl.png",
+    isPopular: false,
+    tags: ["bestseller", "chefs_pick"],
+    optionGroups: [
+      {
+        id: "rice-portion",
+        title: "Rice Portion",
+        titleAr: "حجم الأرز",
+        required: true,
+        type: "single",
+        options: [
+          { id: "regular", name: "Regular Rice", nameAr: "أرز عادي", price: 0 },
+          { id: "extra-rice", name: "Large Rice (+25%)", nameAr: "أرز إضافي (+25%)", price: 1.5 },
+        ],
+      },
+    ],
+  },
+  {
+    id: "combo-1",
+    name: "Deluxe Bento Combo",
+    nameAr: "وجبة بينتو ديلوكس",
+    description: "Teriyaki chicken, salmon rolls, crispy tempura prawns, tamagoyaki and seasoned edamame.",
+    descriptionAr: "دجاج ترياكي مع رول السلمون، جمبري تمبورا مقرمش، بيض تاماجو وإدامامي متبل.",
+    price: 24.99,
+    category: "combos",
+    imageUrl: "/images/food/bento-combo.png",
+    isPopular: true,
+    tags: ["bestseller", "sharing"],
   },
 ];
 
