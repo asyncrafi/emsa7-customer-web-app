@@ -282,12 +282,12 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   </span>
                 </div>
 
-                {/* Items Thumbnails Row with Prominent White Circular Badges matching Figma Frame 2147226311 (63x63 box, x2/x1 badge) */}
+                {/* Items Thumbnails Row with Prominent White Circular Badges matching Figma Frame 1171277079 (59x64 box, cornerRadius 4.77px -> rounded-[5px], x2/x1 badge) */}
                 <div className="flex items-center gap-3 pt-1 pb-1">
                   {ongoingOrder.items.map((it, idx) => (
                     <div
                       key={idx}
-                      className="relative w-[63px] h-[63px] rounded-xl bg-[#F1F1F1] shrink-0 p-1 flex items-center justify-center"
+                      className="relative w-[59px] h-[64px] rounded-[5px] bg-[#F1F1F1] shrink-0 p-1 flex items-center justify-center"
                     >
                       <img
                         src={it.image || '/images/food/ramen.png'}
@@ -660,12 +660,12 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   {ord.items.map((it, idx) => (
                     <div
                       key={idx}
-                      className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-zinc-50 p-1.5 border border-zinc-100 flex items-center justify-center shrink-0"
+                      className="relative w-[59px] h-[64px] rounded-[5px] bg-[#F1F1F1] p-1 flex items-center justify-center shrink-0"
                     >
                       <img
                         src={it.image || '/images/food/ramen.png'}
                         alt={it.name}
-                        className="w-full h-full object-contain rounded-xl"
+                        className="w-[45px] h-[45px] object-contain"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src = '/images/food/ramen.png';
                         }}
