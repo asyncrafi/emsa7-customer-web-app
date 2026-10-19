@@ -783,7 +783,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
       <FloatingCartBar
         cart={cart}
         onOpenCart={() => {
-          setOpenCheckoutDirectly(true);
+          setOpenCheckoutDirectly(false);
           openCartModal();
         }}
         language={language}
