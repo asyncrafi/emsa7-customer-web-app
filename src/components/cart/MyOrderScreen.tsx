@@ -8,6 +8,7 @@ import { OrderConfirmedScreen } from '@/components/cart/OrderConfirmedScreen';
 import { EInvoiceModal } from '@/components/cart/EInvoiceModal';
 import { FoodDetailModal } from '@/components/food/FoodDetailModal';
 import { useLanguage } from '@/providers/LanguageContext';
+import { QuantityControl } from '@/components/food/QuantityControl';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgPlacedIcon from '@/components/ui/svg-icons/PlacedSvg';
 import { useWaiterTooltip } from '@/hooks/useWaiterTooltip';
@@ -460,20 +461,20 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   </div>
 
                   <div>
-                    <h2 className="font-semibold text-lg text-[#2D2F33] tracking-tight">
+                    <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%] text-center">
                       {isArabic ? 'سلتك فارغة' : 'Your Cart is empty'}
                     </h2>
-                    <p className="text-xs text-zinc-400 font-normal mt-1 max-w-xs mx-auto">
+                    <p className="text-[13px] font-normal text-[#989898] leading-[140%] text-center mt-1">
                       {isArabic ? 'أضف بعض الرامن اللذيذ للبدء!' : 'Add some delicious ramen to get started!'}
                     </p>
                   </div>
 
-                  {/* Browse Menu Button */}
-                  <div>
+                  {/* Browse Menu Button (Figma Exact: 202px x 59px, radius 30px, bg #026F4F, 16px medium white) */}
+                  <div className="flex justify-center pt-2">
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-8 py-3 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-sm tracking-wide shadow-md active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
+                      className="w-[202px] h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[16px] leading-[140%] shadow-md active:scale-95 transition-all cursor-pointer flex items-center justify-center text-center"
                     >
                       {isArabic ? 'تصفح القائمة' : 'Browse Menu'}
                     </button>
@@ -578,27 +579,14 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                           </div>
                         </div>
 
-                        {/* Stepper matching Figma Frame 1171276394 (radius 42px, bg #F1F1F1, padding (4, 5)) */}
-                        <div className="rounded-[42px] bg-[#F1F1F1] px-2.5 py-1 flex items-center gap-2.5 shrink-0 select-none">
-                          <button
-                            type="button"
-                            onClick={() => onDecrement(idx as any)}
-                            className="w-5 h-5 rounded-full flex items-center justify-center text-[#559F89] hover:text-[#026F4F] transition-colors cursor-pointer"
-                            aria-label="Decrease quantity"
-                          >
-                            <span className="text-base font-bold leading-none">−</span>
-                          </button>
-                          <span className="text-[15px] font-semibold text-[#2D2F33] min-w-[14px] text-center">
-                            {ci.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => onIncrement(idx as any)}
-                            className="w-5 h-5 rounded-full flex items-center justify-center text-[#026F4F] hover:text-[#015139] transition-colors cursor-pointer"
-                            aria-label="Increase quantity"
-                          >
-                            <span className="text-base font-bold leading-none">+</span>
-                          </button>
+                        {/* Stepper matching Figma screenshot */}
+                        <div>
+                          <QuantityControl
+                            quantity={ci.quantity}
+                            onIncrement={() => onIncrement(ci.item.id)}
+                            onDecrement={() => onDecrement(ci.item.id)}
+                            size="sm"
+                          />
                         </div>
                       </div>
                     ))}
@@ -796,16 +784,11 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
               className="w-full h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white px-6 shadow-md flex items-center justify-between cursor-pointer transition-transform active:scale-[0.99]"
             >
               <span className="text-[16px] font-normal leading-[140%]">
-                {isArabic ? 'تقديم الطلب' : 'Place Order'}
+                {isArabic ? 'المتابعة لإتمام الطلب' : 'Continue to Checkout'}
               </span>
-              <div className="flex items-center gap-2">
-                <span className="text-[16px] font-semibold leading-[140%]">
-                  {formatPrice(grandTotal, activeLanguage)}
-                </span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="rtl:rotate-180">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </div>
+              <span className="text-[16px] font-semibold leading-[140%]">
+                {formatPrice(grandTotal, activeLanguage)}
+              </span>
             </button>
           </div>
         </div>
