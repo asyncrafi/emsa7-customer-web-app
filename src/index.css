@@ -124,22 +124,20 @@ body {
 
 /* Custom CSS Animations for Modals, Sheets, and Step Transitions (Tailwind v4 compatible) */
 @keyframes slideUpModal {
-  from {
+  0% {
     transform: translateY(100%);
-    opacity: 0;
   }
-  to {
+  100% {
     transform: translateY(0);
-    opacity: 1;
   }
 }
 
 @keyframes slideUpContent {
-  from {
-    transform: translateY(28px);
+  0% {
+    transform: translateY(24px);
     opacity: 0;
   }
-  to {
+  100% {
     transform: translateY(0);
     opacity: 1;
   }
@@ -170,15 +168,15 @@ body {
 }
 
 .animate-slide-up-modal {
-  animation: slideUpModal 0.78s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUpModal 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-slide-up-content {
-  animation: slideUpContent 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUpContent 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .animate-fade-in-overlay {
-  animation: fadeInOverlay 0.25s ease-out forwards;
+  animation: fadeInOverlay 0.22s ease-out forwards;
 }
 
 .animate-pop-success {

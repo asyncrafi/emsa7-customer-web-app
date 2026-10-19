@@ -74,24 +74,24 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
               />
             </div>
 
-            {/* Title & Description */}
-            <div className="pt-1 space-y-1.5">
-              <h2 className="text-2xl sm:text-3xl font-semibold text-[#2D2F33] tracking-tight">
+            {/* Title & Description matching Figma (30px Bold #2D2F33, 16px #888888) */}
+            <div className="pt-1 space-y-1.5 text-center">
+              <h2 className="text-[26px] sm:text-[30px] font-bold text-[#2D2F33] leading-[140%] tracking-tight">
                 {isArabic ? 'طلب النادل' : 'Call a Waiter'}
               </h2>
-              <p className="text-xs sm:text-sm text-zinc-400 font-normal px-2 leading-relaxed max-w-xs mx-auto">
+              <p className="text-[15px] sm:text-[16px] text-[#888888] font-normal px-2 leading-[140%] max-w-sm mx-auto">
                 {isArabic
                   ? 'هل تحتاج إلى مساعدة؟ سياتي أحد أفراد طاقمنا إلى طاولتك.'
                   : 'Do you need assistance? A staff member will come to your table.'}
               </p>
             </div>
 
-            {/* Action Buttons Row */}
+            {/* Action Buttons Row matching Figma Frame 1171277297 (h-59px, rounded-full, 19px medium) */}
             <div className="flex items-center gap-3 pt-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 py-3.5 sm:py-4 px-4 rounded-full border border-zinc-200 bg-[#eef0f2] hover:bg-zinc-200/90 text-zinc-800 font-medium text-sm sm:text-base tracking-wide transition-colors cursor-pointer text-center"
+                className="flex-1 h-[59px] rounded-full bg-[#E9E9E9] hover:bg-[#dedede] text-[#2D2F33] font-medium text-[17px] sm:text-[19px] leading-[140%] transition-colors cursor-pointer flex items-center justify-center text-center"
               >
                 {isArabic ? 'إلغاء' : 'Cancel'}
               </button>
@@ -99,7 +99,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
               <button
                 type="button"
                 onClick={handleCallNow}
-                className="flex-1 py-3.5 sm:py-4 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-semibold text-sm sm:text-base tracking-wide shadow-md transition-all active:scale-[0.98] cursor-pointer text-center"
+                className="flex-1 h-[59px] rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[17px] sm:text-[19px] leading-[140%] shadow-md transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center text-center"
               >
                 {isArabic ? 'اطلب الآن' : 'Call Now'}
               </button>
@@ -107,43 +107,40 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
           </div>
         )}
 
-        {/* STEP 2: Notifying Staff Loading View (Upwards Slide Animation) */}
+        {/* STEP 2: Notifying Staff Loading View (Figma id=224:595) */}
         {step === 'notifying' && (
-          <div key="notifying" className="py-14 sm:py-16 space-y-5 animate-slide-up-content">
-            {/* Circular Spinner */}
-            <div className="w-14 h-14 rounded-full border-4 border-emerald-100 border-t-[#026F4F] animate-spin mx-auto my-3" />
+          <div key="notifying" className="py-12 sm:py-14 space-y-5 animate-slide-up-content text-center">
+            {/* Circular Spinner from Figma Group 1171276390 */}
+            <img src="/icons/spinner-waiter.svg" alt="" className="w-14 h-14 mx-auto my-3 animate-spin" />
 
             <div className="space-y-1">
-              <h2 className="text-2xl sm:text-3xl font-semibold text-[#2D2F33] tracking-tight">
+              <h2 className="text-[26px] sm:text-[30px] font-bold text-[#2D2F33] leading-[140%] tracking-tight">
                 {isArabic ? 'جاري إبلاغ النادل' : 'Notifying Staff'}
               </h2>
-              <p className="text-xs sm:text-sm text-zinc-400 font-normal">
+              <p className="text-[16px] text-[#888888] font-normal leading-[140%]">
                 {isArabic ? 'يرجى الانتظار لحظة.' : 'Please wait a moment.'}
               </p>
             </div>
           </div>
         )}
 
-        {/* STEP 3: Success View (Scaled Success Animation) */}
+        {/* STEP 3: Success View (Figma id=224:620) */}
         {step === 'success' && (
-          <div key="success" className="py-12 sm:py-14 space-y-5 animate-slide-up-content">
-            {/* Green Scalloped Checkmark Badge Image */}
-            <div className="w-20 h-20 mx-auto flex items-center justify-center animate-pop-success">
+          <div key="success" className="py-12 sm:py-14 space-y-5 animate-slide-up-content text-center">
+            {/* Green Scalloped Checkmark Badge Image from Figma Group 105x105 */}
+            <div className="w-[105px] h-[105px] mx-auto flex items-center justify-center animate-pop-success">
               <img
-                src="/images/common/success.png"
-                alt="Success Checkmark Badge"
-                className="w-full h-full object-contain drop-shadow-md"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
+                src="/icons/success-badge.svg"
+                alt="Success"
+                className="w-[105px] h-[105px] object-contain drop-shadow-md"
               />
             </div>
 
             <div className="space-y-1">
-              <h2 className="text-2xl sm:text-3xl font-semibold text-[#2D2F33] tracking-tight">
+              <h2 className="text-[26px] sm:text-[30px] font-bold text-[#2D2F33] leading-[140%] tracking-tight">
                 {isArabic ? 'تم بنجاح' : 'Success'}
               </h2>
-              <p className="text-xs sm:text-sm text-zinc-400 font-normal">
+              <p className="text-[16px] text-[#888888] font-normal leading-[140%]">
                 {isArabic ? 'تم إبلاغ النادل بنجاح' : 'Waiter has been notified'}
               </p>
             </div>

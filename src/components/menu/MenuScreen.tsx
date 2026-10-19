@@ -36,7 +36,13 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   const { language, setLanguage } = useLanguage();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search);
+      return p.get('q') || p.get('search') || '';
+    }
+    return '';
+  });
 
   // Scroll/pill refs
   const catPillRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -191,12 +197,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   };
 
   const handleCardAdd = (food: MenuItem) => {
-    const hasOptions = Boolean(food.optionGroups && food.optionGroups.length > 0);
-    if (hasOptions) {
-      openFoodDetailModal(food.id);
-    } else {
-      handleAddToCart(food, 1);
-    }
+    handleAddToCart(food, 1);
   };
 
   const handleIncrement = (item: MenuItem) => {
@@ -442,9 +443,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             </h1>
           </section>
 
-          {/* Integrated Search & Filter Controls Pill Bar matching Figma Frame 1171277067 (408x52) */}
+          {/* Integrated Search & Filter Controls Pill Bar matching Figma Frame 1171277067 (408x52, radius 27px, border #B1D2C8) */}
           <section>
-            <div className="relative w-full h-[52px] bg-white rounded-full border border-zinc-200/50 shadow-2xs flex items-center p-1 pl-4 pr-1.5">
+            <div className="relative w-full h-[52px] bg-white rounded-[27px] border border-[#B1D2C8] flex items-center p-1 pl-4 pr-1.5">
               <img src="/icons/mdi_magnify.svg" alt="" className="h-5 w-5 shrink-0 opacity-60" />
               <input
                 type="text"
@@ -534,45 +535,68 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           {/* Content View: Search Mode OR Figma-matched Sections */}
           {searchQuery ? (
             <section className="space-y-3 pt-1">
-              <div className="flex items-center justify-between">
-                <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%]">
-                  {language === 'ARABIC' ? 'نتائج البحث' : 'Search Results'}
-                </h2>
-                <span className="text-xs font-medium text-zinc-400">
-                  {searchResults.length} {language === 'ARABIC' ? 'صنف' : 'items'}
-                </span>
-              </div>
-
               {searchResults.length === 0 ? (
-                <div className="py-12 text-center text-zinc-400 bg-white rounded-2xl border border-zinc-100 p-6">
-                  <p className="font-medium text-sm text-zinc-700">
+                /* Figma "No match: id=82:348" Screen */
+                <div className="py-4 text-center flex flex-col items-center">
+                  <div className="w-full text-start mb-2">
+                    <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%]">
+                      {language === 'ARABIC' ? 'نتائج لـ ' : 'Results for '}
+                      <span className="text-[#026F4F]">"{searchQuery}"</span>
+                    </h2>
+                  </div>
+
+                  {/* Centered No Match Illustration from Figma (Objects: 264x236) */}
+                  <img
+                    src="/images/no-match.png"
+                    alt="No match"
+                    className="w-[200px] sm:w-[220px] h-auto object-contain mx-auto mt-6 mb-4"
+                  />
+
+                  {/* Subtitle matching Figma: No items match your filters (19px font-normal #2D2F33) */}
+                  <p className="text-[19px] font-normal text-[#2D2F33] text-center leading-[140%]">
                     {language === 'ARABIC'
-                      ? 'لم يتم العثور على أطباق مطابقة'
-                      : 'No food items found'}
+                      ? 'لا توجد أصناف تطابق بحثك'
+                      : 'No items match your filters'}
                   </p>
-                  <p className="text-xs text-zinc-400 mt-1">
-                    {language === 'ARABIC'
-                      ? 'جرب البحث عن كلمة أخرى.'
-                      : 'Try searching with another keyword.'}
-                  </p>
+
+                  {/* POWERED BY EMSA7 footer matching Figma Frame 164:128 */}
+                  <div className="pt-12 pb-4 flex justify-center items-center">
+                    <img
+                      src="/images/powered-by-emsa7.png"
+                      alt="POWERED BY EMSA7"
+                      className="h-[18px] w-auto object-contain opacity-90"
+                    />
+                  </div>
                 </div>
               ) : (
-                <div className="flex flex-col gap-3">
-                  {searchResults.map((item) => (
-                    <FoodCardHorizontal
-                      key={item.id}
-                      item={item}
-                      quantity={getItemQuantity(item.id)}
-                      language={language}
-                      onAdd={handleCardAdd}
-                      onIncrement={(food) => handleCartItemIncrement(food.id)}
-                      onDecrement={(food) => handleDecrement(food.id)}
-                      onClick={(food) => {
-                        openFoodDetailModal(food.id);
-                      }}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className="flex items-center justify-between mb-1">
+                    <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%]">
+                      {language === 'ARABIC' ? 'نتائج لـ ' : 'Results for '}
+                      <span className="text-[#026F4F]">"{searchQuery}"</span>
+                    </h2>
+                    <span className="text-xs font-medium text-zinc-400">
+                      {searchResults.length} {language === 'ARABIC' ? 'صنف' : 'items'}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    {searchResults.map((item) => (
+                      <FoodCardHorizontal
+                        key={item.id}
+                        item={item}
+                        quantity={getItemQuantity(item.id)}
+                        language={language}
+                        onAdd={handleCardAdd}
+                        onIncrement={(food) => handleCartItemIncrement(food.id)}
+                        onDecrement={(food) => handleDecrement(food.id)}
+                        onClick={(food) => {
+                          openFoodDetailModal(food.id);
+                        }}
+                      />
+                    ))}
+                  </div>
+                </>
               )}
             </section>
           ) : selectedCategory === 'all' ? (
@@ -629,10 +653,10 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
               </section>
             </div>
           ) : (
-            /* Filtered Category Section */
+            /* Filtered Category Section matching Figma Frame 42:527 (e.g. Ramen (3)) */
             <section className="space-y-3 pt-1">
               <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%] capitalize">
-                {CATEGORIES.find((c) => c.id === selectedCategory)?.name || selectedCategory}
+                {CATEGORIES.find((c) => c.id === selectedCategory)?.name || selectedCategory} ({categoryFilteredItems.length})
               </h2>
 
               <div className="flex flex-col gap-3">

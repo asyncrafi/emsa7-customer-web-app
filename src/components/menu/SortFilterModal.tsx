@@ -82,30 +82,30 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-xs animate-in fade-in duration-200 select-none p-0 sm:p-4"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs select-none p-0 sm:p-4 animate-fade-in-overlay"
       onClick={onClose}
     >
       <div
         dir={isArabic ? 'rtl' : 'ltr'}
-        className="w-full max-w-[440px] bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl p-5 sm:p-6 animate-in slide-in-from-bottom duration-300 relative overflow-y-auto max-h-[88vh] font-sans"
+        className="w-full max-w-[440px] bg-white rounded-t-[32px] sm:rounded-3xl shadow-2xl p-5 sm:p-6 pb-7 animate-slide-up-modal relative overflow-y-auto max-h-[88vh] font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Center Drag Handle Pill */}
         <div className="w-12 h-1 bg-zinc-300/80 rounded-full mx-auto mb-4" />
 
-        {/* Header Title (Clean medium/semibold matching Figma) */}
-        <div className="relative mb-3 text-center">
-          <h2 className="text-[18px] sm:text-[19px] font-semibold text-[#1C1C1E] tracking-normal">
+        {/* Header Title (Figma Frame 2147226289: 30px semi-bold #2D2F33) */}
+        <div className="relative mb-2">
+          <h2 className="text-[26px] sm:text-[30px] font-semibold text-[#2D2F33] leading-[140%] tracking-tight">
             {isArabic ? 'الفرز والتصفية' : 'Sort & Filter'}
           </h2>
         </div>
 
         {/* Subtle Horizontal Divider */}
-        <div className="border-b border-zinc-100 my-3" />
+        <div className="border-b border-zinc-100 my-2.5" />
 
         {/* Section 1: Sort By */}
         <div className="space-y-1 my-3">
-          <p className="text-[12px] font-medium text-[#8E8E93] mb-2 tracking-normal">
+          <p className="text-[12px] font-medium text-[#989898] mb-2 leading-[140%] tracking-normal">
             {isArabic ? 'ترتيب حسب' : 'Sort By'}
           </p>
 
@@ -118,11 +118,11 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
                   onClick={() => setTempSort(isSelected ? null : option.id)}
                   className="flex items-center justify-between py-2 px-1 cursor-pointer hover:bg-zinc-50/70 rounded-xl transition-colors"
                 >
-                  <span className="text-[15px] font-medium text-[#2D2F33]">
+                  <span className="text-[16px] font-normal text-[#2D2F33] leading-[140%]">
                     {isArabic ? option.labelAr : option.labelEn}
                   </span>
 
-                  {/* Radio Circle Icon */}
+                  {/* Radio Circle Icon matching Figma */}
                   <div
                     className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors shrink-0 ${
                       isSelected ? 'border-2 border-[#026F4F]' : 'border-zinc-300'
@@ -138,7 +138,7 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
 
         {/* Section 2: Filter Tags (Bestseller, Seafood, Sweet, Chef's pick, Sharing) */}
         <div className="mt-4 pt-1">
-          <p className="text-[12px] font-medium text-[#8E8E93] mb-2.5 tracking-normal">
+          <p className="text-[12px] font-medium text-[#989898] mb-2.5 leading-[140%] tracking-normal">
             {isArabic ? 'تصفية' : 'Filter'}
           </p>
 
@@ -150,7 +150,7 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
                   key={tag.id}
                   type="button"
                   onClick={() => toggleTag(tag.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-colors cursor-pointer ${
+                  className={`px-4 py-2 rounded-full text-[16px] font-normal leading-[140%] transition-colors cursor-pointer ${
                     isSelected
                       ? 'bg-[#026F4F] text-white shadow-2xs'
                       : 'bg-[#F4F5F7] text-[#8E8E93] hover:bg-zinc-200/70'
@@ -163,13 +163,13 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
           </div>
         </div>
 
-        {/* Action Buttons Row */}
+        {/* Action Buttons Row matching Figma Frame 1171277297 (Height 59px, rounded-full, 19px text) */}
         <div className="flex items-center gap-3 mt-7 pt-2">
           {/* Clear Filters Button */}
           <button
             type="button"
             onClick={handleClear}
-            className="flex-1 py-3 px-4 rounded-full bg-[#EEF0F2] hover:bg-zinc-200/80 text-[#2D2F33] font-medium text-[14px] transition-colors cursor-pointer text-center"
+            className="flex-1 h-[59px] rounded-full bg-[#E9E9E9] hover:bg-[#dedede] text-[#2D2F33] font-medium text-[17px] sm:text-[19px] leading-[140%] transition-colors cursor-pointer flex items-center justify-center text-center"
           >
             {isArabic ? 'إعادة ضبط' : 'Clear Filters'}
           </button>
@@ -178,7 +178,7 @@ export const SortFilterModal: React.FC<SortFilterModalProps> = ({
           <button
             type="button"
             onClick={handleApply}
-            className="flex-1 py-3 px-4 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[14px] transition-all active:scale-[0.99] cursor-pointer text-center shadow-xs"
+            className="flex-1 h-[59px] rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[17px] sm:text-[19px] leading-[140%] transition-all active:scale-[0.99] cursor-pointer flex items-center justify-center text-center shadow-xs"
           >
             {isArabic ? 'تطبيق التصفية' : 'Apply Filters'}
           </button>

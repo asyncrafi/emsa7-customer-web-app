@@ -1,5 +1,4 @@
 import React from 'react';
-import { Plus, Minus } from 'lucide-react';
 import { type MenuItem, formatPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
 
@@ -62,11 +61,11 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
           </span>
 
           {quantity > 0 ? (
-            /* Stepper Pill when Item is in Cart */
+            /* Stepper (Figma Frame 1171277090: 85x30) */
             <div
               dir="ltr"
               onClick={(e) => e.stopPropagation()}
-              className="bg-[#f4f4f5] rounded-full p-0.5 flex items-center gap-1 shrink-0 border border-zinc-200/60 shadow-2xs"
+              className="flex items-center gap-2 h-[30px] shrink-0"
             >
               <button
                 type="button"
@@ -75,11 +74,11 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
                   onDecrement?.(item);
                 }}
                 aria-label={`Decrease ${title} quantity`}
-                className="w-5.5 h-5.5 rounded-full bg-[#509B82] hover:bg-[#025a40] text-white flex items-center justify-center cursor-pointer active:scale-90 transition-transform"
+                className="w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer active:scale-95 transition-transform shrink-0"
               >
-                <Minus className="w-3 h-3 stroke-2" />
+                <img src="/icons/lsicon_minus-filled.svg" alt="Decrease" className="w-[30px] h-[30px]" />
               </button>
-              <span className="font-medium text-xs text-[#2D2F33] min-w-[1rem] text-center">
+              <span className="font-semibold text-[18px] text-[#2D2F33] min-w-[16px] text-center leading-[140%] select-none">
                 {quantity}
               </span>
               <button
@@ -90,9 +89,9 @@ export const FoodCardVertical: React.FC<FoodCardVerticalProps> = ({
                   else if (onAdd) onAdd(item);
                 }}
                 aria-label={`Increase ${title} quantity`}
-                className="w-5.5 h-5.5 rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white flex items-center justify-center cursor-pointer active:scale-90 transition-transform"
+                className="w-[30px] h-[30px] rounded-full flex items-center justify-center cursor-pointer active:scale-95 transition-transform shrink-0"
               >
-                <Plus className="w-3 h-3 stroke-2" />
+                <img src="/icons/mynaui_plus-circle-solid.svg" alt="Increase" className="w-[30px] h-[30px]" />
               </button>
             </div>
           ) : (
