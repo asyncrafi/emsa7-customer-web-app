@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Clock, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Download, Plus } from 'lucide-react';
 import { type CartItem, formatPrice, formatOrderDate, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
 import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
@@ -729,6 +729,18 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   <span>{isArabic ? 'إعادة الطلب' : 'Reorder'}</span>
                   <img src="/icons/weui_arrow-outlined.svg" alt="" className="w-2.5 h-4 object-contain rtl:rotate-180" />
                 </button>
+
+                {/* View & Download Receipt Link (matching thin underlined history links) */}
+                <div className="flex justify-center pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedInvoiceOrder(ord)}
+                    className="inline-flex items-center gap-1.5 text-[13px] font-normal text-[#026F4F] hover:text-[#025a40] underline underline-offset-3 cursor-pointer py-1 transition-opacity active:opacity-75"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>{isArabic ? 'عرض وتحميل الإيصال' : 'View & Download Receipt'}</span>
+                  </button>
+                </div>
               </div>
             ))}
 

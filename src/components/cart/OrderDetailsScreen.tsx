@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download } from 'lucide-react';
 import { formatPrice, getCartItemTotalPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
 import type { StoredOrder } from '@/components/cart/MyOrderScreen';
 import { PoweredByFooter } from '@/components/common/PoweredByFooter';
+import { EInvoiceModal } from '@/components/cart/EInvoiceModal';
 
 export type OrderStatus = 'preparing' | 'ready' | 'served';
 
@@ -39,6 +40,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
     return 'preparing';
   });
   const [manualOverride, setManualOverride] = useState(false);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   const isArabic = activeLanguage === 'ARABIC';
 
@@ -381,6 +383,16 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
               </div>
             </div>
 
+            {/* Download Receipt / Invoice Button */}
+            <button
+              type="button"
+              onClick={() => setShowInvoiceModal(true)}
+              className="w-full h-[52px] rounded-[30px] bg-white hover:bg-zinc-50 border border-[#026F4F]/40 text-[#026F4F] font-semibold text-[16px] leading-[140%] flex items-center justify-center gap-2.5 shadow-2xs cursor-pointer transition-transform active:scale-[0.99]"
+            >
+              <Download className="w-5 h-5 text-[#026F4F]" />
+              <span>{isArabic ? 'تحميل الفاتورة / الإيصال' : 'Download Receipt / Invoice'}</span>
+            </button>
+
             {/* POWERED BY EMSA7 footer branding */}
             <PoweredByFooter className="pt-8 pb-4" />
           </div>
@@ -409,6 +421,37 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
           </div>
         </div>
       </div>
+
+      {/* E-Invoice / Receipt Modal */}
+      <EInvoiceModal
+        isOpen={showInvoiceModal}
+        onClose={() => setShowInvoiceModal(false)}
+        orderId={order?.id || _orderId}
+        date={order?.date || (isArabic ? 'اليوم، 7:42 م' : 'Today, 7:42 PM')}
+        items={
+          order?.cartItems && order.cartItems.length > 0
+            ? order.cartItems.map((ci) => ({
+                name: ci.item.name,
+                nameAr: ci.item.nameAr,
+                qty: ci.quantity,
+                price: getCartItemTotalPrice(ci) / ci.quantity,
+              }))
+            : order?.items && order.items.length > 0
+            ? order.items.map((it) => ({
+                name: it.name,
+                nameAr: it.nameAr,
+                qty: it.qty,
+                price: it.price,
+              }))
+            : [{ name: 'Shoyu Ramen', nameAr: 'شويو رامن', qty: 1, price: 15.99 }]
+        }
+        subtotal={orderSubtotal}
+        serviceCharge={orderServiceCharge}
+        vat={orderVat}
+        tipAmount={orderTips}
+        total={orderTotal}
+        language={activeLanguage}
+      />
     </div>
   );
 };

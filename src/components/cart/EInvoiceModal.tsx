@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { ArrowLeft, Printer } from 'lucide-react';
+import { ArrowLeft, Download, Printer } from 'lucide-react';
 import { formatPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
 import SvgEmsa7Icon from '@/components/ui/svg-icons/EMSA7Svg';
@@ -112,7 +112,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
 
       {/* Main Page Container: Strictly mobile 440px width matching Figma */}
       <div className="w-full max-w-[440px] mx-auto flex-1 flex flex-col justify-between space-y-4">
-        {/* Header Row: 50x50 Back Circle Button (bg #E9E9E9) + Centered Title Receipt (Satoshi 28px font-medium #2D2F33) */}
+        {/* Header Row: 50x50 Back Circle Button (bg #E9E9E9) + Centered Title Receipt + Print Button */}
         <header className="relative flex items-center justify-center py-2 min-h-[50px] no-print">
           <button
             type="button"
@@ -126,6 +126,15 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
           <h1 className="text-[28px] font-medium text-[#2D2F33] tracking-tight leading-[140%]">
             {isArabic ? 'الإيصال' : 'Receipt'}
           </h1>
+
+          <button
+            type="button"
+            onClick={handlePrint}
+            aria-label={isArabic ? 'طباعة' : 'Print'}
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-[50px] h-[50px] rounded-full bg-[#E9E9E9] hover:bg-[#dedede] text-[#2D2F33] flex items-center justify-center cursor-pointer transition-transform active:scale-95 rtl:right-auto rtl:left-0 shadow-2xs"
+          >
+            <Printer className="w-5 h-5 text-[#2D2F33]" />
+          </button>
         </header>
 
         {/* White Receipt Card matching Figma Reciept.png (radius 11.1px bg white border #E9E9E9) */}
@@ -217,14 +226,14 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
             {isArabic ? 'إضافة أصناف' : 'Add Items'}
           </button>
 
-          {/* Save Button (Button 1585:1010: radius 30px bg #026F4F text white) */}
+          {/* Download Receipt Button (Button 1585:1010: radius 30px bg #026F4F text white matching Figma) */}
           <button
             type="button"
             onClick={handlePrint}
             className="flex-1 h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[19px] leading-[140%] flex items-center justify-center gap-2 shadow-md cursor-pointer transition-transform active:scale-[0.98]"
           >
-            <Printer className="w-5 h-5" />
-            <span>{isArabic ? 'حفظ' : 'Save'}</span>
+            <Download className="w-5 h-5" />
+            <span>{isArabic ? 'تحميل الإيصال' : 'Download Receipt'}</span>
           </button>
         </div>
       </div>
