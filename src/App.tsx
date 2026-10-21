@@ -27,11 +27,9 @@ function MainApp() {
         setStep('scanner');
       } else if (requestedScreen === 'menu') {
         setStep('menu');
-      } else if (requestedScreen === 'table' || requestedScreen === 'table-confirmed' || hasTableParam) {
-        setStep('table-confirmed');
       } else {
-        // Default start at scanner so user can experience the full scan flow
-        setStep('scanner');
+        // Customer scans QR from their native phone camera and lands directly ("3la tool") on Table Confirmed
+        setStep('table-confirmed');
       }
     }, 1000);
 
