@@ -719,6 +719,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                       if (onReorder) {
                         onReorder(itemsToReorder);
                       } else {
+                        onClearCart?.();
                         itemsToReorder.forEach((ci) => onAddToCart?.(ci.item));
                       }
                     }

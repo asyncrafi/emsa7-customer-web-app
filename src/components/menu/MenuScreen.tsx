@@ -751,18 +751,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
         onAddToCart={(item) => handleIncrement(item)}
         onUpdateCartItem={handleUpdateCartItem}
         onReorder={(itemsToReorder) => {
-          setCart((prevCart) => {
-            const updated = [...prevCart];
-            itemsToReorder.forEach((rItem) => {
-              const idx = updated.findIndex((c) => c.item.id === rItem.item.id);
-              if (idx > -1) {
-                updated[idx].quantity += rItem.quantity;
-              } else {
-                updated.push({ ...rItem });
-              }
-            });
-            return updated;
-          });
+          // Replace existing cart items with reordered items (per client requirement)
+          setCart(itemsToReorder.map((rItem) => ({ ...rItem })));
         }}
         onCallWaiter={openWaiterModal}
         language={language}
