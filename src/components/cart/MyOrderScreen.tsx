@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Clock, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Plus, Trash2 } from 'lucide-react';
 import { type CartItem, formatPrice, formatOrderDate, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
 import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
@@ -551,9 +551,10 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                     <button
                       type="button"
                       onClick={onClearCart}
-                      className="text-[13px] sm:text-[14px] font-normal text-[#E53935] hover:text-[#C62828] underline underline-offset-3 cursor-pointer transition-colors active:opacity-75 px-1 py-0.5"
+                      className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#E53935] hover:text-[#C62828] hover:bg-red-50/80 px-2.5 py-1 rounded-full transition-colors cursor-pointer active:scale-95"
                     >
-                      {isArabic ? 'مسح السلة' : 'Clear'}
+                      <Trash2 className="w-3.5 h-3.5 stroke-[2.2]" />
+                      <span>{isArabic ? 'مسح السلة' : 'Clear'}</span>
                     </button>
                   </div>
 
