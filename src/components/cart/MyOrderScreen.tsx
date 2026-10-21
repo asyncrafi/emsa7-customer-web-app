@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Clock, Download, Plus } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Download, Plus, ChevronRight } from 'lucide-react';
 import { type CartItem, formatPrice, formatOrderDate, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
 import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
@@ -664,7 +664,11 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 {/* Header Row: #A102 and Price */}
                 <div className="flex items-start justify-between">
                   <div>
-                    <h2 className="text-[23px] font-semibold text-[#2D2F33] tracking-tight leading-[140%]">
+                    <h2
+                      onClick={() => setSelectedInvoiceOrder(ord)}
+                      className="text-[23px] font-semibold text-[#2D2F33] hover:text-[#026F4F] tracking-tight leading-[140%] cursor-pointer transition-colors"
+                      title={isArabic ? 'عرض تفاصيل الطلب والإيصال' : 'Click to view order receipt'}
+                    >
                       <bdi dir="ltr">{ord.id}</bdi>
                     </h2>
                     <p className="text-[13px] text-[#989898] font-normal mt-0.5 leading-[140%]">
@@ -704,40 +708,41 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   ))}
                 </div>
 
-                {/* Long BTN: Reorder > matching Figma Frame 112:1243 (372x55 radius 38px bg #E9E9E9) */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onReorder && ord.cartItems && ord.cartItems.length > 0) {
-                      onReorder(ord.cartItems);
-                    } else {
-                      const itemsToReorder: CartItem[] = ord.items.map((it) => {
-                        const matched =
-                          MOCK_MENU_ITEMS.find((m) => m.name.toLowerCase() === it.name.toLowerCase()) ||
-                          MOCK_MENU_ITEMS[0];
-                        return { item: matched, quantity: it.qty };
-                      });
-                      if (onReorder) {
-                        onReorder(itemsToReorder);
+                {/* Thin Underlined History Action Links (Client Note: thin letters and underlined, clearly clickable) */}
+                <div className="pt-3 border-t border-zinc-100 flex flex-wrap items-center justify-between gap-3 mt-2">
+                  {/* Reorder Action: thin font, cleanly underlined, clear clickable hover/tap styling */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onReorder && ord.cartItems && ord.cartItems.length > 0) {
+                        onReorder(ord.cartItems);
                       } else {
-                        onClearCart?.();
-                        itemsToReorder.forEach((ci) => onAddToCart?.(ci.item));
+                        const itemsToReorder: CartItem[] = ord.items.map((it) => {
+                          const matched =
+                            MOCK_MENU_ITEMS.find((m) => m.name.toLowerCase() === it.name.toLowerCase()) ||
+                            MOCK_MENU_ITEMS[0];
+                          return { item: matched, quantity: it.qty };
+                        });
+                        if (onReorder) {
+                          onReorder(itemsToReorder);
+                        } else {
+                          onClearCart?.();
+                          itemsToReorder.forEach((ci) => onAddToCart?.(ci.item));
+                        }
                       }
-                    }
-                    setActiveTab('cart');
-                  }}
-                  className="w-full h-[55px] rounded-[38px] bg-[#E9E9E9] hover:bg-[#dedede] text-black font-medium text-[16px] leading-[140%] flex items-center justify-center gap-2 transition-colors cursor-pointer mt-3"
-                >
-                  <span>{isArabic ? 'إعادة الطلب' : 'Reorder'}</span>
-                  <img src="/icons/weui_arrow-outlined.svg" alt="" className="w-2.5 h-4 object-contain rtl:rotate-180" />
-                </button>
+                      setActiveTab('cart');
+                    }}
+                    className="inline-flex items-center gap-1.5 text-[15px] font-normal text-[#026F4F] hover:text-[#025a40] underline underline-offset-4 decoration-[#026F4F]/60 hover:decoration-[#026F4F] transition-all cursor-pointer py-1 active:opacity-70 group"
+                  >
+                    <span>{isArabic ? 'إعادة الطلب' : 'Reorder'}</span>
+                    <ChevronRight className="w-4 h-4 rtl:rotate-180 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 transition-transform" />
+                  </button>
 
-                {/* View & Download Receipt Link (matching thin underlined history links) */}
-                <div className="flex justify-center pt-1">
+                  {/* View & Download Receipt: thin letters, cleanly underlined */}
                   <button
                     type="button"
                     onClick={() => setSelectedInvoiceOrder(ord)}
-                    className="inline-flex items-center gap-1.5 text-[13px] font-normal text-[#026F4F] hover:text-[#025a40] underline underline-offset-3 cursor-pointer py-1 transition-opacity active:opacity-75"
+                    className="inline-flex items-center gap-1.5 text-[13px] font-normal text-zinc-500 hover:text-[#026F4F] underline underline-offset-4 decoration-zinc-300 hover:decoration-[#026F4F] cursor-pointer py-1 transition-colors active:opacity-70"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>{isArabic ? 'عرض وتحميل الإيصال' : 'View & Download Receipt'}</span>
