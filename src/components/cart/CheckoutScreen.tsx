@@ -6,6 +6,7 @@ import { PaymentScreen } from '@/components/cart/PaymentScreen';
 import { useLanguage } from '@/providers/LanguageContext';
 import SvgChairIcon from '@/components/ui/svg-icons/ChairSvg';
 import PromoBadgeSvg from '@/components/ui/svg-icons/PromoBadgeSvg';
+import { PoweredByFooter } from '@/components/common/PoweredByFooter';
 
 export interface CheckoutScreenProps {
   isOpen: boolean;
@@ -515,6 +516,9 @@ export const CheckoutScreen: React.FC<CheckoutScreenProps> = ({
             </span>
           </div>
         </div>
+
+        {/* POWERED BY EMSA7 footer branding */}
+        <PoweredByFooter className="pt-8 pb-4" />
       </div>
     </div>
 

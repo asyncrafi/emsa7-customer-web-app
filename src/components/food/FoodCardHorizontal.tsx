@@ -100,8 +100,13 @@ export const FoodCardHorizontal: React.FC<FoodCardHorizontalProps> = ({
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                if (onAdd) onAdd(item);
-                else if (onIncrement) onIncrement(item);
+                if (item.optionGroups && item.optionGroups.length > 0 && onClick) {
+                  onClick(item);
+                } else if (onAdd) {
+                  onAdd(item);
+                } else if (onIncrement) {
+                  onIncrement(item);
+                }
               }}
               aria-label={`Add ${title} to cart`}
               className="w-[28px] h-[28px] rounded-full flex items-center justify-center active:scale-95 transition-all cursor-pointer shrink-0"

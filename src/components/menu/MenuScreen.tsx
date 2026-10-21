@@ -23,6 +23,8 @@ import { FloatingCartBar } from '@/components/cart/FloatingCartBar';
 import { SortFilterModal, type SortOption } from './SortFilterModal';
 import { useUrlModalState } from '@/hooks/useUrlModalState';
 import { useWaiterTooltip } from '@/hooks/useWaiterTooltip';
+import { useWaiterCooldown } from '@/hooks/useWaiterCooldown';
+import { PoweredByFooter } from '@/components/common/PoweredByFooter';
 
 interface MenuScreenProps {
   tableName?: string;
@@ -76,6 +78,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   const [cart, setCart] = useState<CartItem[]>([]);
   const [openCheckoutDirectly, setOpenCheckoutDirectly] = useState(false);
   const waiterTooltip = useWaiterTooltip();
+  const { isCooldown, formattedTime } = useWaiterCooldown();
 
   // Sort & Filter State
   const [selectedSort, setSelectedSort] = useState<SortOption>(null);
@@ -199,7 +202,11 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   };
 
   const handleCardAdd = (food: MenuItem) => {
-    handleAddToCart(food, 1);
+    if (food.optionGroups && food.optionGroups.length > 0) {
+      openFoodDetailModal(food.id);
+    } else {
+      handleAddToCart(food, 1);
+    }
   };
 
   const handleIncrement = (item: MenuItem) => {
@@ -555,20 +562,11 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                   />
 
                   {/* Subtitle matching Figma: No items match your filters (19px font-normal #2D2F33) */}
-                  <p className="text-[19px] font-normal text-[#2D2F33] text-center leading-[140%]">
+                  <p className="text-[19px] font-normal text-[#2D2F33] text-center leading-[140%] pb-4">
                     {language === 'ARABIC'
                       ? 'لا توجد أصناف تطابق بحثك'
                       : 'No items match your filters'}
                   </p>
-
-                  {/* POWERED BY EMSA7 footer matching Figma Frame 164:128 */}
-                  <div className="pt-12 pb-4 flex justify-center items-center">
-                    <img
-                      src="/images/powered-by-emsa7.png"
-                      alt="POWERED BY EMSA7"
-                      className="h-[18px] w-auto object-contain opacity-90"
-                    />
-                  </div>
                 </div>
               ) : (
                 <>
@@ -683,7 +681,8 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             </section>
           )}
 
-
+          {/* POWERED BY EMSA7 footer branding */}
+          <PoweredByFooter className="pt-10 pb-6" />
         </div>
       </div>
 
@@ -695,26 +694,40 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
           totalCartCount > 0 ? 'bottom-20 sm:bottom-22' : 'bottom-6 sm:bottom-7'
         }`}
       >
-        {/* Floating Tooltip Label: Call a Waiter (Frame 2147226382: 98x38 bg #2d2f33 font 13px medium white) */}
+        {/* Floating Tooltip Label: Call a Waiter or Cooldown Timer */}
         <div
-          className={`w-[98px] h-[38px] rounded-[12px] bg-[#2D2F33] text-white text-[13px] font-medium flex items-center justify-center leading-[140%] shadow-md select-none transition-all duration-500 origin-bottom ${
-            waiterTooltip.show
+          className={`min-w-[98px] px-3 h-[38px] rounded-[12px] bg-[#2D2F33] text-white text-[13px] font-medium flex items-center justify-center leading-[140%] shadow-md select-none transition-all duration-500 origin-bottom ${
+            waiterTooltip.show || isCooldown
               ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
               : 'opacity-0 scale-90 translate-y-2 pointer-events-none'
           }`}
         >
-          <span>{language === 'ARABIC' ? 'طلب النادل' : 'Call a Waiter'}</span>
+          <span>
+            {isCooldown
+              ? language === 'ARABIC'
+                ? `يرجى الانتظار (${formattedTime})`
+                : `Please wait (${formattedTime})`
+              : language === 'ARABIC'
+              ? 'طلب النادل'
+              : 'Call a Waiter'}
+          </span>
         </div>
 
         {/* Bell Button (Ellipse 692: 50x50 bg #efac31) */}
         <button
           type="button"
+          disabled={isCooldown}
           onClick={() => {
+            if (isCooldown) return;
             waiterTooltip.dismiss();
             openWaiterModal();
           }}
-          aria-label="Call Waiter"
-          className="relative group w-[50px] h-[50px] rounded-full bg-[#EFAC31] hover:bg-[#df9c21] active:scale-95 text-white flex items-center justify-center shadow-lg transition-all cursor-pointer"
+          aria-label={isCooldown ? `Wait ${formattedTime}` : 'Call Waiter'}
+          className={`relative group w-[50px] h-[50px] rounded-full text-white flex items-center justify-center shadow-lg transition-all ${
+            isCooldown
+              ? 'bg-zinc-400 cursor-not-allowed opacity-85'
+              : 'bg-[#EFAC31] hover:bg-[#df9c21] active:scale-95 cursor-pointer'
+          }`}
         >
           <SvgBellsIcon className="w-6 h-6 fill-current text-white" />
         </button>

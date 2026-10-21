@@ -17,6 +17,11 @@ function MainApp() {
 
   // Automatically transition from splash loader after 1 second
   useEffect(() => {
+    if (requestedScreen === 'splash') {
+      setStep('splash');
+      return;
+    }
+
     const timer = setTimeout(() => {
       if (requestedScreen === 'scanner' || requestedScreen === 'scan') {
         setStep('scanner');

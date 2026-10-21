@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { formatPrice, getCartItemTotalPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
 import type { StoredOrder } from '@/components/cart/MyOrderScreen';
+import { PoweredByFooter } from '@/components/common/PoweredByFooter';
 
 export type OrderStatus = 'preparing' | 'ready' | 'served';
 
@@ -379,6 +380,9 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* POWERED BY EMSA7 footer branding */}
+            <PoweredByFooter className="pt-8 pb-4" />
           </div>
         </div>
 

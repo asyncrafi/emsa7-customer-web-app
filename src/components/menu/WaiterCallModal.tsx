@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBodyScrollLock } from '@/hooks/useBodyScrollLock';
 import { useLanguage } from '@/providers/LanguageContext';
+import { useWaiterCooldown } from '@/hooks/useWaiterCooldown';
 
 interface WaiterCallModalProps {
   isOpen: boolean;
@@ -18,6 +19,7 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
 }) => {
   const { language: contextLanguage } = useLanguage();
   const activeLanguage = propLanguage || contextLanguage;
+  const { isCooldown, formattedTime, startCooldown } = useWaiterCooldown();
 
   useBodyScrollLock(isOpen);
 
@@ -35,6 +37,8 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
   const isArabic = activeLanguage === 'ARABIC';
 
   const handleCallNow = () => {
+    if (isCooldown) return;
+    startCooldown();
     setStep('notifying');
     // Simulate API notification delay
     setTimeout(() => {
@@ -98,10 +102,21 @@ export const WaiterCallModal: React.FC<WaiterCallModalProps> = ({
 
               <button
                 type="button"
+                disabled={isCooldown}
                 onClick={handleCallNow}
-                className="flex-1 h-[59px] rounded-full bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[17px] sm:text-[19px] leading-[140%] shadow-md transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center text-center"
+                className={`flex-1 h-[59px] rounded-full text-white font-medium text-[17px] sm:text-[19px] leading-[140%] shadow-md transition-all flex items-center justify-center text-center ${
+                  isCooldown
+                    ? 'bg-zinc-400 cursor-not-allowed opacity-80'
+                    : 'bg-[#026F4F] hover:bg-[#025a40] active:scale-[0.98] cursor-pointer'
+                }`}
               >
-                {isArabic ? 'اطلب الآن' : 'Call Now'}
+                {isCooldown
+                  ? isArabic
+                    ? `انتظر (${formattedTime})`
+                    : `Wait (${formattedTime})`
+                  : isArabic
+                  ? 'اطلب الآن'
+                  : 'Call Now'}
               </button>
             </div>
           </div>

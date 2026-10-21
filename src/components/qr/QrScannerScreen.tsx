@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { Camera, QrCode, Sparkles, Languages, ChevronDown } from 'lucide-react';
 import { useLanguage } from '@/providers/LanguageContext';
+import { PoweredByFooter } from '@/components/common/PoweredByFooter';
 
 interface QrScannerScreenProps {
   onScanSuccess: (decodedText: string) => void;
@@ -242,6 +243,8 @@ export const QrScannerScreen: React.FC<QrScannerScreenProps> = ({
             {isArabic ? 'تخطي إلى الطاولة مباشرة' : 'Skip directly to Table'}
           </button>
         )}
+
+        <PoweredByFooter theme="dark" className="pt-3 pb-2" />
       </footer>
     </div>
   );

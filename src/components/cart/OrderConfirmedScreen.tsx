@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatPrice, type CartItem, getCartItemTotalPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
+import { PoweredByFooter } from '@/components/common/PoweredByFooter';
 
 // Import downloaded original Figma Chef in kitchen banner
 import chefKitchenBanner from '@/assets/719aa30438ca4acab531227c4dee63edb65a55fd.png';
@@ -221,6 +222,9 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
               </span>
             </div>
           </div>
+
+          {/* POWERED BY EMSA7 footer branding */}
+          <PoweredByFooter className="pt-8 pb-4" />
         </div>
       </div>
 

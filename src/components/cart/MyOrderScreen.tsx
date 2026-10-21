@@ -12,6 +12,8 @@ import { QuantityControl } from '@/components/food/QuantityControl';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgPlacedIcon from '@/components/ui/svg-icons/PlacedSvg';
 import { useWaiterTooltip } from '@/hooks/useWaiterTooltip';
+import { useWaiterCooldown } from '@/hooks/useWaiterCooldown';
+import { PoweredByFooter } from '@/components/common/PoweredByFooter';
 
 export interface StoredOrder {
   id: string;
@@ -85,6 +87,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const waiterTooltip = useWaiterTooltip();
+  const { isCooldown, formattedTime } = useWaiterCooldown();
 
   React.useEffect(() => {
     if (isOpen) {
@@ -194,7 +197,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = getCartSubtotal(cart);
   const serviceCharge = Math.round(subtotal * 0.10 * 100) / 100;
-  const grandTotal = subtotal + serviceCharge;
+  const vat = Math.round(subtotal * 0.05 * 100) / 100;
+  const grandTotal = Math.round((subtotal + serviceCharge + vat) * 100) / 100;
 
   return (
     <div
@@ -410,43 +414,40 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             >
               <div
                 className={`bg-[#2D2F33] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-md relative transition-all duration-500 origin-bottom after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#2D2F33] select-none ${
-                  waiterTooltip.show
+                  waiterTooltip.show || isCooldown
                     ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                     : 'opacity-0 scale-90 translate-y-1 pointer-events-none'
                 }`}
               >
-                {isArabic ? 'استدعاء النادل' : 'Call a Waiter'}
+                {isCooldown
+                  ? isArabic
+                    ? `يرجى الانتظار (${formattedTime})`
+                    : `Please wait (${formattedTime})`
+                  : isArabic
+                  ? 'استدعاء النادل'
+                  : 'Call a Waiter'}
               </div>
               <button
                 type="button"
+                disabled={isCooldown}
                 onClick={() => {
+                  if (isCooldown) return;
                   waiterTooltip.dismiss();
                   onCallWaiter?.();
                 }}
-                className="w-[50px] h-[50px] rounded-full bg-[#F6A743] hover:bg-[#e09230] text-white flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
-                aria-label="Call a Waiter"
+                className={`w-[50px] h-[50px] rounded-full text-white flex items-center justify-center shadow-lg transition-all ${
+                  isCooldown
+                    ? 'bg-zinc-400 cursor-not-allowed opacity-85'
+                    : 'bg-[#F6A743] hover:bg-[#e09230] active:scale-95 cursor-pointer'
+                }`}
+                aria-label={isCooldown ? `Wait ${formattedTime}` : 'Call a Waiter'}
               >
                 <img src="/icons/solar_bell-bold.svg" alt="" className="w-6 h-6 object-contain" />
               </button>
             </div>
 
-            {/* Footer Branding Line: POWERED BY EMSA7 (Figma-Exact Monochrome) */}
-            <div className="pt-10 pb-4 text-center select-none flex justify-center items-center">
-              <a
-                href="https://emsa7.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                dir="ltr"
-                className="inline-flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity no-underline"
-              >
-                <span className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
-                  POWERED BY
-                </span>
-                <div className="inline-flex items-center justify-center my-auto shrink-0">
-                  <img src="/emsa7-logo-grey.png" alt="EMSA7" className="h-4 w-auto object-contain" />
-                </div>
-              </a>
-            </div>
+            {/* Footer Branding Line: POWERED BY EMSA7 */}
+            <PoweredByFooter className="pt-10 pb-4" />
           </div>
         )}
 
@@ -623,6 +624,11 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                       <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
                       <span className="text-[#686868] font-semibold">{formatPrice(serviceCharge, activeLanguage)}</span>
                     </div>
+
+                    <div className="flex justify-between items-center text-[#989898]">
+                      <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
+                      <span className="text-[#686868] font-semibold">{formatPrice(vat, activeLanguage)}</span>
+                    </div>
                   </div>
 
                   {/* Dashed Separator Line matching Vector 13 */}
@@ -638,6 +644,9 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                     </span>
                   </div>
                 </div>
+
+                {/* Footer Branding Line: POWERED BY EMSA7 */}
+                <PoweredByFooter className="pt-8 pb-4" />
               </div>
             )}
           </div>
@@ -731,43 +740,40 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
             >
               <div
                 className={`bg-[#2D2F33] text-white text-[11px] font-medium px-3 py-1 rounded-full shadow-md relative transition-all duration-500 origin-bottom after:content-[''] after:absolute after:top-full after:right-5 after:border-4 after:border-transparent after:border-t-[#2D2F33] select-none ${
-                  waiterTooltip.show
+                  waiterTooltip.show || isCooldown
                     ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto'
                     : 'opacity-0 scale-90 translate-y-1 pointer-events-none'
                 }`}
               >
-                {isArabic ? 'استدعاء النادل' : 'Call a Waiter'}
+                {isCooldown
+                  ? isArabic
+                    ? `يرجى الانتظار (${formattedTime})`
+                    : `Please wait (${formattedTime})`
+                  : isArabic
+                  ? 'استدعاء النادل'
+                  : 'Call a Waiter'}
               </div>
               <button
                 type="button"
+                disabled={isCooldown}
                 onClick={() => {
+                  if (isCooldown) return;
                   waiterTooltip.dismiss();
                   onCallWaiter?.();
                 }}
-                className="w-[50px] h-[50px] rounded-full bg-[#F6A743] hover:bg-[#e09230] text-white flex items-center justify-center shadow-lg active:scale-95 transition-all cursor-pointer"
-                aria-label="Call a Waiter"
+                className={`w-[50px] h-[50px] rounded-full text-white flex items-center justify-center shadow-lg transition-all ${
+                  isCooldown
+                    ? 'bg-zinc-400 cursor-not-allowed opacity-85'
+                    : 'bg-[#F6A743] hover:bg-[#e09230] active:scale-95 cursor-pointer'
+                }`}
+                aria-label={isCooldown ? `Wait ${formattedTime}` : 'Call a Waiter'}
               >
                 <img src="/icons/solar_bell-bold.svg" alt="" className="w-6 h-6 object-contain" />
               </button>
             </div>
 
-            {/* Footer Branding Line: POWERED BY EMSA7 (Figma-Exact Monochrome) */}
-            <div className="pt-10 pb-4 text-center select-none flex justify-center items-center">
-              <a
-                href="https://emsa7.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                dir="ltr"
-                className="inline-flex items-center justify-center gap-1.5 cursor-pointer hover:opacity-80 transition-opacity no-underline"
-              >
-                <span className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-[#989898] inline-flex items-center">
-                  POWERED BY
-                </span>
-                <div className="inline-flex items-center justify-center my-auto shrink-0">
-                  <img src="/emsa7-logo-grey.png" alt="EMSA7" className="h-4 w-auto object-contain" />
-                </div>
-              </a>
-            </div>
+            {/* Footer Branding Line: POWERED BY EMSA7 */}
+            <PoweredByFooter className="pt-10 pb-4" />
           </div>
         )}
         </div>
