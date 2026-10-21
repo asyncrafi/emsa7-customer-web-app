@@ -544,9 +544,18 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
               <div className="space-y-3.5">
                 {/* Card 1: Order Summary (Items List) - Frame 2147226324 */}
                 <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#E9E9E9] space-y-3.5">
-                  <h2 className="text-[19px] font-semibold text-[#2D2F33] leading-[140%]">
-                    {isArabic ? 'ملخص الطلب' : 'Order Summary'}
-                  </h2>
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-[19px] font-semibold text-[#2D2F33] leading-[140%]">
+                      {isArabic ? 'ملخص الطلب' : 'Order Summary'}
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={onClearCart}
+                      className="text-[13px] sm:text-[14px] font-normal text-[#E53935] hover:text-[#C62828] underline underline-offset-3 cursor-pointer transition-colors active:opacity-75 px-1 py-0.5"
+                    >
+                      {isArabic ? 'مسح السلة' : 'Clear'}
+                    </button>
+                  </div>
 
                   {/* Items List */}
                   <div className="space-y-3.5 divide-y divide-zinc-100">
