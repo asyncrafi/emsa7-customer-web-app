@@ -198,7 +198,7 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
       {/* Main Page Container: Strictly mobile 440px width matching Figma */}
       <div
         id="printable-receipt-wrapper"
-        className="w-full max-w-[440px] mx-auto flex-1 flex flex-col justify-between space-y-4"
+        className="w-full max-w-[440px] mx-auto flex-1 flex flex-col justify-between space-y-4 pb-8"
       >
         {/* Header Row: 50x50 Back Circle Button (bg #E9E9E9) + Centered Title Receipt + Print Button */}
         <header className="relative flex items-center justify-center py-2 min-h-[50px] no-print">
@@ -315,30 +315,30 @@ export const EInvoiceModal: React.FC<EInvoiceModalProps> = ({
           </div>
         </div>
 
-        {/* Bottom Action Buttons matching Frame 1171277297: Add Items & Download Receipt */}
-        <div className="no-print pt-4 pb-2 flex items-center gap-3">
-          {/* Add Items Button (Button 1585:990: radius 30px bg #E9E9E9 border #B9B9B9 text #2D2F33) */}
+        {/* Bottom Action Buttons: Add Items & Download Receipt (Mobile-optimized) */}
+        <div className="no-print pt-4 pb-2 flex items-center gap-2 sm:gap-3 w-full">
+          {/* Add Items Button */}
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 h-[59px] rounded-[30px] bg-[#E9E9E9] hover:bg-[#dedede] border border-[#B9B9B9] text-[#2D2F33] font-medium text-[19px] leading-[140%] text-center cursor-pointer transition-transform active:scale-[0.98] flex items-center justify-center"
+            className="flex-1 h-[52px] sm:h-[56px] rounded-[30px] bg-[#E9E9E9] hover:bg-[#dedede] border border-[#B9B9B9] text-[#2D2F33] font-medium text-[13px] min-[370px]:text-[14px] sm:text-[16px] whitespace-nowrap text-center cursor-pointer transition-transform active:scale-[0.98] flex items-center justify-center px-2.5 sm:px-4"
           >
             {isArabic ? 'إضافة أصناف' : 'Add Items'}
           </button>
 
-          {/* Download Receipt Button (Button 1585:1010: radius 30px bg #026F4F text white matching Figma) */}
+          {/* Download Receipt Button */}
           <button
             type="button"
             onClick={handleDownloadPdf}
             disabled={isDownloading}
-            className="flex-1 h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[19px] leading-[140%] flex items-center justify-center gap-2 shadow-md cursor-pointer transition-transform active:scale-[0.98] disabled:opacity-75"
+            className="flex-[1.25] sm:flex-1 h-[52px] sm:h-[56px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[13px] min-[370px]:text-[14px] sm:text-[16px] whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 shadow-md cursor-pointer transition-transform active:scale-[0.98] disabled:opacity-75"
           >
             {isDownloading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin shrink-0" />
             ) : (
-              <Download className="w-5 h-5" />
+              <Download className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
             )}
-            <span>
+            <span className="whitespace-nowrap">
               {isDownloading
                 ? isArabic
                   ? 'جاري التحميل...'
