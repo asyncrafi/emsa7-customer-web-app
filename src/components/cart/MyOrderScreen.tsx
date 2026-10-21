@@ -167,6 +167,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
     vat: 1.60,
     tipAmount: 0,
     status: 'Preparing',
+    isPaid: true,
     items: [
       { name: 'Shoyu Ramen', nameAr: 'شويو رامن', qty: 2, image: '/images/food/ramen.png', price: 15.99 },
       { name: 'Iced Green Tea', nameAr: 'شاي أخضر مثلج', qty: 1, image: '/images/food/iced-tea.png', price: 15.99 },

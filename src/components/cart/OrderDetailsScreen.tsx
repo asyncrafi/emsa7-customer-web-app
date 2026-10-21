@@ -43,6 +43,7 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
   const isArabic = activeLanguage === 'ARABIC';
+  const isPaid = order?.isPaid ?? true;
 
   // Auto-transition status only if not manually switched: preparing -> ready -> served
   useEffect(() => {
@@ -342,9 +343,16 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
 
               {/* Card 2: Payments Details (Figma Frame 2147226328: border-radius 13px bg white) */}
               <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#F1F1F1] space-y-2.5">
-                <h2 className="font-semibold text-[19px] text-[#2D2F33] leading-[140%]">
-                  {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
-                </h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="font-semibold text-[19px] text-[#2D2F33] leading-[140%]">
+                    {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
+                  </h2>
+                  {isPaid && (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-emerald-50 text-[#026F4F] border border-[#026F4F]/20">
+                      {isArabic ? 'مدفوع' : 'Paid'}
+                    </span>
+                  )}
+                </div>
 
                 <div className="space-y-2 text-[16px] font-normal">
                   <div className="flex justify-between text-[#989898]">
@@ -398,26 +406,32 @@ export const OrderDetailsScreen: React.FC<OrderDetailsScreenProps> = ({
           </div>
         </div>
 
-        {/* Bottom Action Bar matching Figma Frame 1171277297 (841:660): Add Items + Pay Now */}
+        {/* Bottom Action Bar: Add Items + (Conditional) Pay Now */}
         <div className="w-full max-w-[440px] mx-auto px-4 pt-5 pb-2">
           <div className="flex items-center gap-3">
-            {/* Add Items Button (Button 841:723: radius 30px bg #E9E9E9 border #B9B9B9 text #2D2F33) */}
+            {/* Add Items Button */}
             <button
               type="button"
               onClick={onAddItems || onNewOrder}
-              className="flex-1 h-[59px] rounded-[30px] bg-[#E9E9E9] hover:bg-[#dedede] border border-[#B9B9B9] text-[#2D2F33] font-medium text-[19px] leading-[140%] cursor-pointer transition-transform active:scale-[0.98] text-center flex items-center justify-center"
+              className={`h-[59px] rounded-[30px] font-medium text-[19px] leading-[140%] cursor-pointer transition-transform active:scale-[0.98] text-center flex items-center justify-center ${
+                !isPaid
+                  ? 'flex-1 bg-[#E9E9E9] hover:bg-[#dedede] border border-[#B9B9B9] text-[#2D2F33]'
+                  : 'w-full bg-[#026F4F] hover:bg-[#025a40] text-white shadow-md'
+              }`}
             >
               {isArabic ? 'إضافة أصناف' : 'Add Items'}
             </button>
 
-            {/* Pay Now Button (Button 841:662: radius 30px bg #026F4F text white) */}
-            <button
-              type="button"
-              onClick={onPayNow || onNewOrder}
-              className="flex-1 h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[19px] leading-[140%] shadow-md cursor-pointer transition-transform active:scale-[0.98] text-center flex items-center justify-center"
-            >
-              {isArabic ? 'الدفع الآن' : 'Pay Now'}
-            </button>
+            {/* Pay Now Button (Only shown in 'pay after eating' unpaid flow per client requirement) */}
+            {!isPaid && (
+              <button
+                type="button"
+                onClick={onPayNow || onNewOrder}
+                className="flex-1 h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white font-medium text-[19px] leading-[140%] shadow-md cursor-pointer transition-transform active:scale-[0.98] text-center flex items-center justify-center"
+              >
+                {isArabic ? 'الدفع الآن' : 'Pay Now'}
+              </button>
+            )}
           </div>
         </div>
       </div>
