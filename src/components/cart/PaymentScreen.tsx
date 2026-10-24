@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, ChevronRight, User, Phone, Mail } from 'lucide-react';
 import { type CartItem, formatPrice, getCartItemTotalPrice } from '@/types/menu';
 import { useLanguage } from '@/providers/LanguageContext';
+import { PoweredByFooter } from '@/components/common/PoweredByFooter';
 
 export interface PaymentScreenProps {
   isOpen: boolean;
@@ -472,6 +473,9 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
                 </div>
               )}
             </div>
+
+            {/* POWERED BY EMSA7 footer branding */}
+            <PoweredByFooter className="pt-8 pb-4" />
           </div>
         </div>
       </div>

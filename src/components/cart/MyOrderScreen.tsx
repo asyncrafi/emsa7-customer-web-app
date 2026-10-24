@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { ArrowLeft, ArrowRight, Clock, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clock, Plus, Trash2, Check } from 'lucide-react';
 import { type CartItem, formatPrice, formatOrderDate, MOCK_MENU_ITEMS, type MenuItem, type SelectedOption, getCartSubtotal, getCartItemTotalPrice } from '@/types/menu';
 import { OrderDetailsScreen } from '@/components/cart/OrderDetailsScreen';
-import { CheckoutScreen } from '@/components/cart/CheckoutScreen';
 import { PaymentScreen } from '@/components/cart/PaymentScreen';
 import { OrderConfirmedScreen } from '@/components/cart/OrderConfirmedScreen';
 import { EInvoiceModal } from '@/components/cart/EInvoiceModal';
@@ -11,6 +10,8 @@ import { useLanguage } from '@/providers/LanguageContext';
 import { QuantityControl } from '@/components/food/QuantityControl';
 import SvgCartIcon from '@/components/ui/svg-icons/CartSvg';
 import SvgPlacedIcon from '@/components/ui/svg-icons/PlacedSvg';
+import SvgChairIcon from '@/components/ui/svg-icons/ChairSvg';
+import PromoBadgeSvg from '@/components/ui/svg-icons/PromoBadgeSvg';
 import { useWaiterTooltip } from '@/hooks/useWaiterTooltip';
 import { useWaiterCooldown } from '@/hooks/useWaiterCooldown';
 import { PoweredByFooter } from '@/components/common/PoweredByFooter';
@@ -84,8 +85,8 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
   const [activeTab, setActiveTab] = useState<'ongoing' | 'cart' | 'history'>(initialTab);
   const [editingCartIndex, setEditingCartIndex] = useState<number | null>(null);
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
-  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [payingFor, setPayingFor] = useState<'cart' | 'ongoing'>('cart');
   const waiterTooltip = useWaiterTooltip();
   const { isCooldown, formattedTime } = useWaiterCooldown();
 
@@ -93,7 +94,6 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
     if (isOpen) {
       if (initialShowCheckout) {
         setActiveTab('cart');
-        setShowCheckoutModal(true);
       } else {
         setActiveTab(initialTab);
       }
@@ -191,15 +191,114 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
     return DEFAULT_ONGOING_ORDER;
   });
 
+  // Split check & checkout states
+  const [isSplitCheck, setIsSplitCheck] = useState(false);
+
+  // Expand cart items into individual single-unit items when split check is ON
+  const expandedSplitItems = React.useMemo(() => {
+    const items: { splitId: string; cartItem: CartItem; singlePrice: number }[] = [];
+    cart.forEach((ci, cartIdx) => {
+      const singlePrice = getCartItemTotalPrice(ci) / ci.quantity;
+      for (let i = 0; i < ci.quantity; i++) {
+        items.push({
+          splitId: `${ci.item.id}-${cartIdx}-${i}`,
+          cartItem: ci,
+          singlePrice,
+        });
+      }
+    });
+    return items;
+  }, [cart]);
+
+  const [selectedSplitIds, setSelectedSplitIds] = useState<Set<string>>(new Set());
+
+  const handleToggleSplitCheck = () => {
+    if (!isSplitCheck) {
+      setSelectedSplitIds(new Set(expandedSplitItems.map((item) => item.splitId)));
+    }
+    setIsSplitCheck((prev) => !prev);
+  };
+
+  const toggleSplitItem = (splitId: string) => {
+    setSelectedSplitIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(splitId)) {
+        next.delete(splitId);
+      } else {
+        next.add(splitId);
+      }
+      return next;
+    });
+  };
+
+  const [promoCode, setPromoCode] = useState('');
+  const [promoStatus, setPromoStatus] = useState<'none' | 'applied' | 'error'>('none');
+
+  const [selectedTip, setSelectedTip] = useState<'0' | '10' | '15' | 'custom' | null>(null);
+  const [customTipAmount, setCustomTipAmount] = useState<string>('');
+
+  const handleApplyPromo = () => {
+    const code = promoCode.trim().toUpperCase();
+    if (code === 'WELCOME20') {
+      setPromoStatus('applied');
+    } else if (code.length > 0) {
+      setPromoStatus('error');
+    }
+  };
+
+  const { selectedCart, paidItems: _paidItems } = React.useMemo(() => {
+    if (!isSplitCheck) {
+      return {
+        selectedCart: cart,
+        paidItems: cart.map((ci, idx) => ({ originalIndex: idx, quantity: ci.quantity })),
+      };
+    }
+    const itemsToPay = expandedSplitItems.filter((item) => selectedSplitIds.has(item.splitId));
+
+    // Group back by cartItem reference
+    const grouped = new Map<CartItem, number>();
+    for (const splitItem of itemsToPay) {
+      grouped.set(splitItem.cartItem, (grouped.get(splitItem.cartItem) || 0) + 1);
+    }
+
+    const paidItemsInfo = Array.from(grouped.entries()).map(([ci, qty]) => ({
+      originalIndex: cart.indexOf(ci),
+      quantity: qty,
+    }));
+
+    const selectedCartArray = Array.from(grouped.entries()).map(([ci, qty]) => ({
+      ...ci,
+      quantity: qty,
+    }));
+
+    return { selectedCart: selectedCartArray, paidItems: paidItemsInfo };
+  }, [isSplitCheck, expandedSplitItems, selectedSplitIds, cart]);
+
   if (!isOpen) return null;
 
   const isArabic = activeLanguage === 'ARABIC';
 
-  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = getCartSubtotal(cart);
+  const subtotal = isSplitCheck
+    ? expandedSplitItems
+        .filter((item) => selectedSplitIds.has(item.splitId))
+        .reduce((sum, item) => sum + item.singlePrice, 0)
+    : getCartSubtotal(cart);
+
+  const activeItemCount = isSplitCheck
+    ? expandedSplitItems.filter((item) => selectedSplitIds.has(item.splitId)).length
+    : cart.reduce((sum, item) => sum + item.quantity, 0);
+
   const serviceCharge = Math.round(subtotal * 0.10 * 100) / 100;
   const vat = Math.round(subtotal * 0.05 * 100) / 100;
-  const grandTotal = Math.round((subtotal + serviceCharge + vat) * 100) / 100;
+
+  let tipAmount = 0;
+  if (selectedTip === '10') tipAmount = 10;
+  else if (selectedTip === '15') tipAmount = 15;
+  else if (selectedTip === 'custom') tipAmount = parseFloat(customTipAmount) || 0;
+
+  const splitFee = 0;
+  const discount = promoStatus === 'applied' ? Math.round(subtotal * 0.20 * 100) / 100 : 0;
+  const grandTotal = Math.max(0, subtotal + serviceCharge + vat + tipAmount + splitFee - discount);
 
   return (
     <div
@@ -540,75 +639,177 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                 </div>
               </div>
             ) : (
-              /* CART WITH ITEMS SCREEN MATCHING FIGMA DESIGN Frame 841:338 */
-              <div className="space-y-3.5">
-                {/* Card 1: Order Summary (Items List) - Frame 2147226324 */}
-                <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#E9E9E9] space-y-3.5">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-[19px] font-semibold text-[#2D2F33] leading-[140%]">
-                      {isArabic ? 'ملخص الطلب' : 'Order Summary'}
-                    </h2>
-                    <button
-                      type="button"
-                      onClick={onClearCart}
-                      className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#E53935] hover:text-[#C62828] hover:bg-red-50/80 px-2.5 py-1 rounded-full transition-colors cursor-pointer active:scale-95"
-                    >
-                      <Trash2 className="w-3.5 h-3.5 stroke-[2.2]" />
-                      <span>{isArabic ? 'مسح السلة' : 'Clear'}</span>
-                    </button>
+              /* UNIFIED CART & CHECKOUT SCREEN */
+              <div className="space-y-4">
+                {/* 1. Dining Location Green Banner Box with SvgChairIcon */}
+                <div className="bg-[#026F4F] rounded-[16px] p-4 flex items-center gap-3.5 text-white shadow-xs">
+                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shrink-0 shadow-xs">
+                    <SvgChairIcon className="w-7 h-7 text-[#026F4F]" />
                   </div>
-
-                  {/* Items List */}
-                  <div className="space-y-3.5 divide-y divide-zinc-100">
-                    {cart.map((ci, idx) => (
-                      <div key={`${ci.item.id}-${idx}`} className="pt-3.5 first:pt-0 flex items-center justify-between gap-3">
-                        <div
-                          className="flex items-center gap-3.5 min-w-0 cursor-pointer flex-1"
-                          onClick={() => setEditingCartIndex(idx)}
-                        >
-                          <div className="w-[64px] h-[64px] rounded-[7px] bg-[#F1F1F1] p-1 flex items-center justify-center shrink-0">
-                            <img
-                              src={ci.item.imageUrl || '/images/food/ramen.png'}
-                              alt={ci.item.name}
-                              className="w-[48px] h-[48px] object-contain"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/images/food/ramen.png';
-                              }}
-                            />
-                          </div>
-                          <div className="min-w-0">
-                            <h3 className="text-[15px] font-medium text-[#2D2F33] leading-[140%] truncate">
-                              {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
-                            </h3>
-                            <p className="text-[11px] font-normal text-[#989898] leading-[140%] truncate">
-                              {ci.selectedOptions && ci.selectedOptions.length > 0
-                                ? `“${ci.selectedOptions.map((o) => (isArabic && o.optionNameAr ? o.optionNameAr : o.optionName)).join(', ')}”`
-                                : ci.specialInstructions
-                                ? `“${ci.specialInstructions}”`
-                                : (isArabic ? '“بدون صلصة”' : '“No Sauce”')}
-                            </p>
-                            <span className="text-[18px] font-semibold text-[#026F4F] block mt-0.5 leading-[140%]">
-                              {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Stepper matching Figma screenshot */}
-                        <div>
-                          <QuantityControl
-                            quantity={ci.quantity}
-                            onIncrement={() => onIncrement(ci.item.id)}
-                            onDecrement={() => onDecrement(ci.item.id)}
-                            size="sm"
-                          />
-                        </div>
-                      </div>
-                    ))}
+                  <div>
+                    <p className="text-emerald-100 text-[13px] font-normal leading-[140%]">
+                      {isArabic ? 'تناول الطعام في' : 'Dining at'}
+                    </p>
+                    <h2 className="text-white text-[18px] font-semibold tracking-tight leading-snug">
+                      {_tableName}
+                    </h2>
+                    <p className="text-emerald-100/80 text-[12px] font-normal leading-[140%]">
+                      {isArabic ? 'بجانب النافذة، الطابق الثاني' : 'Window Side, Floor 2'}
+                    </p>
                   </div>
                 </div>
 
-                {/* + Add More Items Button (Figma Frame 2147226323: Directly below Card 1 on background) */}
-                <div className="pt-0.5 pb-1">
+                {/* 2. Split Check Toggle Card */}
+                <div className="bg-white rounded-[13px] p-4 border border-[#E9E9E9] flex items-center justify-between shadow-2xs">
+                  <span className="font-semibold text-[15px] text-[#2D2F33] leading-[140%]">
+                    {isArabic ? 'تقسيم الفاتورة' : 'Split Check'}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={handleToggleSplitCheck}
+                    aria-label="Toggle Split Check"
+                    className={`relative w-12 h-6 rounded-full transition-colors cursor-pointer p-0.5 ${
+                      isSplitCheck ? 'bg-[#34C759]' : 'bg-[#E5E5EA]'
+                    }`}
+                  >
+                    <span
+                      className={`block w-5 h-5 rounded-full bg-white shadow-md transition-transform duration-200 ${
+                        isSplitCheck ? 'translate-x-6 rtl:-translate-x-6' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* 3. Order Summary Card */}
+                <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#E9E9E9] space-y-3.5">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-[17px] font-semibold text-[#2D2F33] leading-[140%]">
+                      {isArabic ? 'ملخص الطلب' : 'Order Summary'}
+                    </h2>
+                    {!isSplitCheck && onClearCart && (
+                      <button
+                        type="button"
+                        onClick={onClearCart}
+                        className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#E53935] hover:text-[#C62828] hover:bg-red-50/80 px-2.5 py-1 rounded-full transition-colors cursor-pointer active:scale-95"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 stroke-[2.2]" />
+                        <span>{isArabic ? 'مسح السلة' : 'Clear'}</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="space-y-3.5 divide-y divide-zinc-100">
+                    {isSplitCheck
+                      ? expandedSplitItems.map((splitItem) => {
+                          const isChecked = selectedSplitIds.has(splitItem.splitId);
+                          const ci = splitItem.cartItem;
+
+                          return (
+                            <div
+                              key={splitItem.splitId}
+                              onClick={() => toggleSplitItem(splitItem.splitId)}
+                              className="pt-3 first:pt-0 flex items-center justify-between gap-3 cursor-pointer select-none"
+                            >
+                              <div className="flex items-center gap-3 min-w-0 flex-1">
+                                <div
+                                  className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors shrink-0 ${
+                                    isChecked
+                                      ? 'bg-[#026F4F] text-white'
+                                      : 'border border-zinc-400 bg-white'
+                                  }`}
+                                >
+                                  {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                                </div>
+
+                                <div className="w-[56px] h-[56px] rounded-[7px] bg-[#F1F1F1] p-1 flex items-center justify-center shrink-0">
+                                  <img
+                                    src={ci.item.imageUrl || '/images/food/ramen.png'}
+                                    alt={ci.item.name}
+                                    className="w-[44px] h-[44px] object-contain"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = '/images/food/ramen.png';
+                                    }}
+                                  />
+                                </div>
+
+                                <div className="min-w-0 flex-1">
+                                  <h3 className="font-semibold text-[15px] text-[#2D2F33] truncate leading-[140%]">
+                                    {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
+                                  </h3>
+                                  <p className="text-[11px] text-[#989898] font-normal truncate leading-[140%]">
+                                    {ci.selectedOptions && ci.selectedOptions.length > 0
+                                      ? `“${ci.selectedOptions.map((so) => (isArabic && so.optionNameAr ? so.optionNameAr : so.optionName)).join(', ')}”`
+                                      : ci.specialInstructions
+                                      ? `“${ci.specialInstructions}”`
+                                      : (isArabic ? '“بدون صلصة”' : '“No Sauce”')}
+                                  </p>
+                                  <span className="text-[11px] font-semibold text-[#2D2F33] block mt-0.5">
+                                    {isArabic ? '1x' : 'x1'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="shrink-0">
+                                <span className="font-semibold text-[16px] text-[#026F4F]">
+                                  {formatPrice(splitItem.singlePrice, activeLanguage)}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })
+                      : cart.map((ci, idx) => (
+                          <div
+                            key={`${ci.item.id}-${idx}`}
+                            className="pt-3.5 first:pt-0 flex items-center justify-between gap-3"
+                          >
+                            <div
+                              className="flex items-center gap-3.5 min-w-0 cursor-pointer flex-1"
+                              onClick={() => setEditingCartIndex(idx)}
+                            >
+                              <div className="w-[56px] h-[56px] rounded-[7px] bg-[#F1F1F1] p-1 flex items-center justify-center shrink-0">
+                                <img
+                                  src={ci.item.imageUrl || '/images/food/ramen.png'}
+                                  alt={ci.item.name}
+                                  className="w-[44px] h-[44px] object-contain"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = '/images/food/ramen.png';
+                                  }}
+                                />
+                              </div>
+
+                              <div className="min-w-0">
+                                <h3 className="font-semibold text-[15px] text-[#2D2F33] truncate leading-[140%]">
+                                  {isArabic ? ci.item.nameAr || ci.item.name : ci.item.name}
+                                </h3>
+                                <p className="text-[11px] text-[#989898] font-normal truncate leading-[140%]">
+                                  {ci.selectedOptions && ci.selectedOptions.length > 0
+                                    ? `“${ci.selectedOptions.map((o) => (isArabic && o.optionNameAr ? o.optionNameAr : o.optionName)).join(', ')}”`
+                                    : ci.specialInstructions
+                                    ? `“${ci.specialInstructions}”`
+                                    : (isArabic ? '“بدون صلصة”' : '“No Sauce”')}
+                                </p>
+                                <span className="text-[16px] font-semibold text-[#026F4F] block mt-0.5">
+                                  {formatPrice(getCartItemTotalPrice(ci), activeLanguage)}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div>
+                              <QuantityControl
+                                quantity={ci.quantity}
+                                onIncrement={() => onIncrement(ci.item.id)}
+                                onDecrement={() => onDecrement(ci.item.id)}
+                                size="sm"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                  </div>
+                </div>
+
+                {/* + Add More Items Button */}
+                <div className="py-0.5">
                   <button
                     type="button"
                     onClick={onClose}
@@ -619,38 +820,169 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
                   </button>
                 </div>
 
-                {/* Card 2: Order Summary (Totals) matching Figma Frame 1171277086 */}
-                <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#E9E9E9] space-y-3">
-                  <h2 className="text-[19px] font-semibold text-[#2D2F33] leading-[140%]">
-                    {isArabic ? 'ملخص الطلب' : 'Order Summary'}
-                  </h2>
-
-                  <div className="space-y-2 text-[16px] font-normal leading-[140%]">
-                    <div className="flex justify-between items-center text-[#989898]">
-                      <span>{isArabic ? `المجموع الفرعي (${totalCartCount} أصناف)` : `Subtotal (${totalCartCount}items)`}</span>
-                      <span className="text-[#686868] font-semibold">{formatPrice(subtotal, activeLanguage)}</span>
+                {/* 4. Promo Code Card */}
+                {promoStatus === 'applied' ? (
+                  <div className="bg-[#EAF5F0] rounded-[10px] h-[61px] px-4 border border-[#D4EBE0] flex items-center justify-between shadow-2xs">
+                    <div className="flex items-center gap-2.5">
+                      <PromoBadgeSvg className="w-6 h-6 text-[#026F4F] shrink-0" />
+                      <span className="font-semibold text-[15px] text-[#026F4F] tracking-wider uppercase">
+                        {promoCode || 'WELCOME20'}
+                      </span>
                     </div>
-
-                    <div className="flex justify-between items-center text-[#989898]">
-                      <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
-                      <span className="text-[#686868] font-semibold">{formatPrice(serviceCharge, activeLanguage)}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPromoStatus('none');
+                        setPromoCode('');
+                      }}
+                      className="cursor-pointer"
+                      title="Remove promo code"
+                    >
+                      <img src="/icons/icon-park-solid_check-one.svg" alt="" className="w-6 h-6 object-contain" />
+                    </button>
+                  </div>
+                ) : promoStatus === 'error' ? (
+                  <div className="bg-[#FDF0F0] rounded-[10px] h-[61px] px-4 border border-[#FADBD8] flex items-center justify-between shadow-2xs">
+                    <div className="flex items-center gap-2.5">
+                      <PromoBadgeSvg className="w-6 h-6 text-[#D72929] shrink-0" />
+                      <span className="font-semibold text-[15px] text-[#D72929] tracking-wider uppercase">
+                        {promoCode || 'WELCOME20'}
+                      </span>
                     </div>
-
-                    <div className="flex justify-between items-center text-[#989898]">
-                      <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
-                      <span className="text-[#686868] font-semibold">{formatPrice(vat, activeLanguage)}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPromoStatus('none');
+                        setPromoCode('');
+                      }}
+                      className="cursor-pointer"
+                      title="Clear"
+                    >
+                      <img src="/icons/gridicons_cross-circle.svg" alt="" className="w-6 h-6 object-contain" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="bg-white rounded-[10px] h-[61px] px-3.5 border border-[#E9E9E9] shadow-2xs flex items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                      <PromoBadgeSvg className="w-6 h-6 text-[#989898] shrink-0" />
+                      <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                        placeholder={isArabic ? 'أدخل رمز العرض' : 'ENTER PROMO CODE'}
+                        className="flex-1 bg-transparent py-1.5 text-[15px] text-zinc-800 placeholder:text-[#989898] placeholder:font-medium font-medium uppercase outline-none"
+                      />
                     </div>
+                    <button
+                      type="button"
+                      onClick={handleApplyPromo}
+                      className="w-[71px] h-[42px] rounded-[7px] bg-[#026F4F] hover:bg-[#025a40] text-white text-[15px] font-medium transition-colors cursor-pointer shrink-0 shadow-xs active:scale-95 flex items-center justify-center"
+                    >
+                      {isArabic ? 'تطبيق' : 'APPLY'}
+                    </button>
+                  </div>
+                )}
+
+                {/* 5. Add a Tip Card */}
+                <div className="bg-white rounded-[13px] p-4 border border-[#E9E9E9] space-y-3 shadow-2xs">
+                  <span className="font-semibold text-[15px] text-[#2D2F33] block leading-[140%]">
+                    {isArabic ? 'إضافة إكرامية' : 'Add a Tip'}
+                  </span>
+
+                  <div className="grid grid-cols-4 gap-2">
+                    {[
+                      { id: '0', label: isArabic ? '0 ج.م' : '0 EGP' },
+                      { id: '10', label: isArabic ? '10 ج.م' : '10 EGP' },
+                      { id: '15', label: isArabic ? '15 ج.م' : '15 EGP' },
+                      { id: 'custom', label: isArabic ? 'مخصص' : 'Custom' },
+                    ].map((tip) => (
+                      <button
+                        key={tip.id}
+                        type="button"
+                        onClick={() => setSelectedTip(tip.id as any)}
+                        className={`py-2.5 px-1 sm:px-2 rounded-full text-[13px] border transition-all cursor-pointer text-center ${
+                          selectedTip === tip.id
+                            ? 'bg-[#026F4F] border-[#026F4F] text-white font-semibold shadow-xs'
+                            : 'bg-white border-[#E5E5EA] text-[#2D2F33] font-medium hover:bg-zinc-50'
+                        }`}
+                      >
+                        {tip.label}
+                      </button>
+                    ))}
                   </div>
 
-                  {/* Dashed Separator Line matching Vector 13 */}
-                  <div className="border-b border-dashed border-[#989898] my-2" />
+                  {selectedTip === 'custom' && (
+                    <input
+                      type="number"
+                      value={customTipAmount}
+                      onChange={(e) => setCustomTipAmount(e.target.value)}
+                      placeholder={isArabic ? 'مبلغ الإكرامية (ج.م)' : 'Enter tip amount (EGP)'}
+                      className="w-full bg-[#f4f4f5] border border-zinc-200/80 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-zinc-800 placeholder-zinc-400 font-medium focus:outline-none focus:border-[#026F4F] focus:bg-white transition-all mt-2"
+                    />
+                  )}
 
-                  {/* Total Line matching Figma Frame 2147226322 */}
-                  <div className="flex justify-between items-center pt-0.5">
-                    <span className="text-[17px] font-medium text-[#000000] leading-[140%]">
-                      {isArabic ? 'المجموع' : 'Total'}
+                  {/* Highest tip today note */}
+                  <div className="flex items-center gap-1 text-[11px] font-medium text-[#989898] pt-0.5">
+                    <span className="text-[#FF4D4F] font-semibold">*</span>
+                    <span>
+                      {isArabic
+                        ? 'أعلى إكرامية اليوم كانت 10.00 ج.م'
+                        : 'Highest tip today was 10.00 EGP'}
                     </span>
-                    <span className="text-[17px] font-semibold text-[#026F4F] leading-[140%]">
+                  </div>
+                </div>
+
+                {/* 6. Payments Details Card */}
+                <div className="bg-white rounded-[13px] p-4 shadow-2xs border border-[#E9E9E9] space-y-3">
+                  <h2 className="text-[17px] font-semibold text-[#2D2F33] leading-[140%]">
+                    {isArabic ? 'تفاصيل الدفع' : 'Payments Details'}
+                  </h2>
+
+                  <div className="space-y-2 text-[14px] font-medium">
+                    <div className="flex justify-between text-[#8E8E93]">
+                      <span>{isArabic ? `المجموع الفرعي (${activeItemCount} أصناف)` : `Subtotal (${activeItemCount}Items)`}</span>
+                      <span className="text-[#2D2F33] font-medium">{formatPrice(subtotal, activeLanguage)}</span>
+                    </div>
+
+                    <div className="flex justify-between text-[#8E8E93]">
+                      <span>{isArabic ? 'رسوم الخدمة (10%)' : 'Service Charge (10%)'}</span>
+                      <span className="text-[#2D2F33] font-medium">{formatPrice(serviceCharge, activeLanguage)}</span>
+                    </div>
+
+                    <div className="flex justify-between text-[#8E8E93]">
+                      <span>{isArabic ? 'ضريبة القيمة المضافة (5%)' : 'VAT (5%)'}</span>
+                      <span className="text-[#2D2F33] font-medium">{formatPrice(vat, activeLanguage)}</span>
+                    </div>
+
+                    {tipAmount > 0 && (
+                      <div className="flex justify-between text-[#8E8E93]">
+                        <span>{isArabic ? 'الإكرامية' : 'Tips'}</span>
+                        <span className="text-[#2D2F33] font-medium">{formatPrice(tipAmount, activeLanguage)}</span>
+                      </div>
+                    )}
+
+                    {isSplitCheck && (
+                      <div className="flex justify-between text-[#FF6B6B] font-medium">
+                        <span>{isArabic ? 'رسوم التقسيم' : 'Splitting Fees'}</span>
+                        <span>{formatPrice(splitFee || 0, activeLanguage)}</span>
+                      </div>
+                    )}
+
+                    {promoStatus === 'applied' && (
+                      <div className="flex justify-between text-[#026F4F] font-medium">
+                        <span>{isArabic ? 'خصم العرض (20%)' : 'Promo Discount'}</span>
+                        <span className="font-semibold">-{formatPrice(discount, activeLanguage)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Dashed Separator Line */}
+                  <div className="border-b border-dashed border-[#E5E5EA] my-2" />
+
+                  {/* Total Line */}
+                  <div className="flex justify-between items-center font-semibold text-[17px] pt-0.5">
+                    <span className="text-[#2D2F33]">{isArabic ? 'المجموع' : 'Total'}</span>
+                    <span className="text-[#026F4F] font-semibold text-[18px]">
                       {formatPrice(grandTotal, activeLanguage)}
                     </span>
                   </div>
@@ -807,11 +1139,14 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
           <div className="w-full max-w-[409px] mx-auto">
             <button
               type="button"
-              onClick={() => setShowCheckoutModal(true)}
+              onClick={() => {
+                setPayingFor('cart');
+                setShowPaymentModal(true);
+              }}
               className="w-full h-[59px] rounded-[30px] bg-[#026F4F] hover:bg-[#025a40] text-white px-6 shadow-md flex items-center justify-between cursor-pointer transition-transform active:scale-[0.99]"
             >
               <span className="text-[16px] font-normal leading-[140%]">
-                {isArabic ? 'المتابعة لإتمام الطلب' : 'Continue to Checkout'}
+                {isArabic ? 'متابعة للدفع' : 'Continue to Payment'}
               </span>
               <span className="text-[16px] font-semibold leading-[140%]">
                 {formatPrice(grandTotal, activeLanguage)}
@@ -831,6 +1166,7 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         }}
         onPayNow={() => {
           setShowOrderDetailsModal(false);
+          setPayingFor('ongoing');
           setShowPaymentModal(true);
         }}
         onAddItems={() => {
@@ -842,37 +1178,100 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         order={ongoingOrder}
       />
 
-      {/* Payment Screen Modal when paying after eating */}
+      {/* Payment Screen Modal */}
       <PaymentScreen
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
         cart={
-          ongoingOrder?.cartItems && ongoingOrder.cartItems.length > 0
-            ? ongoingOrder.cartItems
-            : cart.length > 0
-            ? cart
-            : [
-                { item: MOCK_MENU_ITEMS[0], quantity: 2 },
-                { item: MOCK_MENU_ITEMS[1] || MOCK_MENU_ITEMS[0], quantity: 1 },
-              ]
+          payingFor === 'ongoing'
+            ? ongoingOrder?.cartItems && ongoingOrder.cartItems.length > 0
+              ? ongoingOrder.cartItems
+              : [
+                  { item: MOCK_MENU_ITEMS[0], quantity: 2 },
+                  { item: MOCK_MENU_ITEMS[1] || MOCK_MENU_ITEMS[0], quantity: 1 },
+                ]
+            : selectedCart
         }
-        subtotal={ongoingOrder?.subtotal || subtotal || 25.99}
-        serviceCharge={ongoingOrder?.serviceCharge || serviceCharge || 2.60}
-        vat={ongoingOrder?.vat || 1.30}
-        tipAmount={ongoingOrder?.tipAmount || 5.00}
-        grandTotal={ongoingOrder?.total || grandTotal || 45.99}
+        subtotal={payingFor === 'ongoing' ? (ongoingOrder?.subtotal || subtotal) : subtotal}
+        serviceCharge={payingFor === 'ongoing' ? (ongoingOrder?.serviceCharge || serviceCharge) : serviceCharge}
+        vat={payingFor === 'ongoing' ? (ongoingOrder?.vat || vat) : vat}
+        tipAmount={payingFor === 'ongoing' ? (ongoingOrder?.tipAmount || 0) : tipAmount}
+        splitFee={payingFor === 'ongoing' ? (ongoingOrder?.splitFee || 0) : splitFee}
+        discount={payingFor === 'ongoing' ? (ongoingOrder?.discount || 0) : discount}
+        grandTotal={payingFor === 'ongoing' ? (ongoingOrder?.total || grandTotal) : grandTotal}
         onPaymentSuccess={() => {
-          if (ongoingOrder) {
-            const updated = { ...ongoingOrder, isPaid: true };
-            setOngoingOrder(updated);
-            try {
-              localStorage.setItem(LOCAL_STORAGE_ONGOING_KEY, JSON.stringify(updated));
-            } catch (e) {
-              console.error(e);
-            }
-          }
           setShowPaymentModal(false);
-          setShowOrderConfirmedModal(true);
+
+          if (payingFor === 'ongoing') {
+            if (ongoingOrder) {
+              const updated = { ...ongoingOrder, isPaid: true };
+              setOngoingOrder(updated);
+              try {
+                localStorage.setItem(LOCAL_STORAGE_ONGOING_KEY, JSON.stringify(updated));
+              } catch (e) {
+                console.error(e);
+              }
+            }
+            setShowOrderConfirmedModal(true);
+          } else {
+            // Cart checkout payment
+            const now = new Date();
+            const timeStr = `Today, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            const newId = `#A${Math.floor(100 + Math.random() * 900)}`;
+
+            const newOrder: StoredOrder = {
+              id: newId,
+              date: timeStr,
+              total: grandTotal,
+              subtotal,
+              serviceCharge,
+              vat,
+              tipAmount,
+              splitFee,
+              discount,
+              status: 'Preparing',
+              isPaid: true,
+              items: selectedCart.map((ci) => ({
+                name: ci.item.name,
+                nameAr: ci.item.nameAr,
+                qty: ci.quantity,
+                image: ci.item.imageUrl || '/images/food/ramen.png',
+                price: ci.item.price,
+              })),
+              cartItems: [...selectedCart],
+            };
+
+            // Save to ongoing state & localStorage
+            setOngoingOrder(newOrder);
+            setHistoryOrders((prev) => {
+              const updated = [newOrder, ...prev];
+              try {
+                localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(updated));
+              } catch (e) {
+                console.error('Error saving history to localStorage:', e);
+              }
+              return updated;
+            });
+
+            try {
+              localStorage.setItem(LOCAL_STORAGE_ONGOING_KEY, JSON.stringify(newOrder));
+            } catch (e) {
+              console.error('Error saving ongoing order to localStorage:', e);
+            }
+
+            // Deduct paid items from the global cart
+            if (onDeductPaidItems) {
+              onDeductPaidItems(selectedCart);
+            }
+
+            setConfirmedCart([...selectedCart]);
+            setConfirmedGrandTotal(grandTotal);
+            setConfirmedTipAmount(tipAmount);
+            setConfirmedSplitFee(splitFee);
+            setConfirmedDiscount(discount);
+            setConfirmedSubtotal(subtotal);
+            setShowOrderConfirmedModal(true);
+          }
         }}
         language={activeLanguage}
         tableName={_tableName}
@@ -899,80 +1298,6 @@ export const MyOrderScreen: React.FC<MyOrderScreenProps> = ({
         discount={confirmedDiscount}
         grandTotal={confirmedGrandTotal || grandTotal}
         language={activeLanguage}
-      />
-
-      {/* Checkout Screen Modal */}
-      <CheckoutScreen
-        isOpen={showCheckoutModal}
-        onClose={() => setShowCheckoutModal(false)}
-        cart={cart}
-        onIncrement={onIncrement}
-        onDecrement={onDecrement}
-        onRemove={_onRemove}
-        onClearCart={onClearCart}
-        onAddMoreItems={() => {
-          setShowCheckoutModal(false);
-          onClose();
-        }}
-        onOrderSuccess={(details) => {
-          const now = new Date();
-          const timeStr = `Today, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-          const newId = `#A${Math.floor(100 + Math.random() * 900)}`;
-
-          const newOrder: StoredOrder = {
-            id: newId,
-            date: timeStr,
-            total: details.grandTotal,
-            subtotal: details.subtotal,
-            tipAmount: details.tipAmount,
-            splitFee: details.splitFee,
-            discount: details.discount,
-            status: 'Preparing',
-            isPaid: true,
-            items: details.selectedCart.map((ci) => ({
-              name: ci.item.name,
-              nameAr: ci.item.nameAr,
-              qty: ci.quantity,
-              image: ci.item.imageUrl || '/images/food/ramen.png',
-              price: ci.item.price,
-            })),
-            cartItems: [...details.selectedCart],
-          };
-
-          // Save to ongoing state & localStorage
-          setOngoingOrder(newOrder);
-          setHistoryOrders((prev) => {
-            const updated = [newOrder, ...prev];
-            try {
-              localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(updated));
-            } catch (e) {
-              console.error('Error saving history to localStorage:', e);
-            }
-            return updated;
-          });
-
-          try {
-            localStorage.setItem(LOCAL_STORAGE_ONGOING_KEY, JSON.stringify(newOrder));
-          } catch (e) {
-            console.error('Error saving ongoing order to localStorage:', e);
-          }
-
-          // Deduct paid items from the global cart
-          if (onDeductPaidItems) {
-            onDeductPaidItems(details.selectedCart);
-          }
-
-          setConfirmedCart([...details.selectedCart]);
-          setConfirmedGrandTotal(details.grandTotal);
-          setConfirmedTipAmount(details.tipAmount);
-          setConfirmedSplitFee(details.splitFee);
-          setConfirmedDiscount(details.discount);
-          setConfirmedSubtotal(details.subtotal);
-          setShowCheckoutModal(false);
-          setShowOrderConfirmedModal(true);
-        }}
-        language={activeLanguage}
-        tableName={_tableName}
       />
 
       {/* Edit Food Item Modal */}

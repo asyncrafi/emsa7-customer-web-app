@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import SvgBellsIcon from '@/components/ui/svg-icons/BellsSvg';
 import emsa7Logo from '@/assets/logo.png';
 import { useLanguage } from '@/providers/LanguageContext';
@@ -38,7 +38,9 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
   // Global Language Management
   const { language, setLanguage } = useLanguage();
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryId>('all');
+  const [selectedCategory, setSelectedCategory] = useState<CategoryId>(
+    CATEGORIES[0]?.id || 'popular'
+  );
   const [searchQuery, setSearchQuery] = useState(() => {
     if (typeof window !== 'undefined') {
       const p = new URLSearchParams(window.location.search);
@@ -47,9 +49,12 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     return '';
   });
 
-  // Scroll/pill refs
+  // ScrollSpy & category refs
+  const categoryRefs = useRef<Record<string, HTMLElement | null>>({});
   const catPillRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const pillContainerRef = useRef<HTMLDivElement | null>(null);
+  const isManualScrolling = useRef(false);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // URL-based Modal state management
   const {
@@ -111,21 +116,117 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
     return sortItems(items).slice(0, 2);
   }, [selectedTags, selectedSort]);
 
-  // All items sorted & filtered
-  const allItems = useMemo(() => {
-    let items = [...MOCK_MENU_ITEMS];
-    items = filterByTags(items);
-    return sortItems(items);
-  }, [selectedTags, selectedSort]);
+  // Category sections data for continuous smooth scrolling by category
+  const categorySectionsData = useMemo(() => {
+    return CATEGORIES.map((cat) => {
+      let items =
+        cat.id === 'popular'
+          ? popularItems
+          : MOCK_MENU_ITEMS.filter((item) => item.category === cat.id);
 
-  // Items for selected category
-  const categoryFilteredItems = useMemo(() => {
-    let items = selectedCategory === 'all'
-      ? MOCK_MENU_ITEMS
-      : MOCK_MENU_ITEMS.filter((item) => item.category === selectedCategory);
-    items = filterByTags(items);
-    return sortItems(items);
-  }, [selectedCategory, selectedTags, selectedSort]);
+      items = filterByTags(items);
+      items = sortItems(items);
+
+      return {
+        category: cat,
+        items,
+      };
+    });
+  }, [popularItems, selectedTags, selectedSort]);
+
+  // ScrollSpy Listener: Auto update active category pill when scrolling through sections
+  useEffect(() => {
+    if (searchQuery) return;
+
+    const handleScroll = () => {
+      if (isManualScrolling.current) return;
+
+      const categoryIds = CATEGORIES.map((c) => c.id);
+      let currentActive = categoryIds[0];
+
+      // If at the very top of the page, activate the first category
+      if (window.scrollY < 60) {
+        setSelectedCategory(categoryIds[0]);
+        return;
+      }
+
+      // If at the bottom of the page, activate the last category
+      if (
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 50
+      ) {
+        setSelectedCategory(categoryIds[categoryIds.length - 1]);
+        return;
+      }
+
+      const stickyBarHeight = pillContainerRef.current?.offsetHeight || 50;
+      const threshold = stickyBarHeight + 30;
+
+      for (const id of categoryIds) {
+        const el = categoryRefs.current[id];
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= threshold) {
+            currentActive = id as CategoryId;
+          }
+        }
+      }
+
+      setSelectedCategory(currentActive);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [searchQuery]);
+
+  // Release manual scroll lock immediately if user touches or wheels
+  useEffect(() => {
+    const onUserInteraction = () => {
+      isManualScrolling.current = false;
+    };
+    window.addEventListener('wheel', onUserInteraction, { passive: true });
+    window.addEventListener('touchstart', onUserInteraction, { passive: true });
+    return () => {
+      window.removeEventListener('wheel', onUserInteraction);
+      window.removeEventListener('touchstart', onUserInteraction);
+    };
+  }, []);
+
+  // Scroll active category pill tab into view horizontally
+  useEffect(() => {
+    const activePill = catPillRefs.current[selectedCategory];
+    if (activePill) {
+      activePill.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+  }, [selectedCategory]);
+
+  const scrollToCategory = (catId: CategoryId) => {
+    setSelectedCategory(catId);
+    isManualScrolling.current = true;
+
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+
+    const el = categoryRefs.current[catId];
+    if (el) {
+      const stickyBarHeight = pillContainerRef.current?.offsetHeight || 50;
+      const targetY =
+        el.getBoundingClientRect().top + window.pageYOffset - stickyBarHeight - 12;
+      window.scrollTo({
+        top: catId === 'popular' ? 0 : Math.max(0, targetY),
+        behavior: 'smooth',
+      });
+    }
+
+    scrollTimeoutRef.current = setTimeout(() => {
+      isManualScrolling.current = false;
+    }, 800);
+  };
 
   // Search Results
   const searchResults = useMemo(() => {
@@ -518,7 +619,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                     ref={(el) => {
                       catPillRefs.current[cat.id] = el;
                     }}
-                    onClick={() => setSelectedCategory(cat.id)}
+                    onClick={() => scrollToCategory(cat.id)}
                     className={`inline-flex items-center gap-[6px] px-[11px] py-[6px] rounded-[40px] text-[16px] font-normal leading-[140%] tracking-normal transition-all cursor-pointer shrink-0 ${
                       isActive
                         ? 'bg-[#026F4F] text-white shadow-xs'
@@ -541,7 +642,7 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
             </div>
           </section>
 
-          {/* Content View: Search Mode OR Figma-matched Sections */}
+          {/* Content View: Search Mode OR Sequential Category Sections with Smart Scroll */}
           {searchQuery ? (
             <section className="space-y-3 pt-1">
               {searchResults.length === 0 ? (
@@ -599,86 +700,95 @@ export const MenuScreen: React.FC<MenuScreenProps> = ({
                 </>
               )}
             </section>
-          ) : selectedCategory === 'all' ? (
-            <div className="space-y-5 pt-1">
-              {/* Section 1: 🔥 Popular Now (2-column vertical cards) */}
-              <section className="space-y-3">
-                <div className="flex items-center gap-1.5">
-                  <img src="/icons/noto_fire.svg" alt="" className="w-5 h-5 object-contain" />
-                  <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%]">
-                    {language === 'ARABIC' ? 'الأكثر شعبية' : 'Popular Now'}
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  {popularItems.map((item) => (
-                    <FoodCardVertical
-                      key={item.id}
-                      item={item}
-                      quantity={getItemQuantity(item.id)}
-                      language={language}
-                      onAdd={handleCardAdd}
-                      onIncrement={(food) => handleCartItemIncrement(food.id)}
-                      onDecrement={(food) => handleDecrement(food.id)}
-                      onClick={(food) => {
-                        openFoodDetailModal(food.id);
-                      }}
-                    />
-                  ))}
-                </div>
-              </section>
-
-              {/* Section 2: All Items (horizontal cards matching Figma) */}
-              <section className="space-y-3">
-                <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%]">
-                  {language === 'ARABIC' ? 'جميع الأصناف' : 'All Items'}
-                </h2>
-
-                <div className="flex flex-col gap-3">
-                  {allItems.map((item) => (
-                    <FoodCardHorizontal
-                      key={item.id}
-                      item={item}
-                      quantity={getItemQuantity(item.id)}
-                      language={language}
-                      onAdd={handleCardAdd}
-                      onIncrement={(food) => handleCartItemIncrement(food.id)}
-                      onDecrement={(food) => handleDecrement(food.id)}
-                      onClick={(food) => {
-                        openFoodDetailModal(food.id);
-                      }}
-                    />
-                  ))}
-                </div>
-              </section>
-            </div>
           ) : (
-            /* Filtered Category Section matching Figma Frame 42:527 (e.g. Ramen (3)) */
-            <section className="space-y-3 pt-1">
-              <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%] capitalize">
-                {language === 'ARABIC'
-                  ? CATEGORIES.find((c) => c.id === selectedCategory)?.nameAr || selectedCategory
-                  : CATEGORIES.find((c) => c.id === selectedCategory)?.name || selectedCategory}{' '}
-                ({categoryFilteredItems.length})
-              </h2>
+            <div className="space-y-6 pt-1">
+              {categorySectionsData.map(({ category, items }) => {
+                if (items.length === 0) return null;
 
-              <div className="flex flex-col gap-3">
-                {categoryFilteredItems.map((item) => (
-                  <FoodCardHorizontal
-                    key={item.id}
-                    item={item}
-                    quantity={getItemQuantity(item.id)}
-                    language={language}
-                    onAdd={handleCardAdd}
-                    onIncrement={(food) => handleCartItemIncrement(food.id)}
-                    onDecrement={(food) => handleDecrement(food.id)}
-                    onClick={(food) => {
-                      openFoodDetailModal(food.id);
+                if (category.id === 'popular') {
+                  return (
+                    <section
+                      key={category.id}
+                      id={`category-${category.id}`}
+                      ref={(el) => {
+                        categoryRefs.current[category.id] = el;
+                      }}
+                      className="space-y-3 pt-1 scroll-mt-20"
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <img src="/icons/noto_fire.svg" alt="" className="w-5 h-5 object-contain" />
+                        <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%]">
+                          {language === 'ARABIC' ? 'الأكثر شعبية' : 'Popular Now'}
+                        </h2>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        {items.map((item) => (
+                          <FoodCardVertical
+                            key={item.id}
+                            item={item}
+                            quantity={getItemQuantity(item.id)}
+                            language={language}
+                            onAdd={handleCardAdd}
+                            onIncrement={(food) => handleCartItemIncrement(food.id)}
+                            onDecrement={(food) => handleDecrement(food.id)}
+                            onClick={(food) => {
+                              openFoodDetailModal(food.id);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  );
+                }
+
+                return (
+                  <section
+                    key={category.id}
+                    id={`category-${category.id}`}
+                    ref={(el) => {
+                      categoryRefs.current[category.id] = el;
                     }}
-                  />
-                ))}
-              </div>
-            </section>
+                    className="space-y-3 pt-5 border-t border-zinc-100/80 scroll-mt-20"
+                  >
+                    <div className="flex items-center justify-between pb-1">
+                      <h2 className="text-[19px] font-medium text-[#2D2F33] leading-[140%] flex items-center gap-2">
+                        {category.image ? (
+                          <img
+                            src={category.image}
+                            alt=""
+                            className="w-[22px] h-[22px] rounded-full object-cover shrink-0"
+                          />
+                        ) : (
+                          <span className="text-[16px] leading-none">{category.emoji}</span>
+                        )}
+                        <span>{language === 'ARABIC' ? category.nameAr : category.name}</span>
+                      </h2>
+                      <span className="text-xs font-medium text-zinc-400">
+                        {items.length} {language === 'ARABIC' ? 'صنف' : 'items'}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      {items.map((item) => (
+                        <FoodCardHorizontal
+                          key={item.id}
+                          item={item}
+                          quantity={getItemQuantity(item.id)}
+                          language={language}
+                          onAdd={handleCardAdd}
+                          onIncrement={(food) => handleCartItemIncrement(food.id)}
+                          onDecrement={(food) => handleDecrement(food.id)}
+                          onClick={(food) => {
+                            openFoodDetailModal(food.id);
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
           )}
 
           {/* POWERED BY EMSA7 footer branding */}

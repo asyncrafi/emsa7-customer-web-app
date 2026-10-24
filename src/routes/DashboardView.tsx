@@ -153,7 +153,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <Skeleton className="h-7 w-24" />
             ) : (
               <div className="text-xl font-extrabold text-foreground">
-                ${customer?.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                EGP {customer?.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </div>
             )}
             <p className="text-xs text-muted-foreground mt-1">Enterprise Subscription Account</p>

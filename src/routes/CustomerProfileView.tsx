@@ -118,7 +118,7 @@ export const CustomerProfileView: React.FC = () => {
             <div>
               <span className="text-xs text-muted-foreground">Account Balance</span>
               <div className="text-2xl font-black text-foreground">
-                ${customer?.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                EGP {customer?.balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </div>
             </div>
             <div className="flex items-center justify-between text-xs pt-2 border-t">
@@ -199,7 +199,7 @@ export const CustomerProfileView: React.FC = () => {
                         </span>
                       </td>
                       <td className="py-3 px-3 text-right font-mono font-bold text-foreground">
-                        ${txn.amount.toFixed(2)}
+                        EGP {txn.amount.toFixed(2)}
                       </td>
                     </tr>
                   ))}

@@ -230,7 +230,7 @@ export const OrderConfirmedScreen: React.FC<OrderConfirmedScreenProps> = ({
           <button
             type="button"
             onClick={() => setShowInvoiceModal(true)}
-            className="w-full h-[52px] rounded-[30px] bg-white hover:bg-zinc-50 border border-[#026F4F]/40 text-[#026F4F] font-semibold text-[16px] leading-[140%] flex items-center justify-center gap-2.5 shadow-2xs cursor-pointer transition-transform active:scale-[0.99]"
+            className="w-full h-[52px] mt-4 sm:mt-5 rounded-[30px] bg-white hover:bg-zinc-50 border border-[#026F4F]/40 text-[#026F4F] font-semibold text-[16px] leading-[140%] flex items-center justify-center gap-2.5 shadow-2xs cursor-pointer transition-transform active:scale-[0.99]"
           >
             <Download className="w-5 h-5 text-[#026F4F]" />
             <span>{isArabic ? 'تحميل الفاتورة / الإيصال' : 'Download Receipt / Invoice'}</span>

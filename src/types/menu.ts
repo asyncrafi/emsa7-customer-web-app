@@ -61,7 +61,7 @@ export const getCartSubtotal = (cart: CartItem[]): number => {
   return cart.reduce((sum, ci) => sum + getCartItemTotalPrice(ci), 0);
 };
 
-export type CategoryId = "all" | "popular" | "ramen" | "sides" | "drinks" | "desserts" | "rice" | "combos";
+export type CategoryId = "popular" | "ramen" | "sides" | "drinks" | "desserts" | "rice" | "combos";
 
 export interface Category {
   id: CategoryId;
@@ -73,7 +73,7 @@ export interface Category {
 }
 
 export const CATEGORIES: Category[] = [
-  { id: "all", name: "All", nameAr: "الكل", emoji: "🍱", image: "/images/food/cat_all.png" },
+  { id: "popular", name: "Popular", nameAr: "الأكثر شعبية", emoji: "🔥", image: "/icons/noto_fire.svg" },
   { id: "ramen", name: "Ramen", nameAr: "رامن", emoji: "🍜", image: "/images/food/cat_ramen.png" },
   { id: "sides", name: "Sides", nameAr: "المقبلات", emoji: "🥟", image: "/images/food/cat_sides.png" },
   { id: "drinks", name: "Drinks", nameAr: "المشروبات", emoji: "🍹", image: "/images/food/cat_drinks.png" },
@@ -357,7 +357,7 @@ export function formatPrice(
   if (language === "ARABIC") {
     return `${price.toFixed(2)} ج.م`;
   }
-  return `$${price.toFixed(2)}`;
+  return `EGP ${price.toFixed(2)}`;
 }
 
 export function formatOrderDate(
